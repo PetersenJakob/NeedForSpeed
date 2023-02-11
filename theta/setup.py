@@ -4,7 +4,7 @@ import pybind11
 cpp_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.7']
 
 sfc_module = Extension(
-    'theta',
+    'nfs',
     sources=['module.cpp'],
     include_dirs=[pybind11.get_include()],
     language='c++',
@@ -12,8 +12,8 @@ sfc_module = Extension(
     )
 
 setup(
-    name='theta',
+    name='nfs',
     version='1.0',
-    description='Python package with theta C++ extension (PyBind11)',
+    description='C++ accelerator module for FinPy',
     ext_modules=[sfc_module],
 )
