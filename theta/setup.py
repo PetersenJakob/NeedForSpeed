@@ -1,7 +1,8 @@
 from setuptools import setup, Extension
 import pybind11
 
-cpp_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.7']
+# cpp_args = ['-std=c++11', '-stdlib=libc++', '-mmacosx-version-min=10.7']
+cpp_args = ['-std=c++11', '-stdlib=libc++']
 
 sfc_module = Extension(
     'nfs',
