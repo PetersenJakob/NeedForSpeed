@@ -16,6 +16,7 @@ double tanh_impl(double x) {
     return sinh_impl(x) / cosh_impl(x);
 }
 
+
 namespace py = pybind11;
 
 PYBIND11_MODULE(nfs, m) {
