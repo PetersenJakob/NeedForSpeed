@@ -131,9 +131,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="eigen_test.cpp" />
+    <ClCompile Include="grid_generator.cpp" />
     <ClCompile Include="matrix.cpp" />
+    <ClCompile Include="test_module.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="grid_generator.h" />
     <ClInclude Include="matrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
