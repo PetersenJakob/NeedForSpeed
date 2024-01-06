@@ -130,14 +130,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="derivatives.cpp" />
     <ClCompile Include="eigen_test.cpp" />
     <ClCompile Include="matrix.cpp" />
-    <ClCompile Include="test_deri.cpp" />
+    <ClCompile Include="test_module.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="derivatives.h" />
-    <ClInclude Include="derivatves.h" />
+    <ClInclude Include="band_diagonal_matrix.h" />
     <ClInclude Include="matrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
