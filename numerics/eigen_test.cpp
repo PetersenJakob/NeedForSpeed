@@ -4,7 +4,6 @@
 using Eigen::MatrixXd;
 
 #if false
-
 int main()
 {
 	MatrixXd m(2, 2);
@@ -19,5 +18,4 @@ int main()
 
 	return 0;
 }
-
 #endif
