@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 
+
 // Band-diagonal matrix in compact form. The matrix is assumed to be square.
 class BandDiagonal {
 
@@ -16,16 +17,26 @@ class BandDiagonal {
 	// Total number of diagonals (including main diagonal).
 	int n_diag_;
 
+	// Number of boundary rows.
+	int n_bound_rows_;
+	// Number of non-zero elements along boundary rows.
+	int n_bound_elements_;
+
 public:
 
 	// Matrix in compact form.
 	std::vector<std::vector<double>> m;
 
+	// Boundary rows.
+	std::vector<std::vector<double>> b;
+
 	// Constructor.
 	BandDiagonal(
 		const int _order,
 		const int _n_sub,
-		const int _n_super);
+		const int _n_super,
+		const int _n_bound_rows = 1,
+		const int _n_bound_elements = 2);
 
 	const int order() {
 		return order_;
@@ -41,6 +52,14 @@ public:
 
 	const int n_diag() {
 		return n_diag_;
+	}
+
+	const int n_bound_rows() {
+		return n_bound_rows_;
+	}
+
+	const int n_bound_elements() {
+		return n_bound_elements_;
 	}
 
 };

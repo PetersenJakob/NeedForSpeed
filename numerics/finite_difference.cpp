@@ -198,7 +198,7 @@ template <class T>
 void boundary(const int row_index, const double dx, const std::vector<double>& coef, T& matrix) {
 	
 	for (int i = 0; i != coef.size(); ++i) {
-		matrix.m[i][row_index] = coef[i] / dx;
+		matrix.b[row_index][i] = coef[i] / dx;
 	}
 
 }
@@ -209,8 +209,10 @@ TriDiagonal d1dx1::c2(const int order, const double dx) {
 	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2);
 
 	// Adjust finite difference approximations at boundary.
-	boundary(0, dx, coef1::b1, matrix);
-	boundary(order - 1, dx, coef1::f1, matrix);
+	for (int i = 0; i != matrix.n_bound_rows(); ++i)
+		boundary(i, dx, coef1::f1, matrix);
+	for (int i = matrix.n_bound_rows(); i != 2 * matrix.n_bound_rows(); ++i)
+		boundary(i, dx, coef1::b1, matrix);
 
 	return matrix;
 
@@ -222,12 +224,8 @@ PentaDiagonal d1dx1::c4(const int order, const double dx) {
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::c4);
 
 	// Adjust finite difference approximations at boundary.
-	boundary(0, dx, coef1::b1, matrix);
-	boundary(1, dx, coef1::b2, matrix);
-	boundary(order - 2, dx, coef1::f2, matrix);
-	boundary(order - 1, dx, coef1::f1, matrix);
-
 	return matrix;
+
 }
 
 // First order derivative operator: Forward difference, 1st order accuracy.
