@@ -7,10 +7,10 @@
 namespace d1dx1 {
 
 	// Central difference; 2nd order accuracy.
-	TriDiagonal central_tri(const int order, const double dx);
+	TriDiagonal c2(const int order, const double dx);
 
 	// Central difference; 4th order accuracy.
-	PentaDiagonal central_penta(const int order, const double dx);
+	PentaDiagonal c4(const int order, const double dx);
 
 	// Forward difference; 1st order accuracy.
 	TriDiagonal f1(const int order, const double dx);
@@ -30,10 +30,10 @@ namespace d1dx1 {
 namespace d2dx2 {
 
 	// Central difference; 2nd order accuracy.
-	TriDiagonal central_tri(const int order, const double dx);
+	TriDiagonal c2(const int order, const double dx);
 
 	// Central difference; 4th order accuracy.
-	PentaDiagonal central_penta(const int order, const double dx);
+	PentaDiagonal c4(const int order, const double dx);
 
 	// Forward difference; 1st order accuracy.
 	TriDiagonal f1(const int order, const double dx);
