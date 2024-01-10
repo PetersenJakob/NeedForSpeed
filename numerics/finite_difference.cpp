@@ -185,7 +185,7 @@ T setup(const int order, const double dx, const std::vector<double>& coef) {
 
 	for (int i = 0; i != coef.size(); ++i) {
 		for (int j = 0; j != order; ++j) {
-			matrix.m[i][j] = coef[i] / dx;
+			matrix.matrix[i][j] = coef[i] / dx;
 		}
 	}
 
@@ -198,7 +198,7 @@ template <class T>
 void boundary(const int row_index, const double dx, const std::vector<double>& coef, T& matrix) {
 	
 	for (int i = 0; i != coef.size(); ++i) {
-		matrix.b[row_index][i] = coef[i] / dx;
+		matrix.boundary_rows[row_index][i] = coef[i] / dx;
 	}
 
 }
@@ -209,9 +209,9 @@ TriDiagonal d1dx1::c2(const int order, const double dx) {
 	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2);
 
 	// Adjust finite difference approximations at boundary.
-	for (int i = 0; i != matrix.n_bound_rows(); ++i)
+	for (int i = 0; i != matrix.n_boundary_rows(); ++i)
 		boundary(i, dx, coef1::f1, matrix);
-	for (int i = matrix.n_bound_rows(); i != 2 * matrix.n_bound_rows(); ++i)
+	for (int i = matrix.n_boundary_rows(); i != 2 * matrix.n_boundary_rows(); ++i)
 		boundary(i, dx, coef1::b1, matrix);
 
 	return matrix;

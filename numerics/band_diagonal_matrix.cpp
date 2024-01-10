@@ -1,30 +1,32 @@
+#include <iomanip>
+#include <iostream>
+
 #include "band_diagonal_matrix.h"
 
-// Constructor.
+
 BandDiagonal::BandDiagonal(
 	const int _order,
-	const int _n_sub,
-	const int _n_super,
-	const int _n_bound_rows,
-	const int _n_bound_elements) {
+	const int _lower_bandwidth,
+	const int _upper_bandwidth,
+	const int _n_boundary_rows,
+	const int _n_boundary_elements) {
 
 	order_ = _order;
-	n_sub_ = _n_sub;
-	n_super_ = _n_super;
-	n_diag_ = 1 + n_sub_ + n_super_;
+	lower_bandwidth_ = _lower_bandwidth;
+	upper_bandwidth_ = _upper_bandwidth;
+	bandwidth_ = 1 + lower_bandwidth_ + upper_bandwidth_;
+	n_boundary_rows_ = _n_boundary_rows;
+	n_boundary_elements_ = _n_boundary_elements;
 
-	n_bound_rows_ = _n_bound_rows;
-	n_bound_elements_ = _n_bound_elements;
-
-	// First index: Diagonal (sub -> main -> super).
+	// First index: Diagonal index (sub -> main -> super).
 	// Second index: Row index.
 	std::vector<double> diagonal(order_, 0.0);
-	std::vector<std::vector<double>> vec1(n_diag_, diagonal);
-	m = vec1;
+	std::vector<std::vector<double>> m(bandwidth_, diagonal);
+	matrix = m;
 
-	std::vector<double> row(n_bound_elements_);
-	std::vector<std::vector<double>> vec2(2 * n_bound_rows_, row);
-	b = vec2;
+	std::vector<double> row(n_boundary_elements_);
+	std::vector<std::vector<double>> b(2 * n_boundary_rows_, row);
+	boundary_rows = b;
 
 }
 
@@ -34,33 +36,30 @@ void print_matrix(BandDiagonal matrix) {
 	std::cout << std::scientific << std::setprecision(5);
 
 	std::cout
-		<< "Band-diagonal matrix (n_sub = "
-		<< matrix.n_sub()
-		<< ", 1, n_super = "
-		<< matrix.n_super()
-		<< ") of order "
-		<< matrix.order() << ":" << std::endl;
+		<< "Band-diagonal matrix of order " << matrix.order() << ":" << std::endl
+		<< "Lower bandwidth = " << matrix.lower_bandwidth() << std::endl
+		<< "Upper bandwidth = " << matrix.upper_bandwidth() << std::endl;
 
 	std::cout << "Boundary rows" << std::endl;
-	for (int i = 0; i != matrix.n_bound_rows(); ++i) {
-		for (int j = 0; j != matrix.n_bound_elements(); ++j) {
-			std::cout << std::setw(14) << matrix.b[i][j];
+	for (int i = 0; i != matrix.n_boundary_rows(); ++i) {
+		for (int j = 0; j != matrix.n_boundary_elements(); ++j) {
+			std::cout << std::setw(14) << matrix.boundary_rows[i][j];
 		}
 		std::cout << std::endl;
 	}
 
 	std::cout << "Matrix" << std::endl;
 	for (int i = 0; i != matrix.order(); ++i) {
-		for (int j = 0; j != matrix.n_diag(); ++j) {
-			std::cout << std::setw(14) << matrix.m[j][i];
+		for (int j = 0; j != matrix.bandwidth(); ++j) {
+			std::cout << std::setw(14) << matrix.matrix[j][i];
 		}
 		std::cout << std::endl;
 	}
 
 	std::cout << "Boundary rows" << std::endl;
-	for (int i = matrix.n_bound_rows(); i != 2 * matrix.n_bound_rows(); ++i) {
-		for (int j = 0; j != matrix.n_bound_elements(); ++j) {
-			std::cout << std::setw(14) << matrix.b[i][j];
+	for (int i = matrix.n_boundary_rows(); i != 2 * matrix.n_boundary_rows(); ++i) {
+		for (int j = 0; j != matrix.n_boundary_elements(); ++j) {
+			std::cout << std::setw(14) << matrix.boundary_rows[i][j];
 		}
 		std::cout << std::endl;
 	}
