@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <iostream>
+#include <stdexcept>
 
 #include "band_diagonal_matrix.h"
 
@@ -27,6 +28,36 @@ BandDiagonal::BandDiagonal(
 	std::vector<double> row(n_boundary_elements_);
 	std::vector<std::vector<double>> b(2 * n_boundary_rows_, row);
 	boundary_rows = b;
+
+}
+
+void TriDiagonal::gauss_elimination(std::vector<double>& column) {
+
+	if (n_boundary_rows_ != 1) {
+		throw std::invalid_argument("Number of boundary rows should be 1.");
+	}
+
+	// TODO: what if n_boundary_elements_ != 3 and 4?
+
+	if (n_boundary_elements_ == 3) {
+
+		const double lower = boundary_rows[0][2] / matrix[2][1];
+		const double upper = boundary_rows[1][0] / matrix[0][order_ - 2];
+
+		// Initialize "corner" elements not part of matrix.
+		matrix[0][0] = 0.0;
+		matrix[2][order_ - 1] = 0.0;
+
+		for (int i = 0; i != n_boundary_rows_ - 1; ++i) {
+
+			// Lower boundary row...
+			matrix[i + 1][0] = boundary_rows[0][i] - lower * matrix[i][1];
+
+			// Upper boundary row...
+			matrix[i][order_ - 1] = boundary_rows[1][i + 1] - upper * matrix[i + 1][order_ - 2];
+
+		}
+	}
 
 }
 
