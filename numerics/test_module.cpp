@@ -8,16 +8,13 @@ int main() {
 
 	TriDiagonal tri(order);
 	PentaDiagonal penta(order);
-	BandDiagonal band(order, 2, 1);
 
 	print_matrix(tri);
 
 	const double dx = 0.1;
-	print_matrix(d1dx1::central_tri(order, dx));
+	print_matrix(d1dx1::c2(order, dx));
 
 	print_matrix(penta);
-
-//	print_matrix(band);
 
 	return 0;
 }
