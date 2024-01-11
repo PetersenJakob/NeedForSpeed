@@ -1,4 +1,3 @@
-//#include <algorithm>
 #include <algorithm>
 #include <vector>
 
@@ -45,17 +44,14 @@ namespace coef1 {
     // Forward difference; 1st order accuracy.
     std::vector<double> f1 { 
 		 1.0, 
-		-1.0, 
-		 0.0 
+		-1.0 
 	};
 
     // Forward difference; 2nd order accuracy.
     std::vector<double> f2 { 
 		-1.0 / 2.0, 
 		 2.0, 
-		-3.0 / 2.0, 
-		 0.0, 
-		 0.0 
+		-3.0 / 2.0
 	};
 
 	// Forward difference; 3rd order accuracy.
@@ -63,10 +59,7 @@ namespace coef1 {
 		 1.0 / 3.0,
 		-3.0 / 2.0,
 		 3.0,
-		-11.0 / 16.0,
-		 0.0,
-		 0.0,
-		 0.0 
+		-11.0 / 16.0
 	};
 
 	// Forward difference; 4th order accuracy.
@@ -75,11 +68,7 @@ namespace coef1 {
 		 4.0 / 3.0,
 		-3.0,
 		 4.0,
-		-25.0 / 12.0,
-		 0.0,
-		 0.0,
-		 0.0,
-		 0.0 
+		-25.0 / 12.0
 	};
 
 	// Backward difference; 1st order accuracy.
@@ -119,9 +108,7 @@ namespace coef2 {
 	std::vector<double> f1 { 
 		 1.0, 
 		-2.0, 
-		 1.0,
-		 0.0,
-		 0.0 
+		 1.0
 	};
 
 	// Forward difference; 2nd order accuracy.
@@ -129,10 +116,7 @@ namespace coef2 {
 		-1.0, 
 		 4.0, 
 		-5.0, 
-		 2.0, 
-		 0.0,
-		 0.0,
-		 0.0 
+		 2.0
 	};
 
 	// Forward difference; 3rd order accuracy.
@@ -141,11 +125,7 @@ namespace coef2 {
 		-14.0 / 3.0, 
 		 19.0 / 2.0, 
 		-26.0 / 3.0,
-		 35.0 / 12.0, 
-		 0.0,
-		 0.0,
-		 0.0,
-		 0.0 
+		 35.0 / 12.0
 	};
 
 	// Forward difference; 4th order accuracy.
@@ -155,12 +135,7 @@ namespace coef2 {
 		-13.0,
 		 107.0 / 6.0,
 		-77.0 / 6.0,
-		 15.0 / 4.0,
-		 0.0,
-		 0.0,
-		 0.0,
-		 0.0,
-		 0.0 
+		 15.0 / 4.0
 	};
 
 	// Backward difference; 1st order accuracy.
@@ -179,9 +154,14 @@ namespace coef2 {
 
 // Setting up finite difference representation of derivative operator on equidistant grid.
 template <class T> 
-T setup(const int order, const double dx, const std::vector<double>& coef) {
+T setup(
+	const int order, 
+	const double dx, 
+	const std::vector<double>& coef,
+	const int n_boundary_rows,
+	const int n_boundary_elements) {
 
-	T matrix(order);
+	T matrix(order, n_boundary_rows, n_boundary_elements);
 
 	for (int i = 0; i != coef.size(); ++i) {
 		for (int j = 0; j != order; ++j) {
@@ -206,13 +186,15 @@ void boundary(const int row_index, const double dx, const std::vector<double>& c
 // First order derivative operator: Central difference, 2nd order accuracy.
 TriDiagonal d1dx1::c2(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2);
+	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2, 1, 2);
 
 	// Adjust finite difference approximations at boundary.
-	for (int i = 0; i != matrix.n_boundary_rows(); ++i)
+	for (int i = 0; i != matrix.n_boundary_rows(); ++i) {
 		boundary(i, dx, coef1::f1, matrix);
-	for (int i = matrix.n_boundary_rows(); i != 2 * matrix.n_boundary_rows(); ++i)
+	}
+	for (int i = matrix.n_boundary_rows(); i != 2 * matrix.n_boundary_rows(); ++i) {
 		boundary(i, dx, coef1::b1, matrix);
+	}
 
 	return matrix;
 
@@ -221,7 +203,7 @@ TriDiagonal d1dx1::c2(const int order, const double dx) {
 // First order derivative operator: Central difference, 4th order accuracy.
 PentaDiagonal d1dx1::c4(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::c4);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::c4, 1, 3);
 
 	// Adjust finite difference approximations at boundary.
 	return matrix;
@@ -231,7 +213,7 @@ PentaDiagonal d1dx1::c4(const int order, const double dx) {
 // First order derivative operator: Forward difference, 1st order accuracy.
 TriDiagonal d1dx1::f1(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::f1);
+	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::f1, 1, 2);
 
 	// TODO: Adjust finite difference approximations at boundary.
 	return matrix;
@@ -241,7 +223,7 @@ TriDiagonal d1dx1::f1(const int order, const double dx) {
 // First order derivative operator: Forward difference, 2nd order accuracy.
 PentaDiagonal d1dx1::f2(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::f2);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::f2, 1, 3);
 
 	// TODO: Adjust finite difference approximations at boundary.
 	return matrix;
@@ -251,7 +233,7 @@ PentaDiagonal d1dx1::f2(const int order, const double dx) {
 // First order derivative operator: Backward difference, 1st order accuracy.
 TriDiagonal d1dx1::b1(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::b1);
+	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::b1, 1, 2);
 
 	// TODO: Adjust finite difference approximations at boundary.
 	return matrix;
@@ -261,7 +243,7 @@ TriDiagonal d1dx1::b1(const int order, const double dx) {
 // First order derivative operator: Backward difference, 2nd order accuracy.
 PentaDiagonal d1dx1::b2(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::b2);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::b2, 1, 3);
 
 	// TODO: Adjust finite difference approximations at boundary.
 	return matrix;
@@ -271,9 +253,16 @@ PentaDiagonal d1dx1::b2(const int order, const double dx) {
 // Second order derivative operator: Central difference, 2nd order accuracy.
 TriDiagonal d2dx2::c2(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef2::c2);
+	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef2::c2, 1, 3);
 
 	// TODO: Adjust finite difference approximations at boundary.
+	for (int i = 0; i != matrix.n_boundary_rows(); ++i) {
+		boundary(i, dx, coef2::f1, matrix);
+	}
+	for (int i = matrix.n_boundary_rows(); i != 2 * matrix.n_boundary_rows(); ++i) {
+		boundary(i, dx, coef2::b1, matrix);
+	}
+
 	return matrix;
 
 }
@@ -281,7 +270,7 @@ TriDiagonal d2dx2::c2(const int order, const double dx) {
 // Second order derivative operator: Central difference, 4th order accuracy.
 PentaDiagonal d2dx2::c4(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef2::c4);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef2::c4, 2, 5);
 
 	// TODO: Adjust finite difference approximations at boundary.
 	return matrix;
@@ -291,7 +280,7 @@ PentaDiagonal d2dx2::c4(const int order, const double dx) {
 // Second order derivative operator: Forward difference, 1st order accuracy.
 TriDiagonal d2dx2::f1(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef2::f1);
+	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef2::f1, 1, 3);
 
 	// TODO: Adjust finite difference approximations at boundary.
 	return matrix;
@@ -301,7 +290,7 @@ TriDiagonal d2dx2::f1(const int order, const double dx) {
 // Second order derivative operator: Forward difference, 2nd order accuracy.
 PentaDiagonal d2dx2::f2(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef2::f2);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef2::f2, 2, 5);
 
 	// TODO: Adjust finite difference approximations at boundary.
 	return matrix;
@@ -311,7 +300,7 @@ PentaDiagonal d2dx2::f2(const int order, const double dx) {
 // Second order derivative operator: Backward difference, 1st order accuracy.
 TriDiagonal d2dx2::b1(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef2::b1);
+	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef2::b1, 1, 3);
 
 	// TODO: Adjust finite difference approximations at boundary.
 	return matrix;
@@ -321,7 +310,7 @@ TriDiagonal d2dx2::b1(const int order, const double dx) {
 // Second order derivative operator: Backward difference, 2nd order accuracy.
 PentaDiagonal d2dx2::b2(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef2::b2);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef2::b2, 2, 5);
 
 	// TODO: Adjust finite difference approximations at boundary.
 	return matrix;

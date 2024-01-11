@@ -31,7 +31,8 @@ BandDiagonal::BandDiagonal(
 
 }
 
-void TriDiagonal::gauss_elimination(std::vector<double>& column) {
+// Adjust matrix rows at boundary using Gauss elimination.
+void TriDiagonal::adjust_boundary() {
 
 	if (n_boundary_rows_ != 1) {
 		throw std::invalid_argument("Number of boundary rows should be 1.");
@@ -39,7 +40,23 @@ void TriDiagonal::gauss_elimination(std::vector<double>& column) {
 
 	// TODO: what if n_boundary_elements_ != 3 and 4?
 
-	if (n_boundary_elements_ == 3) {
+	if (n_boundary_elements_ == 2) {
+
+		// Initialize "corner" elements not part of matrix.
+		matrix[0][0] = 0.0;
+		matrix[2][order_ - 1] = 0.0;
+
+		for (int i = 0; i != n_boundary_elements_; ++i) {
+
+			// Lower boundary row...
+			matrix[i + 1][0] = boundary_rows[0][i];
+
+			// Upper boundary row...
+			matrix[i][order_ - 1] = boundary_rows[1][i];
+
+		}
+	}
+	else if (n_boundary_elements_ == 3) {
 
 		const double lower = boundary_rows[0][2] / matrix[2][1];
 		const double upper = boundary_rows[1][0] / matrix[0][order_ - 2];
@@ -48,7 +65,7 @@ void TriDiagonal::gauss_elimination(std::vector<double>& column) {
 		matrix[0][0] = 0.0;
 		matrix[2][order_ - 1] = 0.0;
 
-		for (int i = 0; i != n_boundary_rows_ - 1; ++i) {
+		for (int i = 0; i != n_boundary_elements_ - 1; ++i) {
 
 			// Lower boundary row...
 			matrix[i + 1][0] = boundary_rows[0][i] - lower * matrix[i][1];
@@ -56,8 +73,39 @@ void TriDiagonal::gauss_elimination(std::vector<double>& column) {
 			// Upper boundary row...
 			matrix[i][order_ - 1] = boundary_rows[1][i + 1] - upper * matrix[i + 1][order_ - 2];
 
+			// TODO: Adjust column vector on RHS of equal sign...
+
 		}
 	}
+
+}
+
+std::vector<double> TriDiagonal::mat_vec_product(const std::vector<double>& column) {
+
+	std::vector<double> result(order_, 0.0);
+
+	for (int i = 0; i != n_boundary_rows_; ++i) {
+		for (int j = 0; j != n_boundary_elements_; ++j) {
+			result[i] += boundary_rows[i][j] * column[i + j];
+		}
+	}
+
+	for (int i = 1; i != order_ - 1; ++i) {
+		for (int j = 0; j != bandwidth_; ++j) {
+			result[i] += matrix[j][i] * column[i + j - 1];
+		}
+	}
+
+	for (int i = n_boundary_rows_; i != 2 * n_boundary_rows_; ++i) {
+
+		int row_nr = order_ - 1 - (i - n_boundary_rows_);
+
+		for (int j = 0; j != n_boundary_elements_; ++j) {
+			result[row_nr] += boundary_rows[i][j] * column[row_nr - n_boundary_elements_ + j];
+		}
+	}
+
+	return result;
 
 }
 
