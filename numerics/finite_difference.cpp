@@ -10,7 +10,7 @@
 
 
 // Reverse order of coefficients and multiply by scalar.
-std::vector<double> reverse_order(std::vector<double> coef, const double scalar) {
+std::vector<double> reverse_order(std::vector<double> coef, const double scalar = 1.0) {
 
 	std::reverse(coef.begin(), coef.end());
 
@@ -22,53 +22,53 @@ std::vector<double> reverse_order(std::vector<double> coef, const double scalar)
 
 }
 
-// Coefficients for finite difference representations of first order derivative operator.
+// Coefficients for finite difference representation of first order derivative operator.
 namespace coef1 {
 
     // Central difference; 2nd order accuracy.
-    std::vector<double> c2 { 
-		 1.0 / 2.0, 
-		 0.0, 
-		-1.0 / 2.0 
+    std::vector<double> c2 {
+		-1.0 / 2.0,
+		 0.0,
+		 1.0 / 2.0
 	};
 
     // Central difference; 4th order accuracy.
-    std::vector<double> c4 { 
-		-1.0 / 12.0, 
-		 2.0 / 3.0, 
-		 0.0, 
-		-2.0 / 3.0, 
-		 1.0 / 12.0 
+    std::vector<double> c4 {
+		 1.0 / 12.0,
+		-2.0 / 3.0,
+		 0.0,
+		 2.0 / 3.0,
+		-1.0 / 12.0
 	};
 
     // Forward difference; 1st order accuracy.
-    std::vector<double> f1 { 
-		 1.0, 
-		-1.0 
+    std::vector<double> f1 {
+		-1.0,
+		 1.0
 	};
 
     // Forward difference; 2nd order accuracy.
-    std::vector<double> f2 { 
-		-1.0 / 2.0, 
-		 2.0, 
-		-3.0 / 2.0
+    std::vector<double> f2 {
+		-3.0 / 2.0,
+		 2.0,
+		-1.0 / 2.0
 	};
 
 	// Forward difference; 3rd order accuracy.
 	std::vector<double> f3 {
-		 1.0 / 3.0,
-		-3.0 / 2.0,
+		-11.0 / 6.0,
 		 3.0,
-		-11.0 / 16.0
+		-3.0 / 2.0,
+		 1.0 / 3.0
 	};
 
 	// Forward difference; 4th order accuracy.
 	std::vector<double> f4 {
-		-1.0 / 4.0,
-		 4.0 / 3.0,
-		-3.0,
+		-25.0 / 12.0,
 		 4.0,
-		-25.0 / 12.0
+		-3.0,
+		 4.0 / 3.0,
+		-1.0 / 4.0
 	};
 
 	// Backward difference; 1st order accuracy.
@@ -89,66 +89,66 @@ namespace coef1 {
 namespace coef2 {
 
 	// Central difference; 2nd order accuracy.
-	std::vector<double> c2 { 
-		 1.0, 
-		-2.0, 
-		 1.0 
+	std::vector<double> c2 {
+		 1.0,
+		-2.0,
+		 1.0
 	};
 
 	// Central difference; 4th order accuracy.
-	std::vector<double> c4 { 
-		-1.0 / 12.0, 
-		 4.0 / 3.0, 
-		-5.0 / 2.0, 
-		 4.0 / 3.0, 
-		-1.0 / 12.0 
+	std::vector<double> c4 {
+		-1.0 / 12.0,
+		 4.0 / 3.0,
+		-5.0 / 2.0,
+		 4.0 / 3.0,
+		-1.0 / 12.0
 	};
 
 	// Forward difference; 1st order accuracy.
-	std::vector<double> f1 { 
-		 1.0, 
-		-2.0, 
+	std::vector<double> f1 {
+		 1.0,
+		-2.0,
 		 1.0
 	};
 
 	// Forward difference; 2nd order accuracy.
-	std::vector<double> f2 { 
-		-1.0, 
-		 4.0, 
-		-5.0, 
-		 2.0
+	std::vector<double> f2 {
+		 2.0,
+		-5.0,
+		 4.0,
+		-1.0
 	};
 
 	// Forward difference; 3rd order accuracy.
-	std::vector<double> f3 { 
-		 11.0 / 12.0, 
-		-14.0 / 3.0, 
-		 19.0 / 2.0, 
-		-26.0 / 3.0,
+	std::vector<double> f3 {
 		 35.0 / 12.0
+		-26.0 / 3.0,
+		 19.0 / 2.0,
+		-14.0 / 3.0,
+		 11.0 / 12.0
 	};
 
 	// Forward difference; 4th order accuracy.
 	std::vector<double> f4 {
-		-5.0 / 6.0,
-		 61.0 / 12.0,
-		-13.0,
-		 107.0 / 6.0,
+		 15.0 / 4.0,
 		-77.0 / 6.0,
-		 15.0 / 4.0
+		 107.0 / 6.0,
+		-13.0,
+		 61.0 / 12.0,
+		-5.0 / 6.0
 	};
 
 	// Backward difference; 1st order accuracy.
-	std::vector<double> b1 = reverse_order(f1, 1.0);
+	std::vector<double> b1 = reverse_order(f1);
 
 	// Backward difference; 2nd order accuracy.
-	std::vector<double> b2 = reverse_order(f2, 1.0);
+	std::vector<double> b2 = reverse_order(f2);
 
 	// Backward difference; 3rd order accuracy.
-	std::vector<double> b3 = reverse_order(f3, 1.0);
+	std::vector<double> b3 = reverse_order(f3);
 
 	// Backward difference; 4th order accuracy.
-	std::vector<double> b4 = reverse_order(f4, 1.0);
+	std::vector<double> b4 = reverse_order(f4);
 
 }
 

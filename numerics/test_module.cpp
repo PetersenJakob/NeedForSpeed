@@ -9,7 +9,10 @@
 
 int main() {
 
+	const double x_min = -0.2;
+	const double x_max = 0.2;
 	const int order = 21;
+	const double dx = (x_max - x_min) / (order - 1);
 
 	TriDiagonal tri(order);
 //	print_matrix(tri);
@@ -17,7 +20,6 @@ int main() {
 	PentaDiagonal penta(order);
 //	print_matrix(penta);
 	
-	const double dx = 0.1;
 	TriDiagonal d1dx1_ = d1dx1::c2(order, dx);
 //	print_matrix(d1dx1_);
 
@@ -31,7 +33,7 @@ int main() {
 	print_matrix(d2dx2_);
 
 
-	std::vector<double> grid = grid_equidistant(-1.0, 1.0, order);
+	std::vector<double> grid = grid_equidistant(x_min, x_max, order);
 	std::cout << std::scientific << std::setprecision(5);
 
 	std::vector<double> func;
