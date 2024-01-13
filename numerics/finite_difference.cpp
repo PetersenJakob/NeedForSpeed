@@ -183,11 +183,11 @@ void boundary(const int row_index, const double dx, const std::vector<double>& c
 // First order derivative operator. Central difference; 2nd order accuracy.
 TriDiagonal d1dx1::c2(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2, 1, 4);
+	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2, 1, 3);
 
 	// Adjust finite difference approximations at boundary.
-	boundary(0, dx, coef1::f3, matrix);
-	boundary(1, dx, coef1::b3, matrix);
+	boundary(0, pow(dx, 1.0), coef1::f2, matrix);
+	boundary(1, pow(dx, 1.0), coef1::b2, matrix);
 
 	return matrix;
 
@@ -196,7 +196,7 @@ TriDiagonal d1dx1::c2(const int order, const double dx) {
 // First order derivative operator. Central difference; 4th order accuracy.
 PentaDiagonal d1dx1::c4(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::c4, 1, 3);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef1::c4, 1, 3);
 
 	// TODO: Adjust finite difference approximations at boundary.
 
