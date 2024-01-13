@@ -6,12 +6,17 @@
 // Band-diagonal matrix stored in compact form.
 class BandDiagonal {
 
-	// Matrix order: Number of elements along main diagonal.
-	int order_;
+private:
+
 	// Lower bandwidth: Number of non-zero sub-diagonals.
 	int lower_bandwidth_;
 	// Upper bandwidth: Number of non-zero super-diagonals.
 	int upper_bandwidth_;
+
+protected:
+
+	// Matrix order: Number of elements along main diagonal.
+	int order_;
 	// Bandwidth: Number of non-zero diagonals, including main diagonal.
 	int bandwidth_;
 
@@ -70,6 +75,10 @@ public:
 		const int _order,
 		const int _n_boundary_rows = 1,
 		const int _n_boundary_elements = 3) : BandDiagonal(_order, 1, 1, _n_boundary_rows, _n_boundary_elements) {}
+
+	void adjust_boundary();
+
+	std::vector<double> mat_vec_product(const std::vector<double>& column);
 
 };
 

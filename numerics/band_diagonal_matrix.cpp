@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <iostream>
+#include <stdexcept>
 
 #include "band_diagonal_matrix.h"
 
@@ -27,6 +28,126 @@ BandDiagonal::BandDiagonal(
 	std::vector<double> row(n_boundary_elements_);
 	std::vector<std::vector<double>> b(2 * n_boundary_rows_, row);
 	boundary_rows = b;
+
+}
+
+// Adjust matrix rows at boundary using Gauss elimination.
+void TriDiagonal::adjust_boundary() {
+
+	if (n_boundary_rows_ != 1) {
+		throw std::invalid_argument("Number of boundary rows should be 1.");
+	}
+
+	// TODO: what if n_boundary_elements_ != 3 and 4?
+
+	if (n_boundary_elements_ == 2) {
+
+		// Initialize "corner" elements not part of matrix.
+		matrix[0][0] = 0.0;
+		matrix[2][order_ - 1] = 0.0;
+
+		for (int i = 0; i != n_boundary_elements_; ++i) {
+
+			// Lower boundary row...
+			matrix[i + 1][0] = boundary_rows[0][i];
+
+			// Upper boundary row...
+			matrix[i][order_ - 1] = boundary_rows[1][i];
+
+		}
+	}
+	else if (n_boundary_elements_ == 3) {
+
+		const double lower = boundary_rows[0][2] / matrix[2][1];
+		const double upper = boundary_rows[1][0] / matrix[0][order_ - 2];
+
+		for (int i = 0; i != n_boundary_elements_ - 1; ++i) {
+
+			// Lower boundary row...
+			matrix[i + 1][0] = boundary_rows[0][i] - lower * matrix[i][1];
+
+			// Upper boundary row...
+			matrix[i][order_ - 1] = boundary_rows[1][i + 1] - upper * matrix[i + 1][order_ - 2];
+
+			// TODO: Adjust column vector on RHS of equal sign...
+
+		}
+
+		// Initialize "corner" elements not part of matrix.
+		matrix[0][0] = 0.0;
+		matrix[2][order_ - 1] = 0.0;
+
+	}
+	else if (n_boundary_elements_ == 4) {
+
+		// Temporary boundary rows.
+		std::vector<std::vector<double>> b_rows = boundary_rows;
+
+		// First elimination.
+		const double lower1 = b_rows[0][3] / matrix[2][2];
+		const double upper1 = b_rows[1][0] / matrix[0][order_ - 3];
+
+		for (int i = 0; i != 3; ++i) {
+
+			// Lower boundary row...
+			b_rows[0][i + 1] -= lower1 * matrix[i][2];
+
+			// Upper boundary row...
+			b_rows[1][i] -= upper1 * matrix[i][order_ - 3];
+
+			// TODO: Adjust column vector on RHS of equal sign...
+
+		}
+
+		// Second elimination.
+		const double lower2 = b_rows[0][2] / matrix[2][1];
+		const double upper2 = b_rows[1][1] / matrix[0][order_ - 2];
+
+		for (int i = 0; i != 2; ++i) {
+
+			// Lower boundary row...
+			matrix[i + 1][0] = b_rows[0][i] - lower2 * matrix[i][1];
+
+			// Upper boundary row...
+			matrix[i][order_ - 1] = b_rows[1][i + 2] - upper2 * matrix[i + 1][order_ - 2];
+
+			// TODO: Adjust column vector on RHS of equal sign...
+
+		}
+
+		// Initialize "corner" elements not part of matrix.
+		matrix[0][0] = 0.0;
+		matrix[2][order_ - 1] = 0.0;
+
+	}
+}
+
+std::vector<double> TriDiagonal::mat_vec_product(const std::vector<double>& column) {
+
+	std::vector<double> result(order_, 0.0);
+
+	for (int i = 0; i != n_boundary_rows_; ++i) {
+		for (int j = 0; j != n_boundary_elements_; ++j) {
+			result[i] += boundary_rows[i][j] * column[i + j];
+		}
+	}
+
+	for (int i = n_boundary_rows_; i != order_ - n_boundary_rows_; ++i) {
+		for (int j = 0; j != bandwidth_; ++j) {
+			result[i] += matrix[j][i] * column[(i - n_boundary_rows_) + j];
+		}
+	}
+
+	for (int i = n_boundary_rows_; i != 2 * n_boundary_rows_; ++i) {
+
+		int row_nr = order_ - (2 * n_boundary_rows_ - i);
+
+		for (int j = 0; j != n_boundary_elements_; ++j) {
+			result[row_nr] += boundary_rows[i][j] * column[row_nr - (n_boundary_elements_ - 1) + j];
+		}
+	}
+
+	return result;
 
 }
 
