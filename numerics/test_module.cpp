@@ -26,13 +26,6 @@ int main() {
 	d1dx1_.adjust_boundary();
 	print_matrix(d1dx1_);
 
-	TriDiagonal d2dx2_ = d2dx2::c2(order, dx);
-//	print_matrix(d2dx2_);
-
-	d2dx2_.adjust_boundary();
-	print_matrix(d2dx2_);
-
-
 	std::vector<double> grid = grid_equidistant(x_min, x_max, order);
 	std::cout << std::scientific << std::setprecision(5);
 
@@ -53,6 +46,12 @@ int main() {
 			<< std::endl;
 
 	}
+
+	TriDiagonal d2dx2_ = d2dx2::c2(order, dx);
+	// print_matrix(d2dx2_);
+
+	d2dx2_.adjust_boundary();
+	// print_matrix(d2dx2_);
 
 	return 0;
 }
