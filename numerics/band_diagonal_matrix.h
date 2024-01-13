@@ -76,7 +76,7 @@ public:
 		const int _n_boundary_rows = 1,
 		const int _n_boundary_elements = 3) : BandDiagonal(_order, 1, 1, _n_boundary_rows, _n_boundary_elements) {}
 
-	void adjust_boundary();
+	void adjust_boundary(std::vector<double>& column);
 
 	std::vector<double> mat_vec_product(const std::vector<double>& column);
 

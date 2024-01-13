@@ -32,7 +32,7 @@ BandDiagonal::BandDiagonal(
 }
 
 // Adjust matrix rows at boundary using Gauss elimination.
-void TriDiagonal::adjust_boundary() {
+void TriDiagonal::adjust_boundary(std::vector<double>& column) {
 
 	if (n_boundary_rows_ != 1) {
 		throw std::invalid_argument("Number of boundary rows should be 1.");
@@ -70,6 +70,8 @@ void TriDiagonal::adjust_boundary() {
 			matrix[i][order_ - 1] = boundary_rows[1][i + 1] - upper * matrix[i + 1][order_ - 2];
 
 			// TODO: Adjust column vector on RHS of equal sign...
+			column[0] -= lower * column[1];
+			column[order_ - 1] -= upper * column[order_ - 2];
 
 		}
 
