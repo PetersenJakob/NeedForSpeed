@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 #include "band_diagonal_matrix.h"
@@ -250,11 +251,11 @@ PentaDiagonal d1dx1::b2(const int order, const double dx) {
 // Second order derivative operator. Central difference; 2nd order accuracy.
 TriDiagonal d2dx2::c2(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef2::c2, 1, 3);
+	TriDiagonal matrix = setup<TriDiagonal>(order, pow(dx, 2.0), coef2::c2, 1, 4);
 
 	// Adjust finite difference approximations at boundary.
-	boundary(0, dx, coef2::f1, matrix);
-	boundary(1, dx, coef2::b1, matrix);
+	boundary(0, pow(dx, 2.0), coef2::f2, matrix);
+	boundary(1, pow(dx, 2.0), coef2::b2, matrix);
 
 	return matrix;
 

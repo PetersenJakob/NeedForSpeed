@@ -131,17 +131,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="band_diagonal_matrix.cpp" />
-    <ClCompile Include="eigen_test.cpp" />
     <ClCompile Include="finite_difference.cpp" />
     <ClCompile Include="grid_generator.cpp" />
-    <ClCompile Include="matrix.cpp" />
     <ClCompile Include="test_module.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="band_diagonal_matrix.h" />
     <ClInclude Include="grid_generator.h" />
     <ClInclude Include="finite_difference.h" />
-    <ClInclude Include="matrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

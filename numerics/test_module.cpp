@@ -48,10 +48,24 @@ int main() {
 	}
 
 	TriDiagonal d2dx2_ = d2dx2::c2(order, dx);
-	// print_matrix(d2dx2_);
+	print_matrix(d2dx2_);
 
 	d2dx2_.adjust_boundary();
-	// print_matrix(d2dx2_);
+	print_matrix(d2dx2_);
+
+	std::vector<double> deriv2 = d2dx2_.mat_vec_product(func);
+
+	for (int i = 0; i != order; ++i) {
+
+		std::cout
+			<< std::setw(3) << i
+			<< std::setw(14) << grid[i]
+			<< std::setw(14) << func[i]
+			<< std::setw(14) << 4 * exp(2 * grid[i])
+			<< std::setw(14) << deriv2[i]
+			<< std::endl;
+
+	}
 
 	return 0;
 }
