@@ -28,6 +28,8 @@ public:
 	// Boundary rows of band-diagonal matrix.
 	std::vector<std::vector<double>> boundary_rows;
 
+	std::vector<std::vector<double>> boundary_rows_tmp;
+
 	BandDiagonal(
 		const int _order,
 		const int _bandwidth,
@@ -58,9 +60,18 @@ public:
 	// Matrix-vector product.
 	std::vector<double> mat_vec_prod(const std::vector<double>& column);
 
+	//
+	void gauss_elimination(
+		const int boundary_row_idx,
+		const int boundary_element_idx,
+		const int matrix_row_idx,
+		std::vector<double>& column);
+
+	void overwrite_bounary_row(const int boundary_row_idx);
+
 	// TODO: Mover from TriDiagonal!
 //	void adjust_boundary(std::vector<double>& column);
-
+	
 };
 
 // Tri-diagonal matrix stored in compact form.

@@ -29,6 +29,7 @@ BandDiagonal::BandDiagonal(
 
 }
 
+
 std::vector<double> BandDiagonal::mat_vec_prod(const std::vector<double>& column) {
 
 	int row_idx;
@@ -65,6 +66,90 @@ std::vector<double> BandDiagonal::mat_vec_prod(const std::vector<double>& column
 }
 
 
+// Remove boundary row element by Gauss elimination.
+void BandDiagonal::gauss_elimination(
+	const int boundary_row_idx,
+	const int boundary_element_idx,
+	const int matrix_row_idx,
+	std::vector<double>& column) {
+
+	// Lower boundary row index.
+	const int br_lower_idx = boundary_row_idx;
+	// Lower boundary row element index. TODO: Remember to include zero at beginning if more than one boundary row!
+	const int be_lower_idx = boundary_element_idx;
+	// Lower matrix row index.
+	const int mr_lower_idx = matrix_row_idx;
+	// Lower matrix row element index. TODO: Assume that the last element is used to remove boundary element!
+	const int me_lower_idx = n_diagonals_ - 1;
+
+	// Upper boundary row index.
+	const int br_upper_idx = (2 * n_boundary_rows_ - 1) - br_lower_idx;
+	// Upper boundary row element index.
+	const int be_upper_idx = (n_boundary_elements_ - 1) - be_lower_idx;
+	// Upper matrix row index.
+	const int mr_upper_idx = (order_ - 1) - mr_lower_idx;
+	// Upper matrix row element index.
+	const int me_upper_idx = (n_diagonals_ - 1) - me_lower_idx;
+
+	// Factor at lower boundary.
+	const double lower = boundary_rows_tmp[br_lower_idx][be_lower_idx] / matrix[me_lower_idx][mr_lower_idx];
+	// Factor at upper boundary.
+	const double upper = boundary_rows_tmp[br_upper_idx][be_upper_idx] / matrix[me_upper_idx][mr_upper_idx];
+
+	double me_lower_idx_tmp = 0.0;
+	double be_lower_idx_tmp = 0.0;
+	double me_upper_idx_tmp = 0.0;
+	double be_upper_idx_tmp = 0.0;
+
+	for (int i = 0; i != n_diagonals_ - 1; ++i) {
+
+		// Adjust lower boundary rows.
+		me_lower_idx_tmp = me_lower_idx - i;
+		be_lower_idx_tmp = be_lower_idx - i;
+		boundary_rows_tmp[br_lower_idx][be_lower_idx_tmp] -= lower * matrix[me_lower_idx_tmp][mr_lower_idx];
+
+		// Adjust upper boundary rows.
+		me_upper_idx_tmp = me_upper_idx + i;
+		be_upper_idx_tmp = be_upper_idx + i;
+		boundary_rows_tmp[br_upper_idx][be_upper_idx_tmp] -= lower * matrix[me_upper_idx_tmp][mr_upper_idx];
+
+		// Adjust RHS column vector.
+		column[br_lower_idx] -= lower * column[mr_lower_idx];
+		column[br_upper_idx] -= lower * column[mr_upper_idx];
+
+	}
+
+}
+
+
+void BandDiagonal::overwrite_bounary_row(const int boundary_row_idx) {
+
+	// Lower boundary row index.
+	const int br_lower_idx = boundary_row_idx;
+	// Lower matrix row index.
+	const int mr_lower_idx = boundary_row_idx;
+
+	// Upper boundary row index.
+	const int br_upper_idx = (2 * n_boundary_rows_ - 1) - br_lower_idx;
+	// Upper matrix row index.
+	const int mr_upper_idx = (order_ - 1) - mr_lower_idx;
+
+	for (int i = 0; i != boundary_row_idx + (bandwidth_ + 1); ++i) {
+
+		double me_lower_idx = (bandwidth_ - boundary_row_idx) + i;
+
+		// TODO!
+		double me_upper_idx = i;
+
+		matrix[me_lower_idx][mr_lower_idx] = boundary_rows_tmp[br_lower_idx][i];
+
+		matrix[me_upper_idx][mr_upper_idx] = boundary_rows_tmp[br_upper_idx][n_boundary_elements_ - i];
+
+	}
+
+}
+
+
 // Adjust matrix rows at boundary using Gauss elimination.
 void TriDiagonal::adjust_boundary(std::vector<double>& column) {
 
@@ -75,10 +160,6 @@ void TriDiagonal::adjust_boundary(std::vector<double>& column) {
 	// TODO: what if n_boundary_elements_ != 3 and 4?
 
 	if (n_boundary_elements_ == 2) {
-
-		// Initialize "corner" elements not part of matrix.
-		matrix[0][0] = 0.0;
-		matrix[2][order_ - 1] = 0.0;
 
 		for (int i = 0; i != n_boundary_elements_; ++i) {
 
@@ -92,6 +173,9 @@ void TriDiagonal::adjust_boundary(std::vector<double>& column) {
 	}
 	else if (n_boundary_elements_ == 3) {
 
+		boundary_rows_tmp = boundary_rows;
+
+#if false
 		const double lower = boundary_rows[0][2] / matrix[2][1];
 		const double upper = boundary_rows[1][0] / matrix[0][order_ - 2];
 
@@ -108,10 +192,10 @@ void TriDiagonal::adjust_boundary(std::vector<double>& column) {
 			column[order_ - 1] -= upper * column[order_ - 2];
 
 		}
+#endif
 
-		// Initialize "corner" elements not part of matrix.
-		matrix[0][0] = 0.0;
-		matrix[2][order_ - 1] = 0.0;
+		gauss_elimination(0, 2, 1, column);
+		overwrite_bounary_row(0);
 
 	}
 	else if (n_boundary_elements_ == 4) {
@@ -169,11 +253,12 @@ void TriDiagonal::adjust_boundary(std::vector<double>& column) {
 
 		}
 
-		// Initialize "corner" elements not part of matrix.
-		matrix[0][0] = 0.0;
-		matrix[2][order_ - 1] = 0.0;
-
 	}
+
+	// Initialize "corner" elements not part of matrix.
+	matrix[0][0] = 0.0;
+	matrix[2][order_ - 1] = 0.0;
+
 }
 
 // TODO: Why not const or reference allowed?

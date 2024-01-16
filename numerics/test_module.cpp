@@ -26,7 +26,7 @@ int main() {
 	PentaDiagonal penta(order);
 //	print_matrix(penta);
 	
-	TriDiagonal d1dx1_ = d1dx1::c2b1(order, dx);
+	TriDiagonal d1dx1_ = d1dx1::c2b2(order, dx);
 //	print_matrix(d1dx1_);
 
 	d1dx1_.adjust_boundary(column_tmp);
