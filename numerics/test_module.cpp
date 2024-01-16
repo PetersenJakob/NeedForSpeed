@@ -11,8 +11,8 @@
 
 int main() {
 
-	const double x_min = -M_PI / 2.0;
-	const double x_max = M_PI / 2.0;
+	const double x_min = -0.2; // -M_PI / 2.0;
+	const double x_max = 0.2; // M_PI / 2.0;
 	const int order = 21;
 	const double dx = (x_max - x_min) / (order - 1);
 

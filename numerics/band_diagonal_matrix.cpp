@@ -96,12 +96,12 @@ void BandDiagonal::gauss_elimination(
 	// Factor at upper boundary.
 	const double upper = boundary_rows_tmp[br_upper_idx][be_upper_idx] / matrix[me_upper_idx][mr_upper_idx];
 
-	double me_lower_idx_tmp = 0.0;
-	double be_lower_idx_tmp = 0.0;
-	double me_upper_idx_tmp = 0.0;
-	double be_upper_idx_tmp = 0.0;
+	int me_lower_idx_tmp = 0;
+	int be_lower_idx_tmp = 0;
+	int me_upper_idx_tmp = 0;
+	int be_upper_idx_tmp = 0;
 
-	for (int i = 0; i != n_diagonals_ - 1; ++i) {
+	for (int i = 0; i != n_diagonals_; ++i) {
 
 		// Adjust lower boundary rows.
 		me_lower_idx_tmp = me_lower_idx - i;
@@ -136,14 +136,15 @@ void BandDiagonal::overwrite_bounary_row(const int boundary_row_idx) {
 
 	for (int i = 0; i != boundary_row_idx + (bandwidth_ + 1); ++i) {
 
-		double me_lower_idx = (bandwidth_ - boundary_row_idx) + i;
+		int me_lower_idx = (bandwidth_ - boundary_row_idx) + i;
+		int me_upper_idx = i;
 
-		// TODO!
-		double me_upper_idx = i;
+		int be_lower_idx = i;
+		int be_upper_idx = n_boundary_elements_ - (boundary_row_idx + (bandwidth_ + 1)) + i ;
 
-		matrix[me_lower_idx][mr_lower_idx] = boundary_rows_tmp[br_lower_idx][i];
+		matrix[me_lower_idx][mr_lower_idx] = boundary_rows_tmp[br_lower_idx][be_lower_idx];
 
-		matrix[me_upper_idx][mr_upper_idx] = boundary_rows_tmp[br_upper_idx][n_boundary_elements_ - i];
+		matrix[me_upper_idx][mr_upper_idx] = boundary_rows_tmp[br_upper_idx][be_upper_idx];
 
 	}
 
