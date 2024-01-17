@@ -60,17 +60,18 @@ public:
 	// Matrix-vector product.
 	std::vector<double> mat_vec_prod(const std::vector<double>& column);
 
-	//
+	// ...
 	void gauss_elimination(
 		const int boundary_row_idx,
 		const int boundary_element_idx,
 		const int matrix_row_idx,
 		std::vector<double>& column);
 
+	// ...
 	void overwrite_bounary_row(const int boundary_row_idx);
 
-	// TODO: Mover from TriDiagonal!
-//	void adjust_boundary(std::vector<double>& column);
+	// ...
+	virtual void adjust_boundary(std::vector<double>& column) {}
 	
 };
 
@@ -97,6 +98,8 @@ public:
 		const int _order,
 		const int _n_boundary_rows = 2,
 		const int _n_boundary_elements = 3) : BandDiagonal(_order, 2, _n_boundary_rows, _n_boundary_elements) {}
+
+	void adjust_boundary(std::vector<double>& column);
 
 };
 

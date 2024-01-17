@@ -12,8 +12,8 @@ namespace d1dx1 {
 	// Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
 	TriDiagonal c2b2(const int order, const double dx);
 
-	// Central difference; 4th order accuracy.
-	PentaDiagonal c4(const int order, const double dx);
+	// Central difference; 4th order accuracy. Boundary; 4th order accuracy.
+	PentaDiagonal c4b4(const int order, const double dx);
 
 }
 
@@ -26,7 +26,7 @@ namespace d2dx2 {
 	// Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
 	TriDiagonal c2b2(const int order, const double dx);
 
-	// Central difference; 4th order accuracy.
-	PentaDiagonal c4(const int order, const double dx);
+	// Central difference; 4th order accuracy. Boundary; 4th order accuracy.
+	PentaDiagonal c4b4(const int order, const double dx);
 
 }
