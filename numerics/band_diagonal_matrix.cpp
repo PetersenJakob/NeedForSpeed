@@ -135,13 +135,25 @@ void BandDiagonal::overwrite_bounary_row(const int boundary_row_idx) {
 	// Upper matrix row index.
 	const int mr_upper_idx = (order_ - 1) - mr_lower_idx;
 
-	for (int i = 0; i != boundary_row_idx + (bandwidth_ + 1); ++i) {
+	int threshold = boundary_row_idx + (bandwidth_ + 1);
+
+	if (threshold > n_boundary_elements_) {
+		threshold = n_boundary_elements_;
+	}
+
+	// Initialize boundary row.
+	for (int i = 0; i != n_diagonals_; ++i) {
+		matrix[i][mr_lower_idx] = 0.0;
+		matrix[i][mr_upper_idx] = 0.0;
+	}
+
+	for (int i = 0; i != threshold; ++i) {
 
 		int me_lower_idx = (bandwidth_ - boundary_row_idx) + i;
-		int me_upper_idx = i;
+		int me_upper_idx = (n_diagonals_ - 1) - me_lower_idx;
 
 		int be_lower_idx = i;
-		int be_upper_idx = n_boundary_elements_ - (boundary_row_idx + (bandwidth_ + 1)) + i ;
+		int be_upper_idx = (n_boundary_elements_ - 1) - be_lower_idx;
 
 		matrix[me_lower_idx][mr_lower_idx] = boundary_rows_tmp[br_lower_idx][be_lower_idx];
 
@@ -156,10 +168,10 @@ void BandDiagonal::overwrite_bounary_row(const int boundary_row_idx) {
 void TriDiagonal::adjust_boundary(std::vector<double>& column) {
 
 	if (n_boundary_rows_ != 1) {
-		throw std::invalid_argument("Number of boundary rows should be 1.");
-	}
 
-	// TODO: what if n_boundary_elements_ != 3 and 4?
+		throw std::invalid_argument("Number of boundary rows should be 1.");
+
+	}
 
 	if (n_boundary_elements_ == 2) {
 
@@ -191,12 +203,59 @@ void TriDiagonal::adjust_boundary(std::vector<double>& column) {
 		overwrite_bounary_row(0);
 
 	}
+	else {
 
-	// Initialize "corner" elements which are not part of matrix.
-	matrix[0][0] = 0.0;
-	matrix[2][order_ - 1] = 0.0;
+		throw std::invalid_argument("Number of boundary row elements should be larger than 1 and smaller than 6.");
+
+	}
 
 }
+
+
+// Adjust matrix rows at boundary using Gauss elimination.
+void PentaDiagonal::adjust_boundary(std::vector<double>& column) {
+
+	if (n_boundary_rows_ != 2) {
+
+		throw std::invalid_argument("Number of boundary rows should be 2.");
+
+	}
+
+	if (n_boundary_elements_ >= 2 && n_boundary_elements_ <= 4) {
+
+		boundary_rows_tmp = boundary_rows;
+		overwrite_bounary_row(1);
+		overwrite_bounary_row(0);
+
+	}
+	else if (n_boundary_elements_ == 5) {
+
+		boundary_rows_tmp = boundary_rows;
+		gauss_elimination(1, 4, 2, column);
+		overwrite_bounary_row(1);
+		gauss_elimination(0, 3, 1, column);
+		overwrite_bounary_row(0);
+
+	}
+	else if (n_boundary_elements_ == 6) {
+
+		boundary_rows_tmp = boundary_rows;
+		gauss_elimination(1, 5, 3, column);
+		gauss_elimination(1, 4, 2, column);
+		overwrite_bounary_row(1);
+		gauss_elimination(0, 4, 2, column);
+		gauss_elimination(0, 3, 1, column);
+		overwrite_bounary_row(0);
+
+	}
+	else {
+
+		throw std::invalid_argument("Number of boundary row elements should be larger than 1 and smaller than 7.");
+
+	}
+
+}
+
 
 // TODO: Why not const or reference allowed?
 void print_matrix(BandDiagonal matrix) {

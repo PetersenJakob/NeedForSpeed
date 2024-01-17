@@ -21,16 +21,25 @@ int main() {
 	std::vector<double> column_tmp(order, 0.0);
 
 	TriDiagonal tri(order);
-//rint_matrix(tri);
+//	print_matrix(tri);
 
 	PentaDiagonal penta(order);
 //	print_matrix(penta);
-	
-	TriDiagonal d1dx1_ = d1dx1::c2b1(order, dx);
+
+
+	PentaDiagonal d1dx1_p = d1dx1::c4b4(order, dx);
+	print_matrix(d1dx1_p);
+
+	d1dx1_p.adjust_boundary(column_tmp);
+	print_matrix(d1dx1_p);
+
+
+	TriDiagonal d1dx1_ = d1dx1::c2b2(order, dx);
 //	print_matrix(d1dx1_);
 
 	d1dx1_.adjust_boundary(column_tmp);
 //	print_matrix(d1dx1_);
+
 
 	std::vector<double> grid = grid_equidistant(x_min, x_max, order);
 	std::cout << std::scientific << std::setprecision(5);

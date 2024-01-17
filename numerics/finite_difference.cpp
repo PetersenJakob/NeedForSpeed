@@ -161,7 +161,7 @@ T setup(
 	const int n_boundary_rows,
 	const int n_boundary_elements) {
 
-	T matrix(order, n_boundary_rows, n_boundary_elements);
+	T matrix(order, n_boundary_rows, (n_boundary_rows - 1) + n_boundary_elements);
 
 	for (int i = 0; i != coef.size(); ++i) {
 		for (int j = 0; j != order; ++j) {
@@ -178,8 +178,13 @@ T setup(
 template <class T>
 void boundary(const int row_index, const double dx, const std::vector<double>& coef, T& matrix) {
 	
+	int index_tmp = row_index - matrix.n_boundary_rows();
+	if (index_tmp < 0) {
+		index_tmp = row_index;
+	}
+
 	for (int i = 0; i != coef.size(); ++i) {
-		matrix.boundary_rows[row_index][i] = coef[i] / dx;
+		matrix.boundary_rows[row_index][index_tmp + i] = coef[i] / dx;
 	}
 
 }
@@ -190,8 +195,6 @@ void boundary(const int row_index, const double dx, const std::vector<double>& c
 TriDiagonal d1dx1::c2b1(const int order, const double dx) {
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2, 1, 2);
-
-	// Adjust finite difference approximations at boundary.
 	boundary(0, dx, coef1::f1, matrix);
 	boundary(1, dx, coef1::b1, matrix);
 
@@ -205,8 +208,6 @@ TriDiagonal d1dx1::c2b1(const int order, const double dx) {
 TriDiagonal d1dx1::c2b2(const int order, const double dx) {
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2, 1, 3);
-
-	// Adjust finite difference approximations at boundary.
 	boundary(0, dx, coef1::f2, matrix);
 	boundary(1, dx, coef1::b2, matrix);
 
@@ -215,12 +216,15 @@ TriDiagonal d1dx1::c2b2(const int order, const double dx) {
 }
 
 
-// First order derivative operator. Central difference; 4th order accuracy.
-PentaDiagonal d1dx1::c4(const int order, const double dx) {
+// First order derivative operator. 
+// Central difference; 4th order accuracy. Boundary; 4th order accuracy.
+PentaDiagonal d1dx1::c4b4(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef1::c4, 1, 3);
-
-	// Adjust finite difference approximations at boundary.
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef1::c4, 2, 5);
+	boundary(0, dx, coef1::f4, matrix);
+	boundary(1, dx, coef1::f4, matrix);
+	boundary(2, dx, coef1::b4, matrix);
+	boundary(3, dx, coef1::b4, matrix);
 
 	return matrix;
 
@@ -232,8 +236,6 @@ PentaDiagonal d1dx1::c4(const int order, const double dx) {
 TriDiagonal d2dx2::c2b1(const int order, const double dx) {
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, pow(dx, 2.0), coef2::c2, 1, 3);
-
-	// Adjust finite difference approximations at boundary.
 	boundary(0, pow(dx, 2.0), coef2::f1, matrix);
 	boundary(1, pow(dx, 2.0), coef2::b1, matrix);
 
@@ -247,8 +249,6 @@ TriDiagonal d2dx2::c2b1(const int order, const double dx) {
 TriDiagonal d2dx2::c2b2(const int order, const double dx) {
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, pow(dx, 2.0), coef2::c2, 1, 4);
-
-	// Adjust finite difference approximations at boundary.
 	boundary(0, pow(dx, 2.0), coef2::f2, matrix);
 	boundary(1, pow(dx, 2.0), coef2::b2, matrix);
 
@@ -257,12 +257,15 @@ TriDiagonal d2dx2::c2b2(const int order, const double dx) {
 }
 
 
-// Second order derivative operator. Central difference; 4th order accuracy.
-PentaDiagonal d2dx2::c4(const int order, const double dx) {
+// Second order derivative operator.
+// Central difference; 4th order accuracy. Boundary; 4th order accuracy.
+PentaDiagonal d2dx2::c4b4(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef2::c4, 2, 5);
-
-	// Adjust finite difference approximations at boundary.
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef2::c4, 2, 6);
+	boundary(0, dx, coef2::f4, matrix);
+	boundary(1, dx, coef2::f4, matrix);
+	boundary(2, dx, coef2::b4, matrix);
+	boundary(3, dx, coef2::b4, matrix);
 
 	return matrix;
 
