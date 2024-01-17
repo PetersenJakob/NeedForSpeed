@@ -122,6 +122,7 @@ void BandDiagonal::gauss_elimination(
 }
 
 
+// Overwrite boundary row of matrix.
 void BandDiagonal::overwrite_bounary_row(const int boundary_row_idx) {
 
 	// Lower boundary row index.
@@ -162,101 +163,36 @@ void TriDiagonal::adjust_boundary(std::vector<double>& column) {
 
 	if (n_boundary_elements_ == 2) {
 
-		for (int i = 0; i != n_boundary_elements_; ++i) {
+		boundary_rows_tmp = boundary_rows;
+		overwrite_bounary_row(0);
 
-			// Lower boundary row...
-			matrix[i + 1][0] = boundary_rows[0][i];
-
-			// Upper boundary row...
-			matrix[i][order_ - 1] = boundary_rows[1][i];
-
-		}
 	}
 	else if (n_boundary_elements_ == 3) {
 
 		boundary_rows_tmp = boundary_rows;
-
-#if false
-		const double lower = boundary_rows[0][2] / matrix[2][1];
-		const double upper = boundary_rows[1][0] / matrix[0][order_ - 2];
-
-		for (int i = 0; i != n_boundary_elements_ - 1; ++i) {
-
-			// Lower boundary row...
-			matrix[i + 1][0] = boundary_rows[0][i] - lower * matrix[i][1];
-
-			// Upper boundary row...
-			matrix[i][order_ - 1] = boundary_rows[1][i + 1] - upper * matrix[i + 1][order_ - 2];
-
-			// TODO: Adjust column vector on RHS of equal sign...
-			column[0] -= lower * column[1];
-			column[order_ - 1] -= upper * column[order_ - 2];
-
-		}
-#endif
-
 		gauss_elimination(0, 2, 1, column);
 		overwrite_bounary_row(0);
 
 	}
 	else if (n_boundary_elements_ == 4) {
 
-		// Temporary boundary rows.
-		std::vector<std::vector<double>> b_rows = boundary_rows;
+		boundary_rows_tmp = boundary_rows;
+		gauss_elimination(0, 3, 2, column);
+		gauss_elimination(0, 2, 1, column);
+		overwrite_bounary_row(0);
 
-		std::cout << std::endl << "Boundary rows 1:" << std::endl;
-		for (int i = 0; i != 2 * n_boundary_rows_; ++i) {
-			for (int j = 0; j != n_boundary_elements_; ++j) {
-				std::cout << b_rows[i][j] << "\t";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
+	}
+	else if (n_boundary_elements_ == 5) {
 
-		// First elimination.
-		const double lower1 = b_rows[0][3] / matrix[2][2];
-		const double upper1 = b_rows[1][0] / matrix[0][order_ - 3];
-
-		for (int i = 0; i != 3; ++i) {
-
-			// Lower boundary row...
-			b_rows[0][i + 1] -= lower1 * matrix[i][2];
-
-			// Upper boundary row...
-			b_rows[1][i] -= upper1 * matrix[i][order_ - 3];
-
-			// TODO: Adjust column vector on RHS of equal sign...
-
-		}
-
-		std::cout << std::endl << "Boundary rows 2:" << std::endl;
-		for (int i = 0; i != 2 * n_boundary_rows_; ++i) {
-			for (int j = 0; j != n_boundary_elements_; ++j) {
-				std::cout << b_rows[i][j] << "\t";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-
-		// Second elimination.
-		const double lower2 = b_rows[0][2] / matrix[2][1];
-		const double upper2 = b_rows[1][1] / matrix[0][order_ - 2];
-
-		for (int i = 0; i != 2; ++i) {
-
-			// Lower boundary row...
-			matrix[i + 1][0] = b_rows[0][i] - lower2 * matrix[i][1];
-
-			// Upper boundary row...
-			matrix[i][order_ - 1] = b_rows[1][i + 2] - upper2 * matrix[i + 1][order_ - 2];
-
-			// TODO: Adjust column vector on RHS of equal sign...
-
-		}
+		boundary_rows_tmp = boundary_rows;
+		gauss_elimination(0, 4, 3, column);
+		gauss_elimination(0, 3, 2, column);
+		gauss_elimination(0, 2, 1, column);
+		overwrite_bounary_row(0);
 
 	}
 
-	// Initialize "corner" elements not part of matrix.
+	// Initialize "corner" elements which are not part of matrix.
 	matrix[0][0] = 0.0;
 	matrix[2][order_ - 1] = 0.0;
 

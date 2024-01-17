@@ -20,8 +20,11 @@ namespace d1dx1 {
 // Finite difference representations of second order derivative operator.
 namespace d2dx2 {
 
-	// Central difference; 2nd order accuracy.
-	TriDiagonal c2(const int order, const double dx);
+	// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
+	TriDiagonal c2b1(const int order, const double dx);
+
+	// Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
+	TriDiagonal c2b2(const int order, const double dx);
 
 	// Central difference; 4th order accuracy.
 	PentaDiagonal c4(const int order, const double dx);
