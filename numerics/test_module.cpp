@@ -9,82 +9,56 @@
 #include "tridiagonal_matrix_solver.h"
 
 
+void test_exp(const std::vector<double>& grid, const int deriv_order, BandDiagonal& deriv_operator);
+
+void test_cos(const std::vector<double>& grid, const int deriv_order, BandDiagonal& deriv_operator);
+
+void print_test(
+	const std::vector<double>& grid, 
+	const std::vector<double>& func,
+	const std::vector<double>& deriv,
+	const std::vector<double>& deriv_fd);
+
+
 int main() {
 
-	const double x_min = -0.2; // -M_PI / 2.0;
-	const double x_max = 0.2; // M_PI / 2.0;
 	const int order = 21;
-	const double dx = (x_max - x_min) / (order - 1);
 
-	const double dt = 0.1;
+	std::vector<double> grid_exp = grid_equidistant(-0.2, 0.2, order);
+	std::vector<double> grid_cos = grid_equidistant(-M_PI / 2.0 , M_PI / 2.0, order);
+
+	const double dx_exp = grid_exp[1] - grid_exp[0];
+	const double dx_cos = grid_cos[1] - grid_cos[0];
+
+	
+	TriDiagonal d1_c2b1_exp = d1dx1::c2b1(order, dx_exp);
+	TriDiagonal d1_c2b1_cos = d1dx1::c2b1(order, dx_cos);
+
+	TriDiagonal d1_c2b2_exp = d1dx1::c2b2(order, dx_exp);
+	TriDiagonal d1_c2b2_cos = d1dx1::c2b2(order, dx_cos);
+
+	PentaDiagonal d1_c4b4_exp = d1dx1::c4b4(order, dx_exp);
+	PentaDiagonal d1_c4b4_cos = d1dx1::c4b4(order, dx_cos);
+
+	TriDiagonal d2_c2b1_exp = d2dx2::c2b1(order, dx_exp);
+	TriDiagonal d2_c2b1_cos = d2dx2::c2b1(order, dx_cos);
+
+	TriDiagonal d2_c2b2_exp = d2dx2::c2b2(order, dx_exp);
+	TriDiagonal d2_c2b2_cos = d2dx2::c2b2(order, dx_cos);
+
+	PentaDiagonal d2_c4b4_exp = d2dx2::c4b4(order, dx_exp);
+	PentaDiagonal d2_c4b4_cos = d2dx2::c4b4(order, dx_cos);
+
+	test_exp(grid_exp, 1, d1_c4b4_exp);
+
+	test_cos(grid_cos, 1, d1_c2b2_cos);
+
+	test_cos(grid_cos, 1, d1_c4b4_cos);
+
 
 	std::vector<double> column_tmp(order, 0.0);
 
-	TriDiagonal tri(order);
-//	print_matrix(tri);
-
-	PentaDiagonal penta(order);
-//	print_matrix(penta);
-
-
-	PentaDiagonal d1dx1_p = d1dx1::c4b4(order, dx);
-	print_matrix(d1dx1_p);
-
-	d1dx1_p.adjust_boundary(column_tmp);
-	print_matrix(d1dx1_p);
-
-
-	TriDiagonal d1dx1_ = d1dx1::c2b2(order, dx);
-//	print_matrix(d1dx1_);
-
-	d1dx1_.adjust_boundary(column_tmp);
-//	print_matrix(d1dx1_);
-
-
-	std::vector<double> grid = grid_equidistant(x_min, x_max, order);
-	std::cout << std::scientific << std::setprecision(5);
-
-	std::vector<double> func;
-	for (int i = 0; i != order; ++i)
-		func.push_back(exp(2 * grid[i]));
-
-	std::vector<double> deriv1 = d1dx1_.mat_vec_prod(func);
-
-	for (int i = 0; i != order; ++i) {
-
-		std::cout 
-			<< std::setw(3) << i 
-			<< std::setw(14) << grid[i] 
-			<< std::setw(14) << func[i]
-			<< std::setw(14) << 2 * exp(2 * grid[i])
-			<< std::setw(14) << deriv1[i]
-			<< std::endl;
-
-	}
-
-	TriDiagonal d2dx2_ = d2dx2::c2b2(order, dx);
-	print_matrix(d2dx2_);
-
-	d2dx2_.adjust_boundary(column_tmp);
-	print_matrix(d2dx2_);
-
-	std::vector<double> deriv2 = d2dx2_.mat_vec_prod(func);
-
-	for (int i = 0; i != order; ++i) {
-
-		std::cout
-			<< std::setw(3) << i
-			<< std::setw(14) << grid[i]
-			<< std::setw(14) << func[i]
-			<< std::setw(14) << 4 * exp(2 * grid[i])
-			<< std::setw(14) << deriv2[i]
-			<< std::endl;
-
-	}
-	std::cout << std::endl;
-
-
-
+#if false
 	std::vector<double> function(order, 0.0);
 	std::vector<double> antideriv(order, 0.0);
 	std::vector<double> antiantideriv(order, 0.0);
@@ -129,7 +103,90 @@ int main() {
 			<< std::endl;
 
 	}
+#endif
 
 	return 0;
+
+}
+
+
+void test_exp(const std::vector<double>& grid, const int deriv_order, BandDiagonal& deriv_operator) {
+
+	const int order = grid.size();
+
+	std::vector<double> func(order, 0.0);
+	std::vector<double> deriv1(order, 0.0);
+	std::vector<double> deriv2(order, 0.0);
+
+	for (int i = 0; i != order; ++i) {
+		func[i] = exp(2 * grid[i]);
+		deriv1[i] = 2 * func[i];
+		deriv2[i] = 4 * func[i];
+	}
+
+	std::vector<double> deriv_fd = deriv_operator.mat_vec_prod(func);
+
+	std::cout << "Test derivative of exp function:" << std::endl << "Derivative order = " << deriv_order << std::endl;
+
+	if (deriv_order == 1) {
+		print_test(grid, func, deriv1, deriv_fd);
+	}
+	else if (deriv_order == 2) {
+		print_test(grid, func, deriv2, deriv_fd);
+	}
+
+}
+
+
+void test_cos(const std::vector<double>& grid, const int deriv_order, BandDiagonal& deriv_operator) {
+
+	const int order = grid.size();
+
+	std::vector<double> func(order, 0.0);
+	std::vector<double> deriv1(order, 0.0);
+	std::vector<double> deriv2(order, 0.0);
+
+	for (int i = 0; i != order; ++i) {
+		func[i] = cos(2 * grid[i]);
+		deriv1[i] = -2 * sin(2 * grid[i]);
+		deriv2[i] = -4 * func[i];
+	}
+
+	std::vector<double> deriv_fd = deriv_operator.mat_vec_prod(func);
+
+	std::cout << "Test derivative of exp function:" << std::endl << "Derivative order = " << deriv_order << std::endl;
+
+	if (deriv_order == 1) {
+		print_test(grid, func, deriv1, deriv_fd);
+	}
+	else if (deriv_order == 2) {
+		print_test(grid, func, deriv2, deriv_fd);
+	}
+
+}
+
+
+void print_test(
+	const std::vector<double>& grid,
+	const std::vector<double>& func,
+	const std::vector<double>& deriv,
+	const std::vector<double>& deriv_fd) {
+
+	std::cout << std::scientific << std::setprecision(5);
+
+	std::cout << "       Grid           Function       Derivative     FD derivative  Abs diff" << std::endl;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		std::cout
+			<< std::setw(3) << i
+			<< std::setw(15) << grid[i]
+			<< std::setw(15) << func[i]
+			<< std::setw(15) << deriv[i]
+			<< std::setw(15) << deriv_fd[i]
+			<< std::setw(15) << abs(deriv[i] - deriv_fd[i])
+			<< std::endl;
+	}
+
+	std::cout << std::endl;
 
 }

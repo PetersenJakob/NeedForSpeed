@@ -220,7 +220,7 @@ TriDiagonal d1dx1::c2b2(const int order, const double dx) {
 // Central difference; 4th order accuracy. Boundary; 4th order accuracy.
 PentaDiagonal d1dx1::c4b4(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef1::c4, 2, 5);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::c4, 2, 5);
 	boundary(0, dx, coef1::f4, matrix);
 	boundary(1, dx, coef1::f4, matrix);
 	boundary(2, dx, coef1::b4, matrix);
@@ -261,11 +261,11 @@ TriDiagonal d2dx2::c2b2(const int order, const double dx) {
 // Central difference; 4th order accuracy. Boundary; 4th order accuracy.
 PentaDiagonal d2dx2::c4b4(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef2::c4, 2, 6);
-	boundary(0, dx, coef2::f4, matrix);
-	boundary(1, dx, coef2::f4, matrix);
-	boundary(2, dx, coef2::b4, matrix);
-	boundary(3, dx, coef2::b4, matrix);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::c4, 2, 6);
+	boundary(0, pow(dx, 2.0), coef2::f4, matrix);
+	boundary(1, pow(dx, 2.0), coef2::f4, matrix);
+	boundary(2, pow(dx, 2.0), coef2::b4, matrix);
+	boundary(3, pow(dx, 2.0), coef2::b4, matrix);
 
 	return matrix;
 
