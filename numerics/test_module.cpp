@@ -1,12 +1,24 @@
 #define _USE_MATH_DEFINES
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <numeric>
+#include <vector>
 
 #include "band_diagonal_matrix.h"
 #include "finite_difference.h"
 #include "grid_generator.h"
 #include "tridiagonal_matrix_solver.h"
+
+
+std::vector<double> vector_diff(
+	const std::vector<double>& vec1,
+	const std::vector<double>& vec2);
+
+double max_norm(std::vector<double> vec);
+
+double l2_norm(std::vector<double> vec);
 
 
 void test_exp(const std::vector<double>& grid, const int deriv_order, BandDiagonal& deriv_operator);
@@ -188,5 +200,41 @@ void print_test(
 	}
 
 	std::cout << std::endl;
+
+}
+
+
+// Element-wise subtraction of vectors.
+std::vector<double> vector_diff(
+	const std::vector<double>& vec1,
+	const std::vector<double>& vec2) {
+
+	std::vector<double> diff(vec1.size(), 0.0);
+
+	std::transform(vec1.begin(), vec1.end(), vec2.begin(), diff.begin(), std::minus<double>());
+
+	return diff;
+
+}
+
+
+// Max norm.
+double max_norm(std::vector<double> vec) {
+
+	// Absolue value of each element.
+	std::for_each(vec.begin(), vec.end(), [](double x) { return abs(x); });
+
+	return *std::max_element(vec.begin(), vec.end());
+
+}
+
+
+// l2-norm (vector norm). TODO: Should this be dependent on dx? Like a "Riemann sum" expression?
+double l2_norm(std::vector<double> vec) {
+
+	// Square of each element.
+	std::for_each(vec.begin(), vec.end(), [](double x) { return pow(x, 2); });
+
+	return std::accumulate(vec.begin(), vec.end(), (double)0);
 
 }
