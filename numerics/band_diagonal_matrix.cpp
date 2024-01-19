@@ -30,6 +30,81 @@ BandDiagonal::BandDiagonal(
 }
 
 
+// Multiply each element with scalar.
+void BandDiagonal::scalar_prod(const double scalar) {
+
+	for (int i = 0; i != n_diagonals_; ++i) {
+		for (int j = 0; j != order_; ++j) {
+			matrix[i][j] *= scalar;
+		}
+	}
+
+	for (int i = 0; i != 2 * n_boundary_rows_; ++i) {
+		for (int j = 0; j != n_boundary_elements_; ++j) {
+			boundary_rows[i][j] *= scalar;
+		}
+	}
+
+}
+
+
+// Add two identical matrices.
+BandDiagonal BandDiagonal::add_matrix(BandDiagonal mat) {
+
+	for (int i = 0; i != n_diagonals_; ++i) {
+		for (int j = 0; j != order_; ++j) {
+			mat.matrix[i][j] += matrix[i][j];
+		}
+	}
+
+	for (int i = 0; i != 2 * n_boundary_rows_; ++i) {
+		for (int j = 0; j != n_boundary_elements_; ++j) {
+			mat.boundary_rows[i][j] += boundary_rows[i][j];
+		}
+	}
+
+	return mat;
+
+}
+
+
+// Add vector to main diagonal.
+void BandDiagonal::add_diagonal(const std::vector<double>& diagonal) {
+
+	for (int i = 0; i != order_; ++i) {
+		matrix[bandwidth_][i] += diagonal[i];
+	}
+
+	for (int i = 0; i != n_boundary_rows_; ++i) {
+		boundary_rows[i][i] += diagonal[i];
+
+		double index1 = (n_boundary_elements_ - 1) - i;
+		double index2 = (order_ - 1) - i;
+
+		boundary_rows[index1][index1] += diagonal[index2];
+	}
+
+}
+
+
+// Add scalar to main diagonal.
+void BandDiagonal::add_diagonal(const double scalar) {
+
+	for (int i = 0; i != order_; ++i) {
+		matrix[bandwidth_][i] += scalar;
+	}
+
+	for (int i = 0; i != n_boundary_rows_; ++i) {
+		boundary_rows[i][i] += scalar;
+
+		double index1 = (n_boundary_elements_ - 1) - i;
+
+		boundary_rows[index1][index1] += scalar;
+	}
+
+}
+
+
 std::vector<double> BandDiagonal::mat_vec_prod(const std::vector<double>& column) {
 
 	std::vector<double> result(order_, 0.0);
@@ -121,13 +196,13 @@ void BandDiagonal::gauss_elimination(
 		// Adjust upper boundary rows.
 		me_upper_idx_tmp = me_upper_idx + i;
 		be_upper_idx_tmp = be_upper_idx + i;
-		boundary_rows_tmp[br_upper_idx][be_upper_idx_tmp] -= lower * matrix[me_upper_idx_tmp][mr_upper_idx];
-
-		// Adjust RHS column vector.
-		column[br_lower_idx] -= lower * column[mr_lower_idx];
-		column[br_upper_idx] -= lower * column[mr_upper_idx];
+		boundary_rows_tmp[br_upper_idx][be_upper_idx_tmp] -= upper * matrix[me_upper_idx_tmp][mr_upper_idx];
 
 	}
+
+	// Adjust RHS column vector.
+	column[br_lower_idx] -= lower * column[mr_lower_idx];
+	column[br_upper_idx] -= upper * column[mr_upper_idx];
 
 }
 

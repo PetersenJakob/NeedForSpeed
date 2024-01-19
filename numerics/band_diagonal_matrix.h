@@ -57,6 +57,18 @@ public:
 		return n_boundary_elements_;
 	}
 
+	// Multiply each element with scalar.
+	void scalar_prod(const double scalar);
+
+	// Add two identical matrices.
+	BandDiagonal add_matrix(BandDiagonal mat);
+
+	// Add vector to main diagonal.
+	void add_diagonal(const std::vector<double>& diagonal);
+
+	// Add scalar to main diagonal.
+	void add_diagonal(const double scalar);
+	 
 	// Matrix-vector product.
 	std::vector<double> mat_vec_prod(const std::vector<double>& column);
 
