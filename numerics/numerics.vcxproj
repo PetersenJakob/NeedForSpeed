@@ -40,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>C:\Users\peter\Dev\eigen-3.3.9</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -134,12 +134,14 @@
     <ClCompile Include="finite_difference.cpp" />
     <ClCompile Include="grid_generator.cpp" />
     <ClCompile Include="test_module.cpp" />
+    <ClCompile Include="test_util.cpp" />
     <ClCompile Include="tridiagonal_matrix_solver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="band_diagonal_matrix.h" />
     <ClInclude Include="grid_generator.h" />
     <ClInclude Include="finite_difference.h" />
+    <ClInclude Include="test_util.h" />
     <ClInclude Include="tridiagonal_matrix_solver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

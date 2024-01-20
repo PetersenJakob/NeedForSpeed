@@ -40,7 +40,7 @@ void BandDiagonal::add_diagonal(const double scalar) {
 	for (int i = 0; i != n_boundary_rows_; ++i) {
 		boundary_rows[i][i] += scalar;
 
-		double index1 = (n_boundary_elements_ - 1) - i;
+		int index1 = (n_boundary_elements_ - 1) - i;
 
 		boundary_rows[index1][index1] += scalar;
 	}
@@ -58,8 +58,8 @@ void BandDiagonal::add_diagonal(const std::vector<double>& diagonal) {
 	for (int i = 0; i != n_boundary_rows_; ++i) {
 		boundary_rows[i][i] += diagonal[i];
 
-		double index1 = (n_boundary_elements_ - 1) - i;
-		double index2 = (order_ - 1) - i;
+		int index1 = (n_boundary_elements_ - 1) - i;
+		int index2 = (order_ - 1) - i;
 
 		boundary_rows[index1][index1] += diagonal[index2];
 	}

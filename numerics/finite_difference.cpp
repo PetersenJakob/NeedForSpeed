@@ -236,12 +236,12 @@ PentaDiagonal d1dx1::c4b4(const int order, const double dx) {
 TriDiagonal d2dx2::c2b1(const int order, const double dx) {
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, pow(dx, 2.0), coef2::c2, 1, 3);
-//	boundary(0, pow(dx, 2.0), coef2::f1, matrix);
-//	boundary(1, pow(dx, 2.0), coef2::b1, matrix);
+	boundary(0, pow(dx, 2.0), coef2::f1, matrix);
+	boundary(1, pow(dx, 2.0), coef2::b1, matrix);
 
 	std::vector<double> coefficients(3, 0.0);
-	boundary(0, pow(dx, 2.0), coefficients, matrix);
-	boundary(1, pow(dx, 2.0), coefficients, matrix);
+//	boundary(0, pow(dx, 2.0), coefficients, matrix);
+//	boundary(1, pow(dx, 2.0), coefficients, matrix);
 
 	return matrix;
 

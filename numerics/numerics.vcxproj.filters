@@ -30,6 +30,9 @@
     <ClCompile Include="tridiagonal_matrix_solver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="test_util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="band_diagonal_matrix.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tridiagonal_matrix_solver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test_util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -23,7 +23,7 @@ TEST(FiniteDifference1stOrder, C2B1) {
 		grid.at(n) = dx * n + x_min;
 
 
-//	TriDiagonal d1_c2b1_exp = d1dx1::c2b1(order, dx);
+	TriDiagonal d1_c2b1_exp = d1dx1::c2b1(order, dx);
 
 
 	std::vector<double> function(order, 0.0);
