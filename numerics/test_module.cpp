@@ -21,9 +21,16 @@ double max_norm(std::vector<double> vec);
 double l2_norm(const double dx, std::vector<double> vec);
 
 
-std::vector<double> test_exp(const std::vector<double>& grid, const int deriv_order, BandDiagonal& deriv_operator, bool screen = false);
+std::vector<double> test_exp(
+	const std::vector<double>& grid, 
+	const int deriv_order, 
+	BandDiagonal& deriv_operator, 
+	bool screen = false);
 
-void test_cos(const std::vector<double>& grid, const int deriv_order, BandDiagonal& deriv_operator);
+void test_cos(
+	const std::vector<double>& grid, 
+	const int deriv_order, 
+	BandDiagonal& deriv_operator);
 
 void print_test(
 	const std::vector<double>& grid, 
@@ -43,7 +50,6 @@ int main() {
 	const double dx_cos = grid_cos[1] - grid_cos[0];
 
 
-	
 	TriDiagonal d1_c2b1_exp = d1dx1::c2b1(order, dx_exp);
 	TriDiagonal d1_c2b1_cos = d1dx1::c2b1(order, dx_cos);
 
@@ -68,10 +74,10 @@ int main() {
 
 //	test_cos(grid_cos, 1, d1_c4b4_cos);
 
-
-	for (int i = 0; i != 3; ++i) {
+#if false
+	for (int i = 0; i != 19; ++i) {
 	
-		const int n_points = 20 * pow(2, i);
+		const int n_points = 20 + 10 * i;
 		const double x_min = -0.2;
 		const double x_max = 0.2;
 
@@ -79,61 +85,80 @@ int main() {
 
 		const double dx = grid[1] - grid[0];
 
-		TriDiagonal d1_c2b1 = d1dx1::c2b1(n_points, dx);
+//		TriDiagonal deriv_operator = d1dx1::c2b2(n_points, dx);
+		PentaDiagonal deriv_operator = d1dx1::c4b4(n_points, dx);
 
-		test_exp(grid, 1, d1_c2b1, true);
+		test_exp(grid, 1, deriv_operator, true);
 	
 	}
-
+#endif
 
 	std::vector<double> column_tmp(order, 0.0);
 
-#if false
-	std::vector<double> function(order, 0.0);
-	std::vector<double> antideriv(order, 0.0);
-	std::vector<double> antiantideriv(order, 0.0);
-	std::vector<double> deriv(order, 0.0);
-	std::vector<double> derivderiv(order, 0.0);
+	std::vector<double> func(order, 0.0);
 
 	for (int i = 0; i != order; ++i) {
-		function[i] = cos(grid[i]);
-		antideriv[i] = sin(grid[i]);
-		antiantideriv[i] = -function[i];
-		deriv[i] = -sin(grid[i]);
-		derivderiv[i] = -function[i];
+		func[i] = cos(grid_cos[i]);
 	}
 
-	std::vector<double> deriv_fd = d1dx1_.mat_vec_prod(function);
-	std::vector<double> derivderiv_fd = d2dx2_.mat_vec_prod(function);
+	std::vector<double> solution_fd = func;
 
-	std::vector<double> solution_fd = function;
+	const double dt = 0.01;
+	const int n_steps = 3;
 
-	for (int i = 0; i != d2dx2_.order(); ++i) {
+	print_matrix(d2_c2b1_cos);
 
-		for (int j = 0; j != d2dx2_.n_diagonals(); ++j) {
-			d2dx2_.matrix[j][i] *= -dt;
+	for (int i = 0; i != d2_c2b1_cos.order(); ++i) {
+
+		for (int j = 0; j != d2_c2b1_cos.n_diagonals(); ++j) {
+			d2_c2b1_cos.matrix[j][i] *= -dt;
 		}
 
-		d2dx2_.matrix[d2dx2_.bandwidth()][i] += 1.0;
+		d2_c2b1_cos.matrix[d2_c2b1_cos.bandwidth()][i] += 1.0;
 
 	}
 
-	tri_solver(d2dx2_, solution_fd);
+	for (int i = 0; i != 2 * d2_c2b1_cos.n_boundary_rows(); ++i) {
+		for (int j = 0; j != d2_c2b1_cos.n_boundary_elements(); ++j) {
+			d2_c2b1_cos.boundary_rows[i][j] *= -dt;
+		}
+	}
 
+	d2_c2b1_cos.boundary_rows[0][0] += 1.0;
+	d2_c2b1_cos.boundary_rows[1][d2_c2b1_cos.n_boundary_elements() - 1] += 1.0;
+
+
+	print_matrix(d2_c2b1_cos);
+	d2_c2b1_cos.adjust_boundary(column_tmp);
+	print_matrix(d2_c2b1_cos);
+
+	std::cout << "Column vector: " << std::endl;
+	for (int i = 0; i != column_tmp.size(); ++i) {
+		std::cout << column_tmp[i] << std::endl;
+	}
+	std::cout << std::endl;
+
+
+	for (int i = 0; i != n_steps; ++i) {
+		tri_solver(d2_c2b1_cos, solution_fd);
+	}
+
+
+	std::cout << std::scientific << std::setprecision(5);
+
+	
 	for (int i = 0; i != order; ++i) {
 
 		std::cout
 			<< std::setw(3) << i
-			<< std::setw(14) << grid[i]
-			<< std::setw(14) << function[i]
-			<< std::setw(14) << deriv[i]
-			<< std::setw(14) << deriv_fd[i]
-			<< std::setw(14) << exp(-dt) * function[i]
+			<< std::setw(14) << grid_cos[i]
+			<< std::setw(14) << func[i]
+			<< std::setw(14) << exp(-n_steps * dt) * func[i]
 			<< std::setw(14) << solution_fd[i]
+			<< std::setw(14) << abs(exp(-n_steps * dt) * func[i] - solution_fd[i])
 			<< std::endl;
 
 	}
-#endif
 
 	return 0;
 
@@ -157,7 +182,13 @@ std::vector<double> test_exp(const std::vector<double>& grid, const int deriv_or
 	std::vector<double> deriv_fd = deriv_operator.mat_vec_prod(func);
 
 	if (screen) {
-		std::cout << "Test derivative of exp function:" << std::endl << "Derivative order = " << deriv_order << std::endl;
+
+		std::cout << std::scientific << std::setprecision(5);
+
+//		std::cout << "Test derivative of exp function:" << std::endl << "Derivative order = " << deriv_order << std::endl;
+
+//		std::cout << "dx    max-norm   l2-norm" << std::endl;
+
 	}
 
 	if (deriv_order == 1) {
@@ -169,7 +200,7 @@ std::vector<double> test_exp(const std::vector<double>& grid, const int deriv_or
 
 		if (screen) {
 //			print_test(grid, func, deriv1, deriv_fd);
-			std::cout << "max-norm = " << max_norm_ << "\t l2-norm = " << l2_norm_ << std::endl;
+			std::cout << std::setw(13) << dx << std::setw(13) << max_norm_ << std::setw(13) << l2_norm_ << std::endl;
 		}
 
 	}
@@ -182,7 +213,7 @@ std::vector<double> test_exp(const std::vector<double>& grid, const int deriv_or
 
 		if (screen) {
 //			print_test(grid, func, deriv2, deriv_fd);
-			std::cout << "max-norm = " << max_norm_ << "\t l2-norm = " << l2_norm_ << std::endl;
+			std::cout << std::setw(13) << dx << std::setw(13) << max_norm_ << std::setw(13) << l2_norm_ << std::endl;
 		}
 
 	}

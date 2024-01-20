@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 
 #include "band_diagonal_matrix.h"
@@ -5,8 +6,22 @@
 
 void tri_solver(TriDiagonal& matrix, std::vector<double>& column) {
 	
+	print_matrix(matrix);
+	std::cout << "Column vector before: " << std::endl;
+	for (int i = 0; i != column.size(); ++i) {
+		std::cout << column[i] << std::endl;
+	}
+	std::cout << std::endl;
+
 //	matrix.adjust_boundary
-//	matrix.adjust_boundary(column);
+	matrix.adjust_boundary(column);
+
+	print_matrix(matrix);
+	std::cout << "Column vector after: " << std::endl;
+	for (int i = 0; i != column.size(); ++i) {
+		std::cout << column[i] << std::endl;
+	}
+	std::cout << std::endl;
 
 	// Number of elements along main diagonal.
 	const int n_elements = column.size();
@@ -34,7 +49,7 @@ void tri_solver(TriDiagonal& matrix, std::vector<double>& column) {
 
 	// Back substitution.
 	for (int i = n_elements - 2; i != -1; --i) {
-		
+
 		idx_tmp = i + 1;
 
 		column[i] -= tmp[i] * column[idx_tmp];
