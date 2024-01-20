@@ -30,34 +30,119 @@ BandDiagonal::BandDiagonal(
 }
 
 
+// Add scalar to main diagonal.
+void BandDiagonal::add_diagonal(const double scalar) {
+
+	for (int i = 0; i != order_; ++i) {
+		matrix[bandwidth_][i] += scalar;
+	}
+
+	for (int i = 0; i != n_boundary_rows_; ++i) {
+		boundary_rows[i][i] += scalar;
+
+		int index1 = (n_boundary_elements_ - 1) - i;
+
+		boundary_rows[index1][index1] += scalar;
+	}
+
+}
+
+
+// Add vector to main diagonal.
+void BandDiagonal::add_diagonal(const std::vector<double>& diagonal) {
+
+	for (int i = 0; i != order_; ++i) {
+		matrix[bandwidth_][i] += diagonal[i];
+	}
+
+	for (int i = 0; i != n_boundary_rows_; ++i) {
+		boundary_rows[i][i] += diagonal[i];
+
+		int index1 = (n_boundary_elements_ - 1) - i;
+		int index2 = (order_ - 1) - i;
+
+		boundary_rows[index1][index1] += diagonal[index2];
+	}
+
+}
+
+
+// Multiply each element with scalar.
+void BandDiagonal::scalar_prod(const double scalar) {
+
+	for (int i = 0; i != n_diagonals_; ++i) {
+		for (int j = 0; j != order_; ++j) {
+			matrix[i][j] *= scalar;
+		}
+	}
+
+	for (int i = 0; i != 2 * n_boundary_rows_; ++i) {
+		for (int j = 0; j != n_boundary_elements_; ++j) {
+			boundary_rows[i][j] *= scalar;
+		}
+	}
+
+}
+
+
+// Add two identical matrices.
+BandDiagonal BandDiagonal::add_matrix(BandDiagonal mat) {
+
+	for (int i = 0; i != n_diagonals_; ++i) {
+		for (int j = 0; j != order_; ++j) {
+			mat.matrix[i][j] += matrix[i][j];
+		}
+	}
+
+	for (int i = 0; i != 2 * n_boundary_rows_; ++i) {
+		for (int j = 0; j != n_boundary_elements_; ++j) {
+			mat.boundary_rows[i][j] += boundary_rows[i][j];
+		}
+	}
+
+	return mat;
+
+}
+
+
 std::vector<double> BandDiagonal::mat_vec_prod(const std::vector<double>& column) {
 
-	int row_idx;
-	int col_idx;
 	std::vector<double> result(order_, 0.0);
 
-	// Lower boundary rows.
+	int mr_lower_idx = 0;
+	int mr_upper_idx = 0;
+	int br_lower_idx = 0;
+	int br_upper_idx = 0;
+
+	int be_upper_idx = 0;
+	int column_idx = 0;
+
+	// Boundary rows.
 	for (int i = 0; i != n_boundary_rows_; ++i) {
-		for (int j = 0; j != n_boundary_elements_; ++j) {
-			col_idx = i + j;
-			result[i] += boundary_rows[i][j] * column[col_idx];
+		for (int j = i; j != n_boundary_elements_; ++j) {
+
+			mr_lower_idx = i;
+			mr_upper_idx = (order_ - 1) - mr_lower_idx;
+
+			br_lower_idx = i;
+			br_upper_idx = (2 * n_boundary_rows_ - 1) - br_lower_idx;
+
+			// Lower boundary row.
+			result[mr_lower_idx] += boundary_rows[br_lower_idx][j] * column[j];
+
+			be_upper_idx = (n_boundary_elements_ - 1) - j;
+			column_idx = (order_ - 1) - j;
+
+			// Upper boundary row.
+			result[mr_upper_idx] += boundary_rows[br_upper_idx][be_upper_idx] * column[column_idx];
+
 		}
 	}
 
 	// Interior rows.
 	for (int i = n_boundary_rows_; i != order_ - n_boundary_rows_; ++i) {
 		for (int j = 0; j != n_diagonals_; ++j) {
-			col_idx = (i - n_boundary_rows_) + j;
-			result[i] += matrix[j][i] * column[col_idx];
-		}
-	}
-
-	// Upper boundary rows.
-	for (int i = n_boundary_rows_; i != 2 * n_boundary_rows_; ++i) {
-		row_idx = (order_ - 2 * n_boundary_rows_) + i;
-		for (int j = 0; j != n_boundary_elements_; ++j) {
-			col_idx = (row_idx - n_boundary_elements_) + j + 1;
-			result[row_idx] += boundary_rows[i][j] * column[col_idx];
+			result[i] += matrix[j][i] * column[(i - n_boundary_rows_) + j];
 		}
 	}
 
@@ -111,13 +196,13 @@ void BandDiagonal::gauss_elimination(
 		// Adjust upper boundary rows.
 		me_upper_idx_tmp = me_upper_idx + i;
 		be_upper_idx_tmp = be_upper_idx + i;
-		boundary_rows_tmp[br_upper_idx][be_upper_idx_tmp] -= lower * matrix[me_upper_idx_tmp][mr_upper_idx];
-
-		// Adjust RHS column vector.
-		column[br_lower_idx] -= lower * column[mr_lower_idx];
-		column[br_upper_idx] -= lower * column[mr_upper_idx];
+		boundary_rows_tmp[br_upper_idx][be_upper_idx_tmp] -= upper * matrix[me_upper_idx_tmp][mr_upper_idx];
 
 	}
+
+	// Adjust RHS column vector.
+	column[br_lower_idx] -= lower * column[mr_lower_idx];
+	column[br_upper_idx] -= upper * column[mr_upper_idx];
 
 }
 

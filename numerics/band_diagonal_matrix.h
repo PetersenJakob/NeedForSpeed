@@ -37,25 +37,37 @@ public:
 		const int _n_boundary_elements);
 
 
-	const int order() {
+	int order() const {
 		return order_;
 	}
 
-	const int bandwidth() {
+	int bandwidth() const {
 		return bandwidth_;
 	}
 
-	const int n_diagonals() {
+	int n_diagonals() const {
 		return n_diagonals_;
 	}
 
-	const int n_boundary_rows() {
+	int n_boundary_rows() const {
 		return n_boundary_rows_;
 	}
 
-	const int n_boundary_elements() {
+	int n_boundary_elements() const {
 		return n_boundary_elements_;
 	}
+
+	// Add scalar to main diagonal.
+	void add_diagonal(const double scalar);
+
+	// Add vector to main diagonal.
+	void add_diagonal(const std::vector<double>& diagonal);
+
+	// Multiply each element with scalar.
+	void scalar_prod(const double scalar);
+
+	// Add two identical matrices.
+	BandDiagonal add_matrix(BandDiagonal mat);
 
 	// Matrix-vector product.
 	std::vector<double> mat_vec_prod(const std::vector<double>& column);
