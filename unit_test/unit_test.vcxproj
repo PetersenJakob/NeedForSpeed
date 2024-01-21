@@ -108,6 +108,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="derivatives.cpp" />
+    <ClCompile Include="tridiagonal_solver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\numerics\numerics.vcxproj">

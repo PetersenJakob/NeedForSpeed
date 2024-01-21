@@ -40,9 +40,10 @@ void BandDiagonal::add_diagonal(const double scalar) {
 	for (int i = 0; i != n_boundary_rows_; ++i) {
 		boundary_rows[i][i] += scalar;
 
-		int index1 = (n_boundary_elements_ - 1) - i;
+		int br_index = (2 * n_boundary_rows_ - 1) - i;
+		int be_index = (n_boundary_elements_ - 1) - i;
 
-		boundary_rows[index1][index1] += scalar;
+		boundary_rows[br_index][be_index] += scalar;
 	}
 
 }
@@ -201,8 +202,10 @@ void BandDiagonal::gauss_elimination(
 	}
 
 	// Adjust RHS column vector.
-	column[br_lower_idx] -= lower * column[mr_lower_idx];
-	column[br_upper_idx] -= upper * column[mr_upper_idx];
+	const int cr_lower_idx = br_lower_idx;
+	const int cr_upper_idx = (order_ - 1) - cr_lower_idx;
+	column[cr_lower_idx] -= lower * column[mr_lower_idx];
+	column[cr_upper_idx] -= upper * column[mr_upper_idx];
 
 }
 

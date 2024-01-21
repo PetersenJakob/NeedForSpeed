@@ -6,23 +6,24 @@
 
 void tri_solver(TriDiagonal& matrix, std::vector<double>& column) {
 	
+#if false
 	print_matrix(matrix);
 	std::cout << "Column vector before: " << std::endl;
 	for (int i = 0; i != column.size(); ++i) {
 		std::cout << column[i] << std::endl;
 	}
 	std::cout << std::endl;
-
+#endif
 //	matrix.adjust_boundary
 	matrix.adjust_boundary(column);
-
+#if false
 	print_matrix(matrix);
 	std::cout << "Column vector after: " << std::endl;
 	for (int i = 0; i != column.size(); ++i) {
 		std::cout << column[i] << std::endl;
 	}
 	std::cout << std::endl;
-
+#endif
 	// Number of elements along main diagonal.
 	const int n_elements = column.size();
 

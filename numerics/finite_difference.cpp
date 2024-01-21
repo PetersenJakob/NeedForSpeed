@@ -195,8 +195,8 @@ void boundary(const int row_index, const double dx, const std::vector<double>& c
 TriDiagonal d1dx1::c2b1(const int order, const double dx) {
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2, 1, 2);
-	boundary(0, dx, coef1::f1, matrix);
-	boundary(1, dx, coef1::b1, matrix);
+	boundary<TriDiagonal>(0, dx, coef1::f1, matrix);
+	boundary<TriDiagonal>(1, dx, coef1::b1, matrix);
 
 	return matrix;
 
@@ -208,8 +208,8 @@ TriDiagonal d1dx1::c2b1(const int order, const double dx) {
 TriDiagonal d1dx1::c2b2(const int order, const double dx) {
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::c2, 1, 3);
-	boundary(0, dx, coef1::f2, matrix);
-	boundary(1, dx, coef1::b2, matrix);
+	boundary<TriDiagonal>(0, dx, coef1::f2, matrix);
+	boundary<TriDiagonal>(1, dx, coef1::b2, matrix);
 
 	return matrix;
 
@@ -221,10 +221,10 @@ TriDiagonal d1dx1::c2b2(const int order, const double dx) {
 PentaDiagonal d1dx1::c4b4(const int order, const double dx) {
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::c4, 2, 5);
-	boundary(0, dx, coef1::f4, matrix);
-	boundary(1, dx, coef1::f4, matrix);
-	boundary(2, dx, coef1::b4, matrix);
-	boundary(3, dx, coef1::b4, matrix);
+	boundary<PentaDiagonal>(0, dx, coef1::f4, matrix);
+	boundary<PentaDiagonal>(1, dx, coef1::f4, matrix);
+	boundary<PentaDiagonal>(2, dx, coef1::b4, matrix);
+	boundary<PentaDiagonal>(3, dx, coef1::b4, matrix);
 
 	return matrix;
 
@@ -236,12 +236,8 @@ PentaDiagonal d1dx1::c4b4(const int order, const double dx) {
 TriDiagonal d2dx2::c2b1(const int order, const double dx) {
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, pow(dx, 2.0), coef2::c2, 1, 3);
-	boundary(0, pow(dx, 2.0), coef2::f1, matrix);
-	boundary(1, pow(dx, 2.0), coef2::b1, matrix);
-
-	std::vector<double> coefficients(3, 0.0);
-//	boundary(0, pow(dx, 2.0), coefficients, matrix);
-//	boundary(1, pow(dx, 2.0), coefficients, matrix);
+	boundary<TriDiagonal>(0, pow(dx, 2.0), coef2::f1, matrix);
+	boundary<TriDiagonal>(1, pow(dx, 2.0), coef2::b1, matrix);
 
 	return matrix;
 
@@ -253,8 +249,8 @@ TriDiagonal d2dx2::c2b1(const int order, const double dx) {
 TriDiagonal d2dx2::c2b2(const int order, const double dx) {
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, pow(dx, 2.0), coef2::c2, 1, 4);
-	boundary(0, pow(dx, 2.0), coef2::f2, matrix);
-	boundary(1, pow(dx, 2.0), coef2::b2, matrix);
+	boundary<TriDiagonal>(0, pow(dx, 2.0), coef2::f2, matrix);
+	boundary<TriDiagonal>(1, pow(dx, 2.0), coef2::b2, matrix);
 
 	return matrix;
 
@@ -266,10 +262,10 @@ TriDiagonal d2dx2::c2b2(const int order, const double dx) {
 PentaDiagonal d2dx2::c4b4(const int order, const double dx) {
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::c4, 2, 6);
-	boundary(0, pow(dx, 2.0), coef2::f4, matrix);
-	boundary(1, pow(dx, 2.0), coef2::f4, matrix);
-	boundary(2, pow(dx, 2.0), coef2::b4, matrix);
-	boundary(3, pow(dx, 2.0), coef2::b4, matrix);
+	boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::f4, matrix);
+	boundary<PentaDiagonal>(1, pow(dx, 2.0), coef2::f4, matrix);
+	boundary<PentaDiagonal>(2, pow(dx, 2.0), coef2::b4, matrix);
+	boundary<PentaDiagonal>(3, pow(dx, 2.0), coef2::b4, matrix);
 
 	return matrix;
 
