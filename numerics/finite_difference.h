@@ -30,3 +30,7 @@ namespace d2dx2 {
 	PentaDiagonal c4b4(const int order, const double dx);
 
 }
+
+// Adjusting finite difference representation at boundary.
+template <class T>
+void boundary(const int row_index, const double dx, const std::vector<double>& coef, T& matrix);
