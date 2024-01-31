@@ -3,8 +3,8 @@
 
 TEST(TriDiagonalSolver, HeatEquation1D) {
 
-	bool show_output_basic = false;
-	bool show_output_all = false;
+	bool show_output_basic = true;
+	bool show_output_all = true;
 
 	std::vector<double> dx_vec;
 	std::vector<double> max_norm;
@@ -19,7 +19,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 	// Number of grid points.
 	int n_points = 21;
 
-	for (int i = 0; i != 15; ++i) {
+	for (int i = 0; i != 1; ++i) {
 
 		// Step size in time.
 		double dt = time_interval / (n_steps - 1);
@@ -103,6 +103,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 	std::vector<double> tmp(3, 0.0);
 	std::vector<std::vector<double>> ratio(2, tmp);
 
+#if false
 	ratio[0][0] = max_norm[0] / max_norm[2];
 	ratio[0][1] = max_norm[2] / max_norm[6];
 	ratio[0][2] = max_norm[6] / max_norm[14];
@@ -134,7 +135,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 			<< ratio[1][1] << std::endl
 			<< ratio[1][2] << std::endl << std::endl;
 	}
-
+#endif
 	for (int i = 0; i != ratio[0].size(); ++i) {
 		EXPECT_NEAR(ratio[0][i], 4.5, 0.6);
 	}

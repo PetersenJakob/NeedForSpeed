@@ -27,11 +27,14 @@ void tri_solver(TriDiagonal& matrix, std::vector<double>& column) {
 	std::cout << std::endl;
 #endif
 
+	std::vector<double> vec_tmp(matrix.order(), 0.0);
+
 	tridiagonal_matrix_solver(
 		matrix.matrix[0],
 		matrix.matrix[1],
 		matrix.matrix[2],
-		column);
+		column,
+		vec_tmp);
 
 }
 
@@ -39,8 +42,9 @@ void tri_solver(TriDiagonal& matrix, std::vector<double>& column) {
 void tridiagonal_matrix_solver(
 	std::vector<double>& sub,
 	std::vector<double>& main,
-	std::vector<double>  super,
-	std::vector<double>& column) {
+	std::vector<double>& super,
+	std::vector<double>& column,
+	std::vector<double>& vec_tmp) {
 
 	// Number of elements along main diagonal.
 	const int n_elements = main.size();
@@ -48,15 +52,16 @@ void tridiagonal_matrix_solver(
 	// Temporary index.
 	int idx_tmp = 0;
 
-	// *****************************************************************
-	// Forward sweep. Remove sub-diagonal elements by Gauss elimination.
-	// *****************************************************************
+	// *****************************************************
+	// Forward sweep:
+	// Remove elements of sub-diagonal by Gauss elimination.
+	// *****************************************************
 
 	// Denominator for normalization of 1st element of main diagonal.
 	double denominator = main[0];
 
 	// 1st element of super-diagonal after normalization.
-	super[0] /= denominator;
+	vec_tmp[0] = super[0] / denominator;
 
 	// 1st element of column vector after normalization.
 	column[0] /= denominator;
@@ -66,26 +71,27 @@ void tridiagonal_matrix_solver(
 		idx_tmp = i - 1;
 
 		// Denominator for normalization of (i + 1)'th element of main diagonal.
-		denominator = main[i] - sub[i] * super[idx_tmp];
+		denominator = main[i] - sub[i] * vec_tmp[idx_tmp];
 
 		// (i + 1)'th element of super-diagonal after Gauss elimination.
-		super[i] /= denominator;
+		vec_tmp[i] = super[i] / denominator;
 
 		// (i + 1)'th element of column vector after Gauss elimination.
 		column[i] = (column[i] - sub[i] * column[idx_tmp]) / denominator;
 
 	}
 
-	// ***********************************************************************
-	// Back substitution. Remove super-diagonal elements by Gauss elimination.
-	// ***********************************************************************
+	// ******************************************************
+	// Back substitution:
+	// Remove element of super-diagonal by Gauss elimination.
+	// ******************************************************
 
 	for (int i = n_elements - 2; i != -1; --i) {
 
 		idx_tmp = i + 1;
 
 		// (i + 1)'th element of vector matrix after Gauss elimination.
-		column[i] -= super[i] * column[idx_tmp];
+		column[i] -= vec_tmp[i] * column[idx_tmp];
 
 	}
 
@@ -94,11 +100,15 @@ void tridiagonal_matrix_solver(
 
 void pentadiagonal_matrix_solver(
 	std::vector<double>& sub_2,
-	std::vector<double>  sub_1,
-	std::vector<double>  main,
-	std::vector<double>  super_1,
-	std::vector<double>  super_2,
-	std::vector<double>& column) {
+	std::vector<double>& sub_1,
+	std::vector<double>& main,
+	std::vector<double>& super_1,
+	std::vector<double>& super_2,
+	std::vector<double>& column,
+	std::vector<double>& sub_tmp,
+	std::vector<double>& main_tmp,
+	std::vector<double>& super_tmp,
+	std::vector<double>& vec_tmp) {
 
 	// Number of elements along main diagonal.
 	const int n_elements = main.size();
@@ -106,55 +116,50 @@ void pentadiagonal_matrix_solver(
 	// Temporary index.
 	int idx_tmp = 0;
 
-	// *****************************************************************
-	// Forward sweep. Remove sub-diagonal elements by Gauss elimination.
-	// *****************************************************************
+	// *****************************************************
+	// Forward sweep:
+	// Remove elements of sub-diagonal by Gauss elimination.
+	// *****************************************************
 
-	// Denominator for normalization of 1st element of 1st sub-diagonal.
-	double denominator = sub_1[1];
+	// Denominator for normalization of 1st element of main diagonal.
+	double denominator = main[0];
 
-	// 2nd element of main diagonal after normalization.
-	main[1] /= denominator;
+	// 1st element of super-diagonal after normalization.
+	vec_tmp[0] = super_1[0] / denominator;
 
-	// 2nd element of super-diagonals after normalization.
-	super_1[0] /= denominator;
-	super_2[0] /= denominator;
+	// 1st element of column vector after normalization.
+	column[0] /= denominator;
 
-	// 2nd element of column vector after normalization.
-	column[1] /= denominator;
-
-	for (int i = 2; i != n_elements; ++i) {
+	for (int i = 1; i != n_elements; ++i) {
 
 		idx_tmp = i - 1;
 
-		// Denominator for normalization of (i + 1)'th element of 1st sub-diagonal.
-		denominator = sub_1[i] - sub_2[i] * main[idx_tmp];
+		// Denominator for normalization of (i + 1)'th element of main diagonal.
+		denominator = main[i] - sub_1[i] * vec_tmp[idx_tmp];
 
-		// (i + 1)'th element of main diagonal after Gauss elimination.
-		main[i] /= denominator;
-		
-		// (i + 1)'th element of super-diagonala after Gauss elimination.
-		super_1[i] /= denominator;
-		super_2[i] /= denominator;
+		// (i + 1)'th element of super-diagonal after Gauss elimination.
+		vec_tmp[i] = super_1[i] / denominator;
 
 		// (i + 1)'th element of column vector after Gauss elimination.
-		column[i] = (column[i] - sub_2[i] * column[idx_tmp]) / denominator;
+		column[i] = (column[i] - sub_1[i] * column[idx_tmp]) / denominator;
 
 	}
 
-	// ***********************************************************************
-	// Back substitution. Remove super-diagonal elements by Gauss elimination.
-	// ***********************************************************************
+	// ******************************************************
+	// Back substitution:
+	// Remove element of super-diagonal by Gauss elimination.
+	// ******************************************************
 
-	for (int i = n_elements - 3; i != -1; --i) {
+	for (int i = n_elements - 2; i != -1; --i) {
 
 		idx_tmp = i + 1;
 
-		// Correct main diagonal and 1st super-diagonal!!!
-
 		// (i + 1)'th element of vector matrix after Gauss elimination.
-		column[i] -= super_2[i] * column[idx_tmp];
+		column[i] -= vec_tmp[i] * column[idx_tmp];
 
 	}
+
+	// ...
+	tridiagonal_matrix_solver(sub_tmp, main_tmp, super_tmp, column, vec_tmp);
 
 }
