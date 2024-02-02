@@ -68,6 +68,15 @@ int main() {
 	PentaDiagonal d2_c4b4_exp = d2dx2::c4b4(order, dx_exp);
 	PentaDiagonal d2_c4b4_cos = d2dx2::c4b4(order, dx_cos);
 
+
+	TriDiagonal d1_c2b1_exp_non = d1dx1::nonequidistant::c2b1(order, grid_exp);
+	TriDiagonal d1_c2b1_cos_non = d1dx1::nonequidistant::c2b1(order, grid_cos);
+
+	print_matrix(d1_c2b1_cos_non);
+
+	print_matrix(d2_c2b1_cos);
+
+
 //	test_exp(grid_exp, 1, d1_c4b4_exp);
 
 //	test_cos(grid_cos, 1, d1_c2b2_cos);

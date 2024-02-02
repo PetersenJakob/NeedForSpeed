@@ -15,7 +15,16 @@ namespace d1dx1 {
 	// Central difference; 4th order accuracy. Boundary; 4th order accuracy.
 	PentaDiagonal c4b4(const int order, const double dx);
 
+	namespace nonequidistant {
+
+		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
+		TriDiagonal c2b1(const int order, const std::vector<double> grid);
+
+	}
+
 }
+
+
 
 // Finite difference representations of second order derivative operator.
 namespace d2dx2 {
@@ -30,6 +39,7 @@ namespace d2dx2 {
 	PentaDiagonal c4b4(const int order, const double dx);
 
 }
+
 
 // Adjusting finite difference representation at boundary.
 template <class T>
