@@ -261,12 +261,19 @@ TriDiagonal d2dx2::c2b2(const int order, const double dx) {
 // Central difference; 4th order accuracy. Boundary; 4th order accuracy.
 PentaDiagonal d2dx2::c4b4(const int order, const double dx) {
 
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::c4, 2, 3);
+	boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::f1, matrix);
+	boundary<PentaDiagonal>(1, pow(dx, 2.0), coef2::f1, matrix);
+	boundary<PentaDiagonal>(2, pow(dx, 2.0), coef2::b1, matrix);
+	boundary<PentaDiagonal>(3, pow(dx, 2.0), coef2::b1, matrix);
+
+#if false
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::c4, 2, 6);
 	boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::f4, matrix);
 	boundary<PentaDiagonal>(1, pow(dx, 2.0), coef2::f4, matrix);
 	boundary<PentaDiagonal>(2, pow(dx, 2.0), coef2::b4, matrix);
 	boundary<PentaDiagonal>(3, pow(dx, 2.0), coef2::b4, matrix);
-
+#endif
 	return matrix;
 
 }

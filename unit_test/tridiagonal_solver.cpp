@@ -3,24 +3,24 @@
 
 TEST(TriDiagonalSolver, HeatEquation1D) {
 
-	bool show_output_basic = true;
-	bool show_output_all = true;
+	bool show_output_basic = false;
+	bool show_output_all = false;
 
 	std::vector<double> dx_vec;
 	std::vector<double> max_norm;
 	std::vector<double> l2_norm;
 
 	// Time interval.
-	const double time_interval = 0.01; // 0.1;
+	const double time_interval = 0.1; // 0.1;
 
 	// Number of time steps.
-	int n_steps = 2; // 101;
+	int n_steps = 101;
 
 	// Number of grid points.
-	int n_points_start = 11; // 21;
+	int n_points_start = 21;
 	int n_points = 0;
 
-	for (int i = 0; i != 1; ++i) {
+	for (int i = 0; i != 15; ++i) {
 
 		// Step size in time.
 		double dt = time_interval / (n_steps - 1);
@@ -51,16 +51,17 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 
 //		print_matrix(deriv_operator);
 
-
+#if false
 		PentaDiagonal deriv_operator_p = d2dx2::c4b4(n_points, dx);
 
 		std::vector<double> coefficients_p(6, 0.0);
-		boundary<PentaDiagonal>(0, pow(dx, 2.0), coefficients_p, deriv_operator_p);
+		boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::f1, deriv_operator_p);
 		boundary<PentaDiagonal>(1, pow(dx, 2.0), coefficients_p, deriv_operator_p);
 		boundary<PentaDiagonal>(2, pow(dx, 2.0), coefficients_p, deriv_operator_p);
 		boundary<PentaDiagonal>(3, pow(dx, 2.0), coefficients_p, deriv_operator_p);
 
 //		print_matrix(deriv_operator_p); 
+#endif
 
 		// Theta parameter.
 		const double theta = 0.5;
@@ -76,7 +77,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		rhs.add_diagonal(1.0);
 
 
-
+#if false
 		PentaDiagonal lhs_p = deriv_operator_p;
 		lhs_p.scalar_prod(-theta * dt);
 		lhs_p.add_diagonal(1.0);
@@ -85,11 +86,9 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		rhs_p.scalar_prod((1.0 - theta) * dt);
 		rhs_p.add_diagonal(1.0);
 
-
 //		print_matrix(lhs_p);
 //		print_matrix(rhs_p);
-
-
+#endif
 
 		// FD solution.
 		std::vector<double> solution_fd = func;
@@ -97,13 +96,13 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		for (int i = 0; i != n_steps; ++i) {
 
 
-//			solution_fd = rhs.mat_vec_prod(solution_fd);
-//			tri_solver(lhs, solution_fd);
+			solution_fd = rhs.mat_vec_prod(solution_fd);
+			tri_solver(lhs, solution_fd);
 
-
+#if false
 			solution_fd = rhs_p.mat_vec_prod(solution_fd);
 			penta_solver(lhs_p, solution_fd);
-
+#endif
 
 		}
 
@@ -138,7 +137,6 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 	std::vector<double> tmp(3, 0.0);
 	std::vector<std::vector<double>> ratio(2, tmp);
 
-#if false
 	ratio[0][0] = max_norm[0] / max_norm[2];
 	ratio[0][1] = max_norm[2] / max_norm[6];
 	ratio[0][2] = max_norm[6] / max_norm[14];
@@ -170,7 +168,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 			<< ratio[1][1] << std::endl
 			<< ratio[1][2] << std::endl << std::endl;
 	}
-#endif
+
 	for (int i = 0; i != ratio[0].size(); ++i) {
 		EXPECT_NEAR(ratio[0][i], 4.5, 0.6);
 	}

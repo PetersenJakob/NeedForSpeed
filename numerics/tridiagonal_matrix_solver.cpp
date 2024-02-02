@@ -126,7 +126,7 @@ void tridiagonal_matrix_solver(
 	}
 
 	// *******************************************************
-	// Back substitution:
+	// Backward sweep (back substitution):
 	// Remove elements of super-diagonal by Gauss elimination.
 	// *******************************************************
 
@@ -207,11 +207,11 @@ void pentadiagonal_matrix_solver(
 
 	// SPECIAL CASE, WHERE d2dx2 = 0 at boundaries!
 
-	main_tmp[n_elements - 2] = main[n_elements - 2];
-	main_tmp[n_elements - 1] = main[n_elements - 1];
+//	main_tmp[n_elements - 2] = main[n_elements - 2];
+//	main_tmp[n_elements - 1] = main[n_elements - 1];
 
-//	for (int i = 2; i != n_elements; ++i) {
-	for (int i = 2; i != n_elements - 2; ++i) {
+	for (int i = 2; i != n_elements; ++i) {
+//	for (int i = 2; i != n_elements - 2; ++i) {
 
 		idx_tmp = i - 1;
 
@@ -278,8 +278,8 @@ void pentadiagonal_matrix_solver(
 	column[idx_2nd_last] /= denominator;
 
 
-//	for (int i = n_elements - 3; i != -1; --i) {
-	for (int i = n_elements - 3; i != 1; --i) {
+	for (int i = n_elements - 3; i != -1; --i) {
+//	for (int i = n_elements - 3; i != 1; --i) {
 
 		idx_tmp = i + 1;
 
