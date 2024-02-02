@@ -35,27 +35,27 @@ std::vector<std::vector<double>> test_fd_approximation(
 		std::vector<double> deriv_fd;
 
 		if (fd_deriv_type == "d1dx1::c2b1") {
-			TriDiagonal dndxn = d1dx1::c2b1(n_points, dx);
+			TriDiagonal dndxn = d1dx1::equidistant::c2b1(n_points, dx);
 			deriv_fd = dndxn.mat_vec_prod(func);
 		}
 		else if (fd_deriv_type == "d1dx1::c2b2") {
-			TriDiagonal dndxn = d1dx1::c2b2(n_points, dx);
+			TriDiagonal dndxn = d1dx1::equidistant::c2b2(n_points, dx);
 			deriv_fd = dndxn.mat_vec_prod(func);
 		}
 		else if (fd_deriv_type == "d1dx1::c4b4") {
-			PentaDiagonal dndxn = d1dx1::c4b4(n_points, dx);
+			PentaDiagonal dndxn = d1dx1::equidistant::c4b4(n_points, dx);
 			deriv_fd = dndxn.mat_vec_prod(func);
 		}
 		else if (fd_deriv_type == "d2dx2::c2b1") {
-			TriDiagonal dndxn = d2dx2::c2b1(n_points, dx);
+			TriDiagonal dndxn = d2dx2::equidistant::c2b1(n_points, dx);
 			deriv_fd = dndxn.mat_vec_prod(func);
 		}
 		else if (fd_deriv_type == "d2dx2::c2b2") {
-			TriDiagonal dndxn = d2dx2::c2b2(n_points, dx);
+			TriDiagonal dndxn = d2dx2::equidistant::c2b2(n_points, dx);
 			deriv_fd = dndxn.mat_vec_prod(func);
 		}
 		else if (fd_deriv_type == "d2dx2::c4b4") {
-			PentaDiagonal dndxn = d2dx2::c4b4(n_points, dx);
+			PentaDiagonal dndxn = d2dx2::equidistant::c4b4(n_points, dx);
 			deriv_fd = dndxn.mat_vec_prod(func);
 		}
 		else {

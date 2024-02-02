@@ -42,7 +42,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		}
 
 		// Second order differential operator.
-		TriDiagonal deriv_operator = d2dx2::c2b1(n_points, dx);
+		TriDiagonal deriv_operator = d2dx2::equidistant::c2b1(n_points, dx);
 
 
 		std::vector<double> coefficients(3, 0.0);
@@ -220,7 +220,7 @@ TEST(TriDiagonalSolver, BlackScholes1D) {
 		}
 
 		// Second order differential operator.
-		TriDiagonal deriv_operator = d2dx2::c2b1(n_points, dx);
+		TriDiagonal deriv_operator = d2dx2::equidistant::c2b1(n_points, dx);
 
 
 		std::vector<double> coefficients(3, 0.0);
