@@ -336,6 +336,13 @@ void PentaDiagonal::adjust_boundary(std::vector<double>& column) {
 		overwrite_bounary_row(0);
 
 	}
+	else if (n_boundary_elements_ == 7) {
+
+		boundary_rows_tmp = boundary_rows;
+		overwrite_bounary_row(1);
+		overwrite_bounary_row(0);
+
+	}
 	else {
 
 		throw std::invalid_argument("Number of boundary row elements should be larger than 1 and smaller than 7.");

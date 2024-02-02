@@ -11,13 +11,14 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 	std::vector<double> l2_norm;
 
 	// Time interval.
-	const double time_interval = 0.1;
+	const double time_interval = 0.01; // 0.1;
 
 	// Number of time steps.
-	int n_steps = 101;
+	int n_steps = 2; // 101;
 
 	// Number of grid points.
-	int n_points = 21;
+	int n_points_start = 11; // 21;
+	int n_points = 0;
 
 	for (int i = 0; i != 1; ++i) {
 
@@ -25,7 +26,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		double dt = time_interval / (n_steps - 1);
 
 		// Number of grid points.
-		n_points = 21 + 10 * i;
+		n_points = n_points_start + 10 * i;
 
 		// Grid.
 		const std::vector<double> grid = grid_equidistant(-0.5, 0.5, n_points);
@@ -43,11 +44,23 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		// Second order differential operator.
 		TriDiagonal deriv_operator = d2dx2::c2b1(n_points, dx);
 
-		
+
 		std::vector<double> coefficients(3, 0.0);
 		boundary<TriDiagonal>(0, pow(dx, 2.0), coefficients, deriv_operator);
 		boundary<TriDiagonal>(1, pow(dx, 2.0), coefficients, deriv_operator);
 
+//		print_matrix(deriv_operator);
+
+
+		PentaDiagonal deriv_operator_p = d2dx2::c4b4(n_points, dx);
+
+		std::vector<double> coefficients_p(6, 0.0);
+		boundary<PentaDiagonal>(0, pow(dx, 2.0), coefficients_p, deriv_operator_p);
+		boundary<PentaDiagonal>(1, pow(dx, 2.0), coefficients_p, deriv_operator_p);
+		boundary<PentaDiagonal>(2, pow(dx, 2.0), coefficients_p, deriv_operator_p);
+		boundary<PentaDiagonal>(3, pow(dx, 2.0), coefficients_p, deriv_operator_p);
+
+//		print_matrix(deriv_operator_p); 
 
 		// Theta parameter.
 		const double theta = 0.5;
@@ -62,13 +75,35 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		rhs.scalar_prod((1.0 - theta) * dt);
 		rhs.add_diagonal(1.0);
 
+
+
+		PentaDiagonal lhs_p = deriv_operator_p;
+		lhs_p.scalar_prod(-theta * dt);
+		lhs_p.add_diagonal(1.0);
+
+		PentaDiagonal rhs_p = deriv_operator_p;
+		rhs_p.scalar_prod((1.0 - theta) * dt);
+		rhs_p.add_diagonal(1.0);
+
+
+//		print_matrix(lhs_p);
+//		print_matrix(rhs_p);
+
+
+
 		// FD solution.
 		std::vector<double> solution_fd = func;
 
 		for (int i = 0; i != n_steps; ++i) {
 
-			solution_fd = rhs.mat_vec_prod(solution_fd);
-			tri_solver(lhs, solution_fd);
+
+//			solution_fd = rhs.mat_vec_prod(solution_fd);
+//			tri_solver(lhs, solution_fd);
+
+
+			solution_fd = rhs_p.mat_vec_prod(solution_fd);
+			penta_solver(lhs_p, solution_fd);
+
 
 		}
 
