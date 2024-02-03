@@ -92,19 +92,18 @@ namespace coef1 {
 	// See Sundqvist and Veronis (1970).
 	namespace nonequidistant {
 
-		std::vector<double> c2(
-			const double dx_minus,
-			const double dx_plus) {
-
-			const double denominator = dx_plus * (1.0 + dx_plus / dx_minus);
+		// Central difference; 2nd order accuracy.
+		std::vector<double> c2(const double dx_m, const double dx_p) {
 
 			std::vector<double> row(3, 0.0);
 
+			const double denominator = dx_p * (1.0 + dx_p / dx_m);
+
 			// Sub-diagonal element.
-			row[0] = -pow(dx_plus / dx_minus, 2.0) / denominator;
+			row[0] = -pow(dx_p / dx_m, 2.0) / denominator;
 
 			// Main diagonal element.
-			row[1] = -(1.0 - pow(dx_plus / dx_minus, 2.0)) / denominator;
+			row[1] = -(1.0 - pow(dx_p / dx_m, 2.0)) / denominator;
 
 			// Super-diagonal element.
 			row[2] = 1.0 / denominator;
@@ -193,19 +192,18 @@ namespace coef2 {
 	// See Sundqvist and Veronis (1970).
 	namespace nonequidistant {
 
-		std::vector<double> c2(
-			const double dx_minus,
-			const double dx_plus) {
-
-			const double denominator = dx_plus * dx_minus * (1.0 + dx_plus / dx_minus);
+		// Central difference; ~2nd order accuracy.
+		std::vector<double> c2(const double dx_m, const double dx_p) {
 
 			std::vector<double> row(3, 0.0);
 
+			const double denominator = dx_p * dx_m * (1.0 + dx_p / dx_m);
+
 			// Sub-diagonal element.
-			row[0] = 2.0 * (dx_plus / dx_minus) / denominator;
+			row[0] = 2.0 * (dx_p / dx_m) / denominator;
 
 			// Main diagonal element.
-			row[1] = -2.0 * (1.0 + dx_plus / dx_minus) / denominator;
+			row[1] = -2.0 * (1.0 + dx_p / dx_m) / denominator;
 
 			// Super-diagonal element.
 			row[2] = 2.0 / denominator;
@@ -324,7 +322,7 @@ TriDiagonal d2dx2::equidistant::c2b2(const int order, const double dx) {
 
 
 // Second order derivative operator.
-// Central difference; 4th order accuracy. Boundary; 4th order accuracy.
+// Central difference; 4th order accuracy. Boundary; TODO 1st order accuracy.
 PentaDiagonal d2dx2::equidistant::c4b4(const int order, const double dx) {
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::equidistant::c4, 2, 3);
@@ -358,17 +356,19 @@ T setup(
 
 	for (int i = n_boundary_rows; i != order - n_boundary_rows; ++i) {
 
-		double dx_minus = grid[i] - grid[i - 1];
-		double dx_plus = grid[i + 1] - grid[i];
+		int idx_m = i - 1;
+		int idx_p = i + 1;
+		double dx_m = grid[i] - grid[idx_m];
+		double dx_p = grid[idx_p] - grid[i];
 
 		std::vector<double> vec_tmp;
 		
 		if (std::is_same<T, TriDiagonal>::value) {
 			if (derivative_order == 1) {
-				vec_tmp = coef1::nonequidistant::c2(dx_minus, dx_plus);
+				vec_tmp = coef1::nonequidistant::c2(dx_m, dx_p);
 			}
 			else if (derivative_order == 2) {
-				vec_tmp = coef2::nonequidistant::c2(dx_minus, dx_plus);
+				vec_tmp = coef2::nonequidistant::c2(dx_m, dx_p);
 			}
 			else {
 				throw std::invalid_argument("Derivative order should be 1 or 2!");
