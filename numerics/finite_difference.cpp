@@ -112,6 +112,40 @@ namespace coef1 {
 
 		}
 
+		// Central difference; 4th order accuracy.
+		std::vector<double> c4(
+			const double dx_m2,
+			const double dx_m1,
+			const double dx_p1,
+			const double dx_p2) {
+
+			std::vector<double> row(5, 0.0);
+
+			const double denominator =
+				pow(dx_m1 + dx_m2, 2.0) * (dx_p1 + dx_p2)
+				- 32.0 * dx_p1 * pow(dx_m1, 2.0)
+				- 32.0 * pow(dx_p1, 2.0) * dx_m1
+				+ (dx_m1 + dx_m2) * pow(dx_p1 + dx_p2, 2.0);
+
+			// Element of 2nd sub-diagonal.
+			row[0] = -pow(dx_p1 + dx_p2, 2.0) / denominator;
+
+			// Element of 1st sub-diagonal.
+			row[1] = 32.0 * pow(dx_p1, 2.0) / denominator;
+
+			// Main diagonal element.
+			row[2] = -(pow(dx_m1 + dx_m2, 2.0) - 32.0 * pow(dx_m1, 2.0) + 32.0 * pow(dx_p1, 2.0) - pow(dx_p1 + dx_p2, 2.0)) / denominator;
+
+			// Element of 1st super-diagonal.
+			row[3] = -32.0 * pow(dx_m1, 2.0) / denominator;
+
+			// Element of 2nd super-diagonal.
+			row[4] = pow(dx_m1 + dx_m2, 2.0) / denominator;
+
+			return row;
+
+		}
+
 	}
 
 }

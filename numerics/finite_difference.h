@@ -25,6 +25,9 @@ namespace d1dx1 {
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const std::vector<double> grid);
 
+		// Central difference; 4th order accuracy. TODO Boundary; 2nd order accuracy.
+		PentaDiagonal c4b2(const int order, const std::vector<double> grid);
+
 	}
 
 }
