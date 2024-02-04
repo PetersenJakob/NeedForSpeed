@@ -99,13 +99,13 @@ namespace coef1 {
 
 			const double denominator = dx_p * (1.0 + dx_p / dx_m);
 
-			// Sub-diagonal element.
+			// Coefficient of 1st sub-diagonal.
 			row[0] = -pow(dx_p / dx_m, 2.0) / denominator;
 
-			// Main diagonal element.
+			// Coefficient of main diagonal.
 			row[1] = -(1.0 - pow(dx_p / dx_m, 2.0)) / denominator;
 
-			// Super-diagonal element.
+			// Coefficient of 1st super-diagonal.
 			row[2] = 1.0 / denominator;
 
 			return row;
@@ -127,19 +127,19 @@ namespace coef1 {
 				- 32.0 * pow(dx_p1, 2.0) * dx_m1
 				+ (dx_m1 + dx_m2) * pow(dx_p1 + dx_p2, 2.0);
 
-			// Element of 2nd sub-diagonal.
+			// Coefficient of 2nd sub-diagonal.
 			row[0] = -pow(dx_p1 + dx_p2, 2.0) / denominator;
 
-			// Element of 1st sub-diagonal.
+			// Coefficient of 1st sub-diagonal.
 			row[1] = 32.0 * pow(dx_p1, 2.0) / denominator;
 
-			// Main diagonal element.
+			// Coefficient of main diagonal.
 			row[2] = -(pow(dx_m1 + dx_m2, 2.0) - 32.0 * pow(dx_m1, 2.0) + 32.0 * pow(dx_p1, 2.0) - pow(dx_p1 + dx_p2, 2.0)) / denominator;
 
-			// Element of 1st super-diagonal.
+			// Coefficient of 1st super-diagonal.
 			row[3] = -32.0 * pow(dx_m1, 2.0) / denominator;
 
-			// Element of 2nd super-diagonal.
+			// Coefficient of 2nd super-diagonal.
 			row[4] = pow(dx_m1 + dx_m2, 2.0) / denominator;
 
 			return row;
@@ -321,6 +321,7 @@ PentaDiagonal d1dx1::equidistant::c4b4(const int order, const double dx) {
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::equidistant::c4, 2, 5);
 	boundary<PentaDiagonal>(0, dx, coef1::equidistant::f4, matrix);
+	boundary<PentaDiagonal>(1, dx, coef1::equidistant::f4, matrix);
 	boundary<PentaDiagonal>(2, dx, coef1::equidistant::b4, matrix);
 	boundary<PentaDiagonal>(3, dx, coef1::equidistant::b4, matrix);
 
@@ -359,19 +360,20 @@ TriDiagonal d2dx2::equidistant::c2b2(const int order, const double dx) {
 // Central difference; 4th order accuracy. Boundary; TODO 1st order accuracy.
 PentaDiagonal d2dx2::equidistant::c4b4(const int order, const double dx) {
 
+#if false
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::equidistant::c4, 2, 3);
 	boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::equidistant::f1, matrix);
 	boundary<PentaDiagonal>(1, pow(dx, 2.0), coef2::equidistant::f1, matrix);
 	boundary<PentaDiagonal>(2, pow(dx, 2.0), coef2::equidistant::b1, matrix);
 	boundary<PentaDiagonal>(3, pow(dx, 2.0), coef2::equidistant::b1, matrix);
-
-#if false
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::c4, 2, 6);
-	boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::f4, matrix);
-	boundary<PentaDiagonal>(1, pow(dx, 2.0), coef2::f4, matrix);
-	boundary<PentaDiagonal>(2, pow(dx, 2.0), coef2::b4, matrix);
-	boundary<PentaDiagonal>(3, pow(dx, 2.0), coef2::b4, matrix);
 #endif
+
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::equidistant::c4, 2, 6);
+	boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::equidistant::f4, matrix);
+	boundary<PentaDiagonal>(1, pow(dx, 2.0), coef2::equidistant::f4, matrix);
+	boundary<PentaDiagonal>(2, pow(dx, 2.0), coef2::equidistant::b4, matrix);
+	boundary<PentaDiagonal>(3, pow(dx, 2.0), coef2::equidistant::b4, matrix);
+
 	return matrix;
 
 }
