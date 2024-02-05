@@ -403,3 +403,32 @@ TEST(SecondOrderDerivative, SUMc4b4) {
 	EXPECT_NEAR(slope[3], 4.0, 0.515);
 
 }
+
+
+
+// Non-equidistant grid...
+TEST(FirstOrderDerivativeNonequidistant, EXPc2b1) {
+
+	std::vector<double> slope = test_fd_approximation(0, 1, "d1dx1::c2b1", 51, 2, true, false);
+
+	const int n_points = 21;
+
+	// Grid.
+	const std::vector<double> grid = grid_equidistant(-0.4, 0.4, n_points);
+
+	// Grid spacing.
+	const double dx = grid[1] - grid[0];
+
+	TriDiagonal d1dx1_eq = d1dx1::equidistant::c2b1(n_points, dx);
+	TriDiagonal d1dx1_neq = d1dx1::nonequidistant::c2b1(n_points, grid);
+
+	print_matrix(d1dx1_eq);
+	print_matrix(d1dx1_neq);
+
+	// Maximum norm.
+	EXPECT_NEAR(slope[0], 1.0, 0.2);
+
+	// L1 function norm.
+	EXPECT_NEAR(slope[3], 2.0, 0.2);
+
+}

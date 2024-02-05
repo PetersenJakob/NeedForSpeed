@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <functional>
 #include <stdexcept>
 #include <vector>
 
@@ -21,6 +22,18 @@ std::vector<double> reverse_order(std::vector<double> coef, const double scalar 
 }
 
 
+// ...
+std::vector<double> adjust_coefficients(std::vector<double> coefficients, const double denominator) {
+
+	for (auto& element : coefficients) {
+		element /= denominator;
+	}
+
+	return coefficients;
+
+}
+
+
 // Finite difference coefficients for first order derivative operator.
 namespace coef1 {
 
@@ -29,62 +42,126 @@ namespace coef1 {
 	namespace equidistant {
 
 		// Central difference; 2nd order accuracy.
-		std::vector<double> c2{
+		std::vector<double> c2_coefficients{
+
 			-1.0 / 2.0,
 			 0.0,
 			 1.0 / 2.0
+
 		};
 
+		std::vector<double> c2(const double dx) {
+
+			return adjust_coefficients(c2_coefficients, dx);
+
+		}
+
 		// Central difference; 4th order accuracy.
-		std::vector<double> c4{
+		std::vector<double> c4_coefficients{
+
 			 1.0 / 12.0,
 			-2.0 / 3.0,
 			 0.0,
 			 2.0 / 3.0,
 			-1.0 / 12.0
+
 		};
+
+		std::vector<double> c4(const double dx) {
+
+			return adjust_coefficients(c4_coefficients, dx);
+
+		}
 
 		// Forward difference; 1st order accuracy.
-		std::vector<double> f1{
+		std::vector<double> f1_coefficients{
+
 			-1.0,
 			 1.0
+
 		};
 
+		std::vector<double> f1(const double dx) {
+
+			return adjust_coefficients(f1_coefficients, dx);
+
+		}
+
 		// Forward difference; 2nd order accuracy.
-		std::vector<double> f2{
+		std::vector<double> f2_coefficients{
+
 			-3.0 / 2.0,
 			 2.0,
 			-1.0 / 2.0
+
 		};
 
+		std::vector<double> f2(const double dx) {
+
+			return adjust_coefficients(f2_coefficients, dx);
+
+		}
+
 		// Forward difference; 3rd order accuracy.
-		std::vector<double> f3{
+		std::vector<double> f3_coefficients{
+
 			-11.0 / 6.0,
 			 3.0,
 			-3.0 / 2.0,
 			 1.0 / 3.0
+
 		};
 
+		std::vector<double> f3(const double dx) {
+
+			return adjust_coefficients(f3_coefficients, dx);
+
+		}
+
 		// Forward difference; 4th order accuracy.
-		std::vector<double> f4{
+		std::vector<double> f4_coefficients{
+
 			-25.0 / 12.0,
 			 4.0,
 			-3.0,
 			 4.0 / 3.0,
 			-1.0 / 4.0
+
 		};
 
+		std::vector<double> f4(const double dx) {
+
+			return adjust_coefficients(f4_coefficients, dx);
+
+		}
+
 		// Backward difference; 1st order accuracy.
-		std::vector<double> b1 = reverse_order(f1, -1.0);
+		std::vector<double> b1(const double dx) {
+
+			return reverse_order(f1(dx), -1.0);
+
+		}
 
 		// Backward difference; 2nd order accuracy.
-		std::vector<double> b2 = reverse_order(f2, -1.0);
+		std::vector<double> b2(const double dx) {
+
+			return reverse_order(f2(dx), -1.0);
+
+		}
 
 		// Backward difference; 3rd order accuracy.
-		std::vector<double> b3 = reverse_order(f3, -1.0);
+		std::vector<double> b3(const double dx) {
+
+			return reverse_order(f3(dx), -1.0);
+
+		}
 
 		// Backward difference; 4th order accuracy.
-		std::vector<double> b4 = reverse_order(f4, -1.0);
+		std::vector<double> b4(const double dx) {
+
+			return reverse_order(f4(dx), -1.0);
+
+		}
 
 	}
 
@@ -92,8 +169,14 @@ namespace coef1 {
 	// See Sundqvist and Veronis (1970).
 	namespace nonequidistant {
 
+
+		// dx_vector: Step size vector with four elements [dx(-2), dx(-1), dx(+1), dx(+2)].
+
 		// Central difference; 2nd order accuracy.
-		std::vector<double> c2(const double dx_m, const double dx_p) {
+		std::vector<double> c2(const std::vector<double>& dx_vector) {
+
+			const double dx_m = dx_vector[1];
+			const double dx_p = dx_vector[2];
 
 			std::vector<double> row(3, 0.0);
 
@@ -113,11 +196,12 @@ namespace coef1 {
 		}
 
 		// Central difference; 4th order accuracy.
-		std::vector<double> c4(
-			const double dx_m2,
-			const double dx_m1,
-			const double dx_p1,
-			const double dx_p2) {
+		std::vector<double> c4(const std::vector<double>& dx_vector) {
+
+			const double dx_m2 = dx_vector[0];
+			const double dx_m1 = dx_vector[1];
+			const double dx_p1 = dx_vector[2];
+			const double dx_p2 = dx_vector[3];
 
 			std::vector<double> row(5, 0.0);
 
@@ -146,6 +230,63 @@ namespace coef1 {
 
 		}
 
+		// Forward difference; 1st order accuracy.
+		std::vector<double> f1(const std::vector<double>& dx_vector) {
+
+			const double dx_p = dx_vector[2];
+
+			std::vector<double> row(2, 0.0);
+
+			const double denominator = dx_p;
+
+			// Coefficient of main diagonal.
+			row[0] = -1.0 / denominator;
+
+			// Coefficient of 1st super-diagonal.
+			row[1] = 1.0 / denominator;
+
+			return row;
+
+		}
+
+		// Forward difference; 2nd order accuracy.
+		std::vector<double> f2(const std::vector<double>& dx_vector) {
+
+			const double dx_p1 = dx_vector[2];
+			const double dx_p2 = dx_vector[3];
+
+			std::vector<double> row(3, 0.0);
+
+			const double denominator = pow(dx_p1, 2) * (dx_p1 + dx_p2) - dx_p1 * pow(dx_p1 + dx_p2, 2);;
+
+			// Coefficient of main diagonal.
+			row[0] = (pow(dx_p2, 2) + 2 * dx_p1 * dx_p2) / denominator;
+
+			// Coefficient of 1st super-diagonal.
+			row[1] = -pow(dx_p1 + dx_p2, 2) / denominator;
+
+			// Coefficient of 2nd super-diagonal.
+			row[2] = pow(dx_p1, 2) / denominator;
+
+			return row;
+
+		}
+
+		// TODO: For backward differenc, reverse order of dx_vector??
+		// Backward difference; 1st order accuracy.
+		std::vector<double> b1(const std::vector<double>& dx_vector) {
+
+			return reverse_order(f1(dx_vector), -1.0);
+
+		}
+
+		// Backward difference; 2nd order accuracy.
+		std::vector<double> b2(const std::vector<double>& dx_vector) {
+
+			return reverse_order(f2(dx_vector), -1.0);
+
+		}
+
 	}
 
 }
@@ -159,66 +300,130 @@ namespace coef2 {
 	namespace equidistant {
 
 		// Central difference; 2nd order accuracy.
-		std::vector<double> c2{
+		std::vector<double> c2_coefficients{
+
 			 1.0,
 			-2.0,
 			 1.0
+
 		};
 
+		std::vector<double> c2(const double dx) {
+
+			return adjust_coefficients(c2_coefficients, dx * dx);
+
+		}
+
 		// Central difference; 4th order accuracy.
-		std::vector<double> c4{
+		std::vector<double> c4_coefficients{
+
 			-1.0 / 12.0,
 			 4.0 / 3.0,
 			-5.0 / 2.0,
 			 4.0 / 3.0,
 			-1.0 / 12.0
+
 		};
 
+		std::vector<double> c4(const double dx) {
+
+			return adjust_coefficients(c4_coefficients, dx * dx);
+
+		}
+
 		// Forward difference; 1st order accuracy.
-		std::vector<double> f1{
+		std::vector<double> f1_coefficients{
+
 			 1.0,
 			-2.0,
 			 1.0
+
 		};
 
+		std::vector<double> f1(const double dx) {
+
+			return adjust_coefficients(f1_coefficients, dx * dx);
+
+		}
+
 		// Forward difference; 2nd order accuracy.
-		std::vector<double> f2{
+		std::vector<double> f2_coefficients{
+
 			 2.0,
 			-5.0,
 			 4.0,
 			-1.0
+
 		};
+		
+		std::vector<double> f2(const double dx) {
+
+			return adjust_coefficients(f2_coefficients, dx * dx);
+
+		}
 
 		// Forward difference; 3rd order accuracy.
-		std::vector<double> f3{
+		std::vector<double> f3_coefficients{
+
 			 35.0 / 12.0,
 			-26.0 / 3.0,
 			 19.0 / 2.0,
 			-14.0 / 3.0,
 			 11.0 / 12.0
+
 		};
 
+		std::vector<double> f3(const double dx) {
+
+			return adjust_coefficients(f3_coefficients, dx * dx);
+
+		}
+
 		// Forward difference; 4th order accuracy.
-		std::vector<double> f4{
+		std::vector<double> f4_coefficients{
+
 			 15.0 / 4.0,
 			-77.0 / 6.0,
 			 107.0 / 6.0,
 			-13.0,
 			 61.0 / 12.0,
 			-5.0 / 6.0
+
 		};
 
+		std::vector<double> f4(const double dx) {
+
+			return adjust_coefficients(f4_coefficients, dx * dx);
+
+		}
+
 		// Backward difference; 1st order accuracy.
-		std::vector<double> b1 = reverse_order(f1);
+		std::vector<double> b1(const double dx) {
+
+			return reverse_order(f1(dx));
+
+		}
 
 		// Backward difference; 2nd order accuracy.
-		std::vector<double> b2 = reverse_order(f2);
+		std::vector<double> b2(const double dx) {
+
+			return reverse_order(f2(dx));
+
+		}
 
 		// Backward difference; 3rd order accuracy.
-		std::vector<double> b3 = reverse_order(f3);
+		std::vector<double> b3(const double dx) {
+
+			return reverse_order(f3(dx));
+
+		}
 
 		// Backward difference; 4th order accuracy.
-		std::vector<double> b4 = reverse_order(f4);
+		std::vector<double> b4(const double dx) {
+
+			return reverse_order(f4(dx));
+
+		}
 
 	}
 
@@ -286,10 +491,9 @@ namespace coef2 {
 
 
 // Setting up finite difference representation of derivative operator on equidistant grid.
-template <class T> 
+template <class T>
 T setup(
-	const int order, 
-	const double dx, 
+	const int order,
 	const std::vector<double>& coef,
 	const int n_boundary_rows,
 	const int n_boundary_elements) {
@@ -298,7 +502,7 @@ T setup(
 
 	for (int i = 0; i != coef.size(); ++i) {
 		for (int j = 0; j != order; ++j) {
-			matrix.matrix[i][j] = coef[i] / dx;
+			matrix.matrix[i][j] = coef[i];
 		}
 	}
 
@@ -309,15 +513,15 @@ T setup(
 
 // Adjusting finite difference representation at boundary.
 template <class T>
-void boundary(const int row_index, const double dx, const std::vector<double>& coef, T& matrix) {
-	
+void boundary(const int row_index, const std::vector<double>& coef, T& matrix) {
+
 	int index_tmp = row_index - matrix.n_boundary_rows();
 	if (index_tmp < 0) {
 		index_tmp = row_index;
 	}
 
 	for (int i = 0; i != coef.size(); ++i) {
-		matrix.boundary_rows[row_index][index_tmp + i] = coef[i] / dx;
+		matrix.boundary_rows[row_index][index_tmp + i] = coef[i];
 	}
 
 }
@@ -327,9 +531,9 @@ void boundary(const int row_index, const double dx, const std::vector<double>& c
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 TriDiagonal d1dx1::equidistant::c2b1(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::equidistant::c2, 1, 2);
-	boundary<TriDiagonal>(0, dx, coef1::equidistant::f1, matrix);
-	boundary<TriDiagonal>(1, dx, coef1::equidistant::b1, matrix);
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef1::equidistant::c2(dx), 1, 2);
+	boundary<TriDiagonal>(0, coef1::equidistant::f1(dx), matrix);
+	boundary<TriDiagonal>(1, coef1::equidistant::b1(dx), matrix);
 
 	return matrix;
 
@@ -340,9 +544,9 @@ TriDiagonal d1dx1::equidistant::c2b1(const int order, const double dx) {
 // Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
 TriDiagonal d1dx1::equidistant::c2b2(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, dx, coef1::equidistant::c2, 1, 3);
-	boundary<TriDiagonal>(0, dx, coef1::equidistant::f2, matrix);
-	boundary<TriDiagonal>(1, dx, coef1::equidistant::b2, matrix);
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef1::equidistant::c2(dx), 1, 3);
+	boundary<TriDiagonal>(0, coef1::equidistant::f2(dx), matrix);
+	boundary<TriDiagonal>(1, coef1::equidistant::b2(dx), matrix);
 
 	return matrix;
 
@@ -353,11 +557,11 @@ TriDiagonal d1dx1::equidistant::c2b2(const int order, const double dx) {
 // Central difference; 4th order accuracy. Boundary; 4th order accuracy.
 PentaDiagonal d1dx1::equidistant::c4b4(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, dx, coef1::equidistant::c4, 2, 5);
-	boundary<PentaDiagonal>(0, dx, coef1::equidistant::f4, matrix);
-	boundary<PentaDiagonal>(1, dx, coef1::equidistant::f4, matrix);
-	boundary<PentaDiagonal>(2, dx, coef1::equidistant::b4, matrix);
-	boundary<PentaDiagonal>(3, dx, coef1::equidistant::b4, matrix);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef1::equidistant::c4(dx), 2, 5);
+	boundary<PentaDiagonal>(0, coef1::equidistant::f4(dx), matrix);
+	boundary<PentaDiagonal>(1, coef1::equidistant::f4(dx), matrix);
+	boundary<PentaDiagonal>(2, coef1::equidistant::b4(dx), matrix);
+	boundary<PentaDiagonal>(3, coef1::equidistant::b4(dx), matrix);
 
 	return matrix;
 
@@ -368,9 +572,9 @@ PentaDiagonal d1dx1::equidistant::c4b4(const int order, const double dx) {
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 TriDiagonal d2dx2::equidistant::c2b1(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, pow(dx, 2.0), coef2::equidistant::c2, 1, 3);
-	boundary<TriDiagonal>(0, pow(dx, 2.0), coef2::equidistant::f1, matrix);
-	boundary<TriDiagonal>(1, pow(dx, 2.0), coef2::equidistant::b1, matrix);
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef2::equidistant::c2(dx), 1, 3);
+	boundary<TriDiagonal>(0, coef2::equidistant::f1(dx), matrix);
+	boundary<TriDiagonal>(1, coef2::equidistant::b1(dx), matrix);
 
 	return matrix;
 
@@ -381,9 +585,9 @@ TriDiagonal d2dx2::equidistant::c2b1(const int order, const double dx) {
 // Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
 TriDiagonal d2dx2::equidistant::c2b2(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, pow(dx, 2.0), coef2::equidistant::c2, 1, 4);
-	boundary<TriDiagonal>(0, pow(dx, 2.0), coef2::equidistant::f2, matrix);
-	boundary<TriDiagonal>(1, pow(dx, 2.0), coef2::equidistant::b2, matrix);
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef2::equidistant::c2(dx), 1, 4);
+	boundary<TriDiagonal>(0, coef2::equidistant::f2(dx), matrix);
+	boundary<TriDiagonal>(1, coef2::equidistant::b2(dx), matrix);
 
 	return matrix;
 
@@ -395,18 +599,18 @@ TriDiagonal d2dx2::equidistant::c2b2(const int order, const double dx) {
 PentaDiagonal d2dx2::equidistant::c4b4(const int order, const double dx) {
 
 #if false
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::equidistant::c4, 2, 3);
-	boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::equidistant::f1, matrix);
-	boundary<PentaDiagonal>(1, pow(dx, 2.0), coef2::equidistant::f1, matrix);
-	boundary<PentaDiagonal>(2, pow(dx, 2.0), coef2::equidistant::b1, matrix);
-	boundary<PentaDiagonal>(3, pow(dx, 2.0), coef2::equidistant::b1, matrix);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef2::equidistant::c4(dx), 2, 3);
+	boundary<PentaDiagonal>(0, coef2::equidistant::f1(dx), matrix);
+	boundary<PentaDiagonal>(1, coef2::equidistant::f1(dx), matrix);
+	boundary<PentaDiagonal>(2, coef2::equidistant::b1(dx), matrix);
+	boundary<PentaDiagonal>(3, coef2::equidistant::b1(dx), matrix);
 #endif
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, pow(dx, 2.0), coef2::equidistant::c4, 2, 6);
-	boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::equidistant::f4, matrix);
-	boundary<PentaDiagonal>(1, pow(dx, 2.0), coef2::equidistant::f4, matrix);
-	boundary<PentaDiagonal>(2, pow(dx, 2.0), coef2::equidistant::b4, matrix);
-	boundary<PentaDiagonal>(3, pow(dx, 2.0), coef2::equidistant::b4, matrix);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef2::equidistant::c4(dx), 2, 6);
+	boundary<PentaDiagonal>(0, coef2::equidistant::f4(dx), matrix);
+	boundary<PentaDiagonal>(1, coef2::equidistant::f4(dx), matrix);
+	boundary<PentaDiagonal>(2, coef2::equidistant::b4(dx), matrix);
+	boundary<PentaDiagonal>(3, coef2::equidistant::b4(dx), matrix);
 
 	return matrix;
 
@@ -417,40 +621,51 @@ PentaDiagonal d2dx2::equidistant::c4b4(const int order, const double dx) {
 template <class T>
 T setup(
 	const int order,
-	const int derivative_order,
 	const std::vector<double> grid,
+	std::function<std::vector<double>(std::vector<double>)> coef,
 	const int n_boundary_rows,
 	const int n_boundary_elements) {
 
 	T matrix(order, n_boundary_rows, (n_boundary_rows - 1) + n_boundary_elements);
 
+	std::vector<double> coef_tmp;
+
 	for (int i = n_boundary_rows; i != order - n_boundary_rows; ++i) {
 
-		int idx_m = i - 1;
-		int idx_p = i + 1;
-		double dx_m = grid[i] - grid[idx_m];
-		double dx_p = grid[idx_p] - grid[i];
-
-		std::vector<double> vec_tmp;
-		
 		if (std::is_same<T, TriDiagonal>::value) {
-			if (derivative_order == 1) {
-				vec_tmp = coef1::nonequidistant::c2(dx_m, dx_p);
-			}
-			else if (derivative_order == 2) {
-				vec_tmp = coef2::nonequidistant::c2(dx_m, dx_p);
-			}
-			else {
-				throw std::invalid_argument("Derivative order should be 1 or 2!");
-			}
+
+			int idx_m1 = i - 1;
+			int idx_p1 = i + 1;
+
+			double dx_m1 = grid[i] - grid[idx_m1];
+			double dx_p1 = grid[idx_p1] - grid[i];
+
+			coef_tmp = coef({ 0.0, dx_m1, dx_p1, 0.0 });
+
+		}
+		else if (std::is_same<T, PentaDiagonal>::value) {
+
+			int idx_m2 = i - 2;
+			int idx_m1 = i - 1;
+			int idx_p1 = i + 1;
+			int idx_p2 = i + 2;
+
+			double dx_m2 = grid[idx_m1] - grid[idx_m2];
+			double dx_m1 = grid[i] - grid[idx_m1];
+			double dx_p1 = grid[idx_p1] - grid[i];
+			double dx_p2 = grid[idx_p2] - grid[idx_p1];
+
+			coef_tmp = coef({ dx_m2, dx_m1, dx_p1, dx_p2 });
+
 		}
 		else {
-			throw std::invalid_argument("Only TriDiagonal for now!!!");
+			throw std::invalid_argument("Unknown matrix.");
 		}
 
 		for (int j = 0; j != matrix.n_diagonals(); ++j) {
-			matrix.matrix[j][i] = vec_tmp[j];
+			matrix.matrix[j][i] = coef_tmp[j];
 		}
+
 	}
 
 	return matrix;
@@ -462,12 +677,13 @@ T setup(
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 TriDiagonal d1dx1::nonequidistant::c2b1(const int order, const std::vector<double> grid) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, 2, grid, 1, 2);
+	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef1::nonequidistant::c2, 1, 2);
 
-	const double dx_first = grid[1] - grid[0];
-	const double dx_last = grid[order - 1] - grid[order - 2];
-	boundary<TriDiagonal>(0, dx_first, coef1::equidistant::f1, matrix);
-	boundary<TriDiagonal>(1, dx_last, coef1::equidistant::b1, matrix);
+	std::vector<double> dx_vec_first = { 0.0, 0.0, grid[1] - grid[0], 0.0 };
+	boundary<TriDiagonal>(0, coef1::nonequidistant::f1(dx_vec_first), matrix);
+	// TODO: Should dx_last be reversed?
+	std::vector<double> dx_vec_last = { 0.0, 0.0, grid[order - 1] - grid[order - 2], 0.0 };
+	boundary<TriDiagonal>(1, coef1::nonequidistant::b1(dx_vec_last), matrix);
 
 	return matrix;
 
