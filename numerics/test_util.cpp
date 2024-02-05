@@ -145,7 +145,7 @@ std::vector<double> test_util::vector_diff(
 }
 
 
-// Max norm.
+// Maximum norm.
 double test_util::max_norm(std::vector<double> vec) {
 
 	// Absolue value of each element.
@@ -156,38 +156,84 @@ double test_util::max_norm(std::vector<double> vec) {
 }
 
 
-// l2-norm (vector norm). 
-// TODO: Should this be dependent on dx? Like a "Riemann sum" expression?
-double test_util::l2_norm(const double dx, std::vector<double> vec) {
+// l1 vector norm.
+double test_util::l1_vector_norm(std::vector<double> vec) {
 
-	// Square of each element.
-//	std::transform(vec.begin(), vec.end(), vec.begin(), [dx](double x) { return dx * x * x; });
+	// Absolute value of each element.
+	std::transform(vec.begin(), vec.end(), vec.begin(), [](double x) { return abs(x); });
 
-//	return sqrt(std::accumulate(vec.begin(), vec.end(), (double)0));
-
-	double result = 0.0;
-
-	for (int i = 0; i != vec.size() - 1; ++i) {
-
-		result += dx * abs(vec[i + 1] + vec[i]) / 2.0;
-//		result += abs(vec[i + 1] + vec[i]) / 2.0;
-//		result += vec[i];
-
-	}
-
-	return result;
+	return std::accumulate(vec.begin(), vec.end(), (double)0);
 
 }
 
 
-// l2-norm (vector norm). 
-// TODO: Should this be dependent on dx? Like a "Riemann sum" expression?
-double test_util::l2_norm(const std::vector<double>& grid, std::vector<double> vec) {
+// l2 vector norm.
+double test_util::l2_vector_norm(std::vector<double> vec) {
 
 	// Square of each element.
-	std::transform(vec.begin(), vec.end(), grid.begin(), vec.begin(), [](double x, double dx) { return dx * x * x; });
+	std::transform(vec.begin(), vec.end(), vec.begin(), [](double x) { return x * x; });
 
-	return sqrt(std::accumulate(vec.begin(), vec.end(), (double)0));
+	return std::accumulate(vec.begin(), vec.end(), (double)0);
+
+}
+
+
+// L1 function norm.
+double test_util::l1_function_norm(const double dx, std::vector<double> vec) {
+
+	double norm = 0.0;
+
+	// Trapzoidal integration.
+	for (int i = 0; i != vec.size() - 1; ++i) {
+		norm += dx * abs((vec[i + 1] + vec[i]) / 2.0);
+	}
+
+	return norm;
+
+}
+
+
+// L1 function norm.
+double test_util::l1_function_norm(const std::vector<double>& grid, std::vector<double> vec) {
+
+	double norm = 0.0;
+
+	// Trapzoidal integration.
+	for (int i = 0; i != vec.size() - 1; ++i) {
+		norm += (grid[i + 1] - grid[i]) * abs((vec[i + 1] + vec[i]) / 2.0);
+	}
+
+	return norm;
+
+}
+
+
+// L2 function norm.
+double test_util::l2_function_norm(const double dx, std::vector<double> vec) {
+
+	double norm = 0.0;
+
+	// Trapzoidal integration.
+	for (int i = 0; i != vec.size() - 1; ++i) {
+		norm += dx * pow((vec[i + 1] + vec[i]) / 2.0, 2);
+	}
+
+	return norm;
+
+}
+
+
+// L2 function norm.
+double test_util::l2_function_norm(const std::vector<double>& grid, std::vector<double> vec) {
+
+	double norm = 0.0;
+
+	// Trapzoidal integration.
+	for (int i = 0; i != vec.size() - 1; ++i) {
+		norm += (grid[i + 1] - grid[i]) * pow((vec[i + 1] + vec[i]) / 2.0, 2);
+	}
+
+	return norm;
 
 }
 

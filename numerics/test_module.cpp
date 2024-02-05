@@ -300,7 +300,7 @@ std::vector<double> vector_diff(
 }
 
 
-// Max norm.
+// Maximum norm.
 double max_norm(std::vector<double> vec) {
 
 	// Absolue value of each element.
@@ -311,7 +311,7 @@ double max_norm(std::vector<double> vec) {
 }
 
 
-// l2-norm (vector norm). TODO: Should this be dependent on dx? Like a "Riemann sum" expression?
+// L2 function norm.
 double l2_norm(const double dx, std::vector<double> vec) {
 
 	// Square of each element.
