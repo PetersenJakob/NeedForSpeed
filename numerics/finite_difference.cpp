@@ -100,10 +100,10 @@ namespace coef1 {
 			const double denominator = dx_p * (1.0 + dx_p / dx_m);
 
 			// Coefficient of 1st sub-diagonal.
-			row[0] = -pow(dx_p / dx_m, 2.0) / denominator;
+			row[0] = -pow(dx_p / dx_m, 2) / denominator;
 
 			// Coefficient of main diagonal.
-			row[1] = -(1.0 - pow(dx_p / dx_m, 2.0)) / denominator;
+			row[1] = -(1.0 - pow(dx_p / dx_m, 2)) / denominator;
 
 			// Coefficient of 1st super-diagonal.
 			row[2] = 1.0 / denominator;
@@ -122,25 +122,25 @@ namespace coef1 {
 			std::vector<double> row(5, 0.0);
 
 			const double denominator =
-				pow(dx_m1 + dx_m2, 2.0) * (dx_p1 + dx_p2)
-				- 32.0 * dx_p1 * pow(dx_m1, 2.0)
-				- 32.0 * pow(dx_p1, 2.0) * dx_m1
-				+ (dx_m1 + dx_m2) * pow(dx_p1 + dx_p2, 2.0);
+				  pow(dx_m1 + dx_m2, 2) * (dx_p1 + dx_p2)
+				- 32.0 * dx_p1 * pow(dx_m1, 2)
+				- 32.0 * pow(dx_p1, 2) * dx_m1
+				+ (dx_m1 + dx_m2) * pow(dx_p1 + dx_p2, 2);
 
 			// Coefficient of 2nd sub-diagonal.
-			row[0] = -pow(dx_p1 + dx_p2, 2.0) / denominator;
+			row[0] = -pow(dx_p1 + dx_p2, 2) / denominator;
 
 			// Coefficient of 1st sub-diagonal.
-			row[1] = 32.0 * pow(dx_p1, 2.0) / denominator;
+			row[1] = 32.0 * pow(dx_p1, 2) / denominator;
 
 			// Coefficient of main diagonal.
-			row[2] = -(pow(dx_m1 + dx_m2, 2.0) - 32.0 * pow(dx_m1, 2.0) + 32.0 * pow(dx_p1, 2.0) - pow(dx_p1 + dx_p2, 2.0)) / denominator;
+			row[2] = -(pow(dx_m1 + dx_m2, 2) - 32.0 * pow(dx_m1, 2) + 32.0 * pow(dx_p1, 2) - pow(dx_p1 + dx_p2, 2)) / denominator;
 
 			// Coefficient of 1st super-diagonal.
-			row[3] = -32.0 * pow(dx_m1, 2.0) / denominator;
+			row[3] = -32.0 * pow(dx_m1, 2) / denominator;
 
 			// Coefficient of 2nd super-diagonal.
-			row[4] = pow(dx_m1 + dx_m2, 2.0) / denominator;
+			row[4] = pow(dx_m1 + dx_m2, 2) / denominator;
 
 			return row;
 
@@ -241,6 +241,40 @@ namespace coef2 {
 
 			// Super-diagonal element.
 			row[2] = 2.0 / denominator;
+
+			return row;
+
+		}
+
+		// Central difference; ~4th order accuracy.
+		std::vector<double> c4(
+			const double dx_m2,
+			const double dx_m1,
+			const double dx_p1,
+			const double dx_p2) {
+
+			std::vector<double> row(5, 0.0);
+
+			const double denominator =
+				- (dx_m1 + dx_m2) * pow(dx_p1 + dx_p2, 2) / 2.0
+				+ 16.0 * pow(dx_p1, 2) * dx_m1
+				+ 16.0 * dx_p1 * pow(dx_m1, 2)
+				- pow(dx_m1 + dx_m2, 2) * (dx_p1 + dx_p2) / 2.0;
+
+			// Coefficient of 2nd sub-diagonal.
+			row[0] = -(dx_p1 + dx_p2) / denominator;
+
+			// Coefficient of 1st sub-diagonal.
+			row[1] = 32.0 * dx_p1 / denominator;
+
+			// Coefficient of main diagonal.
+			row[2] = -(-(dx_m1 + dx_m2) + 32.0 * dx_m1 + 32.0 * dx_p1 - (dx_p1 + dx_p2)) / denominator;
+
+			// Coefficient of 1st super-diagonal.
+			row[3] = 32.0 * dx_m1 / denominator;
+
+			// Coefficient of 2nd super-diagonal.
+			row[4] = -(dx_m1 + dx_m2) / denominator;
 
 			return row;
 
