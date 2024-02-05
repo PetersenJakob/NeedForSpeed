@@ -425,6 +425,8 @@ TEST(FirstOrderDerivativeNonequidistant, EXPc2b1) {
 	print_matrix(d1dx1_eq);
 	print_matrix(d1dx1_neq);
 
+	std::cout << "Are the objects identical: " << (d1dx1_eq == d1dx1_neq) << std::endl << std::endl;
+
 	// Maximum norm.
 	EXPECT_NEAR(slope[0], 1.0, 0.2);
 
