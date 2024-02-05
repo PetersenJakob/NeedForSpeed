@@ -10,9 +10,23 @@
 
 
 std::vector<double> test_util::test_function(
-	std::vector<double> grid,
+	const std::vector<double>& grid,
 	const int function_type,
 	const int derivative_order) {
+
+	// Function type:
+	//	 0: Exponential function.
+	//	 1: Cosine function.
+	//	 2: Sum of exponential and cosine.
+
+	// Derivative order:
+	//	 2: 2nd order derivative.
+	//	 1: 1st order derivative.
+	//	 0: Function.
+	//	-1: 1st order antiderivative.
+	//	-2: 2nd order antiderivative.
+
+	const int function_idx = derivative_order + 2;
 
 	std::vector<double> inner(grid.size(), 0.0);
 
@@ -20,43 +34,57 @@ std::vector<double> test_util::test_function(
 	std::vector<std::vector<double>> f_cos(5, inner);
 	std::vector<std::vector<double>> f_sum(5, inner);
 
+	const double pi = M_PI;
+	const double pi_sq = pi * pi;
+
 	for (int i = 0; i != grid.size(); ++i) {
 
+		// #####################
+		// Exponential function.
+		// #####################
+		
+		// 2nd order derivative.
 		f_exp[4][i] = 4.0 * exp(2.0 * grid[i]);
-
+		// 1st order derivative.
 		f_exp[3][i] = 2.0 * exp(2.0 * grid[i]);
-
+		// Function.
 		f_exp[2][i] = exp(2.0 * grid[i]);
-
+		// 1st order antiderivative.
 		f_exp[1][i] = exp(2.0 * grid[i]) / 2.0;
-
+		// 2nd order antiderivative.
 		f_exp[0][i] = exp(2.0 * grid[i]) / 4.0;
 
+		// ################
+		// Cosine function.
+		// ################
 
-		f_cos[4][i] = -pow(M_PI, 2.0) * cos(M_PI * grid[i]);
+		// 2nd order derivative.
+		f_cos[4][i] = -pi_sq * cos(pi * grid[i]);
+		// 1st order derivative.
+		f_cos[3][i] = -pi * sin(pi * grid[i]);
+		// Function.
+		f_cos[2][i] = cos(pi * grid[i]);
+		// 1st order antiderivative.
+		f_cos[1][i] = sin(pi * grid[i]) / pi;
+		// 2nd order antiderivative.
+		f_cos[0][i] = -cos(pi * grid[i]) / pi_sq;
 
-		f_cos[3][i] = -M_PI * sin(M_PI * grid[i]);
+		// ##############################
+		// Sum of exponential and cosine.
+		// ##############################
 
-		f_cos[2][i] = cos(M_PI * grid[i]);
-
-		f_cos[1][i] = sin(M_PI * grid[i]) / M_PI;
-
-		f_cos[0][i] = -cos(M_PI * grid[i]) / pow(M_PI, 2.0);
-
-
-		f_sum[4][i] = f_cos[4][i] + f_exp[4][i];
-
-		f_sum[3][i] = f_cos[3][i] + f_exp[3][i];
-
-		f_sum[2][i] = f_cos[2][i] + f_exp[2][i];
-
-		f_sum[1][i] = f_cos[1][i] + f_exp[1][i];
-
-		f_sum[0][i] = f_cos[0][i] + f_exp[0][i];
+		// 2nd order derivative.
+		f_sum[4][i] = f_exp[4][i] + f_cos[4][i];
+		// 1st order derivative.
+		f_sum[3][i] = f_exp[3][i] + f_cos[3][i];
+		// Function.
+		f_sum[2][i] = f_exp[2][i] + f_cos[2][i];
+		// 1st order antiderivative.
+		f_sum[1][i] = f_exp[1][i] + f_cos[1][i];
+		// 2nd order antiderivative.
+		f_sum[0][i] = f_exp[0][i] + f_cos[0][i];
 
 	}
-
-	const int function_idx = derivative_order + 2;
 
 	if (function_type == 0) {
 		return f_exp[function_idx];
@@ -64,18 +92,21 @@ std::vector<double> test_util::test_function(
 	else if (function_type == 1) {
 		return f_cos[function_idx];
 	}
-	else {
+	else if (function_type == 2) {
 		return f_sum[function_idx];
+	}
+	else {
+		throw std::invalid_argument("Function type unknown.");
 	}
 
 }
 
 
 void test_util::print_test_results(
-	std::vector<double> grid,
-	std::vector<double> func,
-	std::vector<double> deriv,
-	std::vector<double> fd_result) {
+	const std::vector<double>& grid,
+	const std::vector<double>& func,
+	const std::vector<double>& deriv,
+	const std::vector<double>& fd_result) {
 
 	std::cout << std::scientific << std::setprecision(5);
 
@@ -114,7 +145,7 @@ std::vector<double> test_util::vector_diff(
 }
 
 
-// Max norm.
+// Maximum norm.
 double test_util::max_norm(std::vector<double> vec) {
 
 	// Absolue value of each element.
@@ -125,12 +156,119 @@ double test_util::max_norm(std::vector<double> vec) {
 }
 
 
-// l2-norm (vector norm). TODO: Should this be dependent on dx? Like a "Riemann sum" expression?
-double test_util::l2_norm(const double dx, std::vector<double> vec) {
+// l1 vector norm.
+double test_util::l1_vector_norm(std::vector<double> vec) {
+
+	// Absolute value of each element.
+	std::transform(vec.begin(), vec.end(), vec.begin(), [](double x) { return abs(x); });
+
+	return std::accumulate(vec.begin(), vec.end(), (double)0);
+
+}
+
+
+// l2 vector norm.
+double test_util::l2_vector_norm(std::vector<double> vec) {
 
 	// Square of each element.
-	std::transform(vec.begin(), vec.end(), vec.begin(), [dx](double x) { return dx * pow(x, 2); });
+	std::transform(vec.begin(), vec.end(), vec.begin(), [](double x) { return x * x; });
 
-	return sqrt(std::accumulate(vec.begin(), vec.end(), (double)0));
+	return std::accumulate(vec.begin(), vec.end(), (double)0);
+
+}
+
+
+// L1 function norm.
+double test_util::l1_function_norm(const double dx, std::vector<double> vec) {
+
+	double norm = 0.0;
+
+	// Trapzoidal integration.
+	for (int i = 0; i != vec.size() - 1; ++i) {
+		norm += dx * abs((vec[i + 1] + vec[i]) / 2.0);
+	}
+
+	return norm;
+
+}
+
+
+// L1 function norm.
+double test_util::l1_function_norm(const std::vector<double>& grid, std::vector<double> vec) {
+
+	double norm = 0.0;
+
+	// Trapzoidal integration.
+	for (int i = 0; i != vec.size() - 1; ++i) {
+		norm += (grid[i + 1] - grid[i]) * abs((vec[i + 1] + vec[i]) / 2.0);
+	}
+
+	return norm;
+
+}
+
+
+// L2 function norm.
+double test_util::l2_function_norm(const double dx, std::vector<double> vec) {
+
+	double norm = 0.0;
+
+	// Trapzoidal integration.
+	for (int i = 0; i != vec.size() - 1; ++i) {
+		norm += dx * pow((vec[i + 1] + vec[i]) / 2.0, 2);
+	}
+
+	return norm;
+
+}
+
+
+// L2 function norm.
+double test_util::l2_function_norm(const std::vector<double>& grid, std::vector<double> vec) {
+
+	double norm = 0.0;
+
+	// Trapzoidal integration.
+	for (int i = 0; i != vec.size() - 1; ++i) {
+		norm += (grid[i + 1] - grid[i]) * pow((vec[i + 1] + vec[i]) / 2.0, 2);
+	}
+
+	return norm;
+
+}
+
+
+// Simple linear regression.
+std::vector<double> test_util::slr(const std::vector<double>& x, const std::vector<double>& y) {
+
+	double x_mean = 0.0;
+	double y_mean = 0.0;
+
+	double xx = 0.0;
+	double xy = 0.0;
+
+	for (int i = 0; i != x.size(); ++i) {
+
+		x_mean += x[i];
+		y_mean += y[i];
+
+	}
+
+	x_mean /= x.size();
+	y_mean /= y.size();
+
+	for (int i = 0; i != x.size(); ++i) {
+
+		xx += pow(x[i] - x_mean, 2);
+		xy += (x[i] - x_mean) * (y[i] - y_mean);
+
+	}
+
+	double beta = xy / xx;
+	double alpha = y_mean - beta * x_mean;
+
+	std::vector<double> result{ beta, alpha };
+
+	return result;
 
 }

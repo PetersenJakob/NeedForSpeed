@@ -42,7 +42,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		}
 
 		// Second order differential operator.
-		TriDiagonal deriv_operator = d2dx2::c2b1(n_points, dx);
+		TriDiagonal deriv_operator = d2dx2::equidistant::c2b1(n_points, dx);
 
 
 		std::vector<double> coefficients(3, 0.0);
@@ -130,7 +130,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 
 		std::vector<double> diff = test_util::vector_diff(analytical, solution_fd);
 		max_norm.push_back(test_util::max_norm(diff));
-		l2_norm.push_back(test_util::l2_norm(dx, diff));
+		l2_norm.push_back(test_util::l2_function_norm(dx, diff));
 
 	}
 
@@ -220,7 +220,7 @@ TEST(TriDiagonalSolver, BlackScholes1D) {
 		}
 
 		// Second order differential operator.
-		TriDiagonal deriv_operator = d2dx2::c2b1(n_points, dx);
+		TriDiagonal deriv_operator = d2dx2::equidistant::c2b1(n_points, dx);
 
 
 		std::vector<double> coefficients(3, 0.0);
@@ -275,7 +275,7 @@ TEST(TriDiagonalSolver, BlackScholes1D) {
 
 		std::vector<double> diff = test_util::vector_diff(analytical, solution_fd);
 		max_norm.push_back(test_util::max_norm(diff));
-		l2_norm.push_back(test_util::l2_norm(dx, diff));
+		l2_norm.push_back(test_util::l2_function_norm(dx, diff));
 
 	}
 

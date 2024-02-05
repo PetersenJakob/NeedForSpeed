@@ -50,23 +50,32 @@ int main() {
 	const double dx_cos = grid_cos[1] - grid_cos[0];
 
 
-	TriDiagonal d1_c2b1_exp = d1dx1::c2b1(order, dx_exp);
-	TriDiagonal d1_c2b1_cos = d1dx1::c2b1(order, dx_cos);
+	TriDiagonal d1_c2b1_exp = d1dx1::equidistant::c2b1(order, dx_exp);
+	TriDiagonal d1_c2b1_cos = d1dx1::equidistant::c2b1(order, dx_cos);
 
-	TriDiagonal d1_c2b2_exp = d1dx1::c2b2(order, dx_exp);
-	TriDiagonal d1_c2b2_cos = d1dx1::c2b2(order, dx_cos);
+	TriDiagonal d1_c2b2_exp = d1dx1::equidistant::c2b2(order, dx_exp);
+	TriDiagonal d1_c2b2_cos = d1dx1::equidistant::c2b2(order, dx_cos);
 
-	PentaDiagonal d1_c4b4_exp = d1dx1::c4b4(order, dx_exp);
-	PentaDiagonal d1_c4b4_cos = d1dx1::c4b4(order, dx_cos);
+	PentaDiagonal d1_c4b4_exp = d1dx1::equidistant::c4b4(order, dx_exp);
+	PentaDiagonal d1_c4b4_cos = d1dx1::equidistant::c4b4(order, dx_cos);
 
-	TriDiagonal d2_c2b1_exp = d2dx2::c2b1(order, dx_exp);
-	TriDiagonal d2_c2b1_cos = d2dx2::c2b1(order, dx_cos);
+	TriDiagonal d2_c2b1_exp = d2dx2::equidistant::c2b1(order, dx_exp);
+	TriDiagonal d2_c2b1_cos = d2dx2::equidistant::c2b1(order, dx_cos);
 
-	TriDiagonal d2_c2b2_exp = d2dx2::c2b2(order, dx_exp);
-	TriDiagonal d2_c2b2_cos = d2dx2::c2b2(order, dx_cos);
+	TriDiagonal d2_c2b2_exp = d2dx2::equidistant::c2b2(order, dx_exp);
+	TriDiagonal d2_c2b2_cos = d2dx2::equidistant::c2b2(order, dx_cos);
 
-	PentaDiagonal d2_c4b4_exp = d2dx2::c4b4(order, dx_exp);
-	PentaDiagonal d2_c4b4_cos = d2dx2::c4b4(order, dx_cos);
+	PentaDiagonal d2_c4b4_exp = d2dx2::equidistant::c4b4(order, dx_exp);
+	PentaDiagonal d2_c4b4_cos = d2dx2::equidistant::c4b4(order, dx_cos);
+
+
+	TriDiagonal d1_c2b1_exp_non = d1dx1::nonequidistant::c2b1(order, grid_exp);
+	TriDiagonal d1_c2b1_cos_non = d1dx1::nonequidistant::c2b1(order, grid_cos);
+
+	print_matrix(d1_c2b1_cos_non);
+
+	print_matrix(d2_c2b1_cos);
+
 
 //	test_exp(grid_exp, 1, d1_c4b4_exp);
 
@@ -291,7 +300,7 @@ std::vector<double> vector_diff(
 }
 
 
-// Max norm.
+// Maximum norm.
 double max_norm(std::vector<double> vec) {
 
 	// Absolue value of each element.
@@ -302,7 +311,7 @@ double max_norm(std::vector<double> vec) {
 }
 
 
-// l2-norm (vector norm). TODO: Should this be dependent on dx? Like a "Riemann sum" expression?
+// L2 function norm.
 double l2_norm(const double dx, std::vector<double> vec) {
 
 	// Square of each element.
