@@ -43,8 +43,8 @@ int main() {
 
 	const int order = 21;
 
-	std::vector<double> grid_exp = grid_equidistant(-0.2, 0.2, order);
-	std::vector<double> grid_cos = grid_equidistant(-M_PI / 2.0 , M_PI / 2.0, order);
+	std::vector<double> grid_exp = grid::equidistant(-0.2, 0.2, order);
+	std::vector<double> grid_cos = grid::equidistant(-M_PI / 2.0 , M_PI / 2.0, order);
 
 	const double dx_exp = grid_exp[1] - grid_exp[0];
 	const double dx_cos = grid_cos[1] - grid_cos[0];
@@ -90,7 +90,7 @@ int main() {
 		const double x_min = -0.2;
 		const double x_max = 0.2;
 
-		std::vector<double> grid = grid_equidistant(x_min, x_max, n_points);
+		std::vector<double> grid = grid::equidistant(x_min, x_max, n_points);
 
 		const double dx = grid[1] - grid[0];
 

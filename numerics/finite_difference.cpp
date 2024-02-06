@@ -688,3 +688,21 @@ TriDiagonal d1dx1::nonequidistant::c2b1(const int order, const std::vector<doubl
 	return matrix;
 
 }
+
+
+// First order derivative operator.
+// Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
+TriDiagonal d1dx1::nonequidistant::c2b2(const int order, const std::vector<double> grid) {
+
+	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef1::nonequidistant::c2, 1, 3);
+
+	std::vector<double> dx_vec_first = { 0.0, 0.0, grid[1] - grid[0], grid[2] - grid[1] };
+	boundary<TriDiagonal>(0, coef1::nonequidistant::f2(dx_vec_first), matrix);
+
+	// TODO: Should dx_last be reversed? Yes!
+	std::vector<double> dx_vec_last = { 0.0, 0.0, grid[order - 1] - grid[order - 2], grid[order - 2] - grid[order - 3] };
+	boundary<TriDiagonal>(1, coef1::nonequidistant::b2(dx_vec_last), matrix);
+
+	return matrix;
+
+}

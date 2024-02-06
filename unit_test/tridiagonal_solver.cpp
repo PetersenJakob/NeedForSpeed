@@ -29,7 +29,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		n_points = n_points_start + 10 * i;
 
 		// Grid.
-		const std::vector<double> grid = grid_equidistant(-0.5, 0.5, n_points);
+		const std::vector<double> grid = grid::equidistant(-0.5, 0.5, n_points);
 
 		// Grid spacing.
 		const double dx = grid[1] - grid[0];
@@ -207,7 +207,7 @@ TEST(TriDiagonalSolver, BlackScholes1D) {
 		n_points = 21 + 10 * i;
 
 		// Grid.
-		const std::vector<double> grid = grid_equidistant(-0.5, 0.5, n_points);
+		const std::vector<double> grid = grid::equidistant(-0.5, 0.5, n_points);
 
 		// Grid spacing.
 		const double dx = grid[1] - grid[0];
