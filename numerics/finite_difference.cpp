@@ -490,6 +490,37 @@ namespace coef2 {
 
 		}
 
+		// Forward difference; 1st order accuracy.
+		std::vector<double> f1(const std::vector<double>& dx_vector) {
+
+			const double dx_p1 = dx_vector[2];
+			const double dx_p2 = dx_vector[3];
+
+			std::vector<double> row(3, 0.0);
+
+			const double denominator = dx_p1 * dx_p2 * (dx_p1 + dx_p2) / 2.0;
+
+			// Coefficient of main diagonal.
+			row[0] = dx_p2 / denominator;
+
+			// Coefficient of 1st super-diagonal.
+			row[1] = -(dx_p1 + dx_p2) / denominator;
+
+			// Coefficient of 2nd super-diagonal.
+			row[2] = dx_p1 / denominator;
+
+			return row;
+
+		}
+
+		// TODO: For backward difference, reverse order of dx_vector??
+		// Backward difference; 1st order accuracy.
+		std::vector<double> b1(const std::vector<double>& dx_vector) {
+
+			return reverse_order(f1(dx_vector));
+
+		}
+
 	}
 
 }
@@ -761,15 +792,13 @@ PentaDiagonal d1dx1::nonequidistant::c4b2(const int order, const std::vector<dou
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 TriDiagonal d2dx2::nonequidistant::c2b1(const int order, const std::vector<double> grid) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef2::nonequidistant::c2, 1, 2);
+	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef2::nonequidistant::c2, 1, 3);
 
-	// f1 and b1 for coef2::nonequidistant...
-
-	std::vector<double> dx_vec_first = { 0.0, 0.0, grid[1] - grid[0], 0.0 };
-	boundary<TriDiagonal>(0, coef1::nonequidistant::f1(dx_vec_first), matrix);
+	std::vector<double> dx_vec_first = { 0.0, 0.0, grid[1] - grid[0], grid[2] - grid[1] };
+	boundary<TriDiagonal>(0, coef2::nonequidistant::f1(dx_vec_first), matrix);
 	// TODO: Should dx_last be reversed?
-	std::vector<double> dx_vec_last = { 0.0, 0.0, grid[order - 1] - grid[order - 2], 0.0 };
-	boundary<TriDiagonal>(1, coef1::nonequidistant::b1(dx_vec_last), matrix);
+	std::vector<double> dx_vec_last = { 0.0, 0.0, grid[order - 1] - grid[order - 2], grid[order - 2] - grid[order - 3] };
+	boundary<TriDiagonal>(1, coef2::nonequidistant::b1(dx_vec_last), matrix);
 
 	return matrix;
 

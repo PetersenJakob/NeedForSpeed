@@ -32,7 +32,7 @@ BandDiagonal::BandDiagonal(
 
 bool BandDiagonal::operator==(const BandDiagonal& m)
 {
-	const double eps = 1.0e-12;
+	const double eps = 1.0e-8;
 
 	if (order_ == m.order_ &&
 		bandwidth_ == m.bandwidth_ &&
