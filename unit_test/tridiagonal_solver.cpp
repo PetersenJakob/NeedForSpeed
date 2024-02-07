@@ -29,7 +29,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		n_points = n_points_start + 10 * i;
 
 		// Grid.
-		const std::vector<double> grid = grid_equidistant(-0.5, 0.5, n_points);
+		const std::vector<double> grid = grid::equidistant(-0.5, 0.5, n_points);
 
 		// Grid spacing.
 		const double dx = grid[1] - grid[0];
@@ -46,8 +46,8 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 
 
 		std::vector<double> coefficients(3, 0.0);
-		boundary<TriDiagonal>(0, pow(dx, 2.0), coefficients, deriv_operator);
-		boundary<TriDiagonal>(1, pow(dx, 2.0), coefficients, deriv_operator);
+		boundary<TriDiagonal>(0, coefficients, deriv_operator);
+		boundary<TriDiagonal>(1, coefficients, deriv_operator);
 
 //		print_matrix(deriv_operator);
 
@@ -55,10 +55,10 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		PentaDiagonal deriv_operator_p = d2dx2::c4b4(n_points, dx);
 
 		std::vector<double> coefficients_p(6, 0.0);
-		boundary<PentaDiagonal>(0, pow(dx, 2.0), coef2::f1, deriv_operator_p);
-		boundary<PentaDiagonal>(1, pow(dx, 2.0), coefficients_p, deriv_operator_p);
-		boundary<PentaDiagonal>(2, pow(dx, 2.0), coefficients_p, deriv_operator_p);
-		boundary<PentaDiagonal>(3, pow(dx, 2.0), coefficients_p, deriv_operator_p);
+		boundary<PentaDiagonal>(0, coef2::f1, deriv_operator_p);
+		boundary<PentaDiagonal>(1, coefficients_p, deriv_operator_p);
+		boundary<PentaDiagonal>(2, coefficients_p, deriv_operator_p);
+		boundary<PentaDiagonal>(3, coefficients_p, deriv_operator_p);
 
 //		print_matrix(deriv_operator_p); 
 #endif
@@ -207,7 +207,7 @@ TEST(TriDiagonalSolver, BlackScholes1D) {
 		n_points = 21 + 10 * i;
 
 		// Grid.
-		const std::vector<double> grid = grid_equidistant(-0.5, 0.5, n_points);
+		const std::vector<double> grid = grid::equidistant(-0.5, 0.5, n_points);
 
 		// Grid spacing.
 		const double dx = grid[1] - grid[0];
@@ -224,8 +224,8 @@ TEST(TriDiagonalSolver, BlackScholes1D) {
 
 
 		std::vector<double> coefficients(3, 0.0);
-		boundary<TriDiagonal>(0, pow(dx, 2.0), coefficients, deriv_operator);
-		boundary<TriDiagonal>(1, pow(dx, 2.0), coefficients, deriv_operator);
+		boundary<TriDiagonal>(0, coefficients, deriv_operator);
+		boundary<TriDiagonal>(1, coefficients, deriv_operator);
 
 
 		// Theta parameter.

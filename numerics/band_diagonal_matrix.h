@@ -37,6 +37,8 @@ public:
 		const int _n_boundary_elements);
 
 
+	bool operator == (const BandDiagonal& m);
+
 	int order() const {
 		return order_;
 	}

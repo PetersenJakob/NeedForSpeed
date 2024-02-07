@@ -30,6 +30,39 @@ BandDiagonal::BandDiagonal(
 }
 
 
+bool BandDiagonal::operator==(const BandDiagonal& m)
+{
+	const double eps = 1.0e-8;
+
+	if (order_ == m.order_ &&
+		bandwidth_ == m.bandwidth_ &&
+		n_boundary_rows_ == m.n_boundary_rows_ &&
+		n_boundary_elements_ == m.n_boundary_elements_) {
+
+		for (int i = n_boundary_rows_; i != order_ - n_boundary_rows_; ++i) {
+			for (int j = 0; j != n_diagonals_; ++j) {
+				if (abs(matrix[j][i] - m.matrix[j][i]) > eps) {
+					return false;
+				}
+			}
+		}
+
+		for (int i = 0; i != 2 * n_boundary_rows_; ++i) {
+			for (int j = 0; j != n_boundary_elements_; ++j) {
+				if (abs(boundary_rows[i][j] - m.boundary_rows[i][j]) > eps) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
 // Add scalar to main diagonal.
 void BandDiagonal::add_diagonal(const double scalar) {
 
