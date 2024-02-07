@@ -17,7 +17,7 @@ namespace d1dx1 {
 
 
 		// TODO: Test convergence rate
-		// Central difference; 2nd order accuracy. Boundary; 3rde order accuracy.
+		// Central difference; 2nd order accuracy. Boundary; 3rd order accuracy.
 		TriDiagonal c2b3(const int order, const double dx);
 
 
