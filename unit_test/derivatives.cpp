@@ -131,9 +131,9 @@ std::vector<double> test_fd_approximation(
 
 		l2_vec_norm.push_back(test_util::l2_vector_norm(diff));
 
-		l1_func_norm.push_back(test_util::l1_function_norm(dx, diff));
+		l1_func_norm.push_back(test_util::l1_function_norm(grid, diff));
 
-		l2_func_norm.push_back(test_util::l2_function_norm(dx, diff));
+		l2_func_norm.push_back(test_util::l2_function_norm(grid, diff));
 
 	}
 
@@ -514,9 +514,9 @@ TEST(FirstOrderDerivativeNonequidistant, EXPc2b1) {
 	// L1 function norm.
 	EXPECT_NEAR(slope_eq[3], 2.0, 0.008);
 
-	EXPECT_NEAR(slope_exp[3], 2.0, 0.025);
+	EXPECT_NEAR(slope_exp[3], 2.0, 0.031);
 
-	EXPECT_NEAR(slope_hyper[3], 2.0, 0.029);
+	EXPECT_NEAR(slope_hyper[3], 2.0, 0.043);
 
 }
 
@@ -574,9 +574,9 @@ TEST(FirstOrderDerivativeNonequidistant, EXPc2b2) {
 	// L1 function norm.
 	EXPECT_NEAR(slope_eq[3], 2.0, 0.008);
 
-	EXPECT_NEAR(slope_exp[3], 2.0, 0.019);
+	EXPECT_NEAR(slope_exp[3], 2.0, 0.025);
 
-	EXPECT_NEAR(slope_hyper[3], 2.0, 0.027);
+	EXPECT_NEAR(slope_hyper[3], 2.0, 0.040);
 
 }
 
@@ -622,9 +622,9 @@ TEST(FirstOrderDerivativeNonequidistant, EXPc4b2) {
 	// L1 function norm.
 	EXPECT_NEAR(slope_eq[3], 3.0, 0.009);
 
-	EXPECT_NEAR(slope_exp[3], 3.0, 0.059);
+	EXPECT_NEAR(slope_exp[3], 3.0, 0.070);
 
-	EXPECT_NEAR(slope_hyper[3], 3.0, 0.084);
+	EXPECT_NEAR(slope_hyper[3], 3.0, 0.109);
 
 }
 
@@ -670,8 +670,8 @@ TEST(SecondOrderDerivativeNonequidistant, EXPc2b1) {
 	// L1 function norm.
 	EXPECT_NEAR(slope_eq[3], 2.0, 0.006);
 
-	EXPECT_NEAR(slope_exp[3], 2.0, 0.028);
+	EXPECT_NEAR(slope_exp[3], 2.0, 0.036);
 
-	EXPECT_NEAR(slope_hyper[3], 2.0, 0.040);
+	EXPECT_NEAR(slope_hyper[3], 2.0, 0.066);
 
 }
