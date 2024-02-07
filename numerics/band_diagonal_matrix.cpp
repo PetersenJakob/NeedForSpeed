@@ -30,6 +30,19 @@ BandDiagonal::BandDiagonal(
 }
 
 
+BandDiagonal::BandDiagonal(const BandDiagonal& mat) {
+
+	order_ = mat.order_;
+	bandwidth_ = mat.bandwidth_;
+	n_diagonals_ = mat.n_diagonals_;
+	n_boundary_rows_ = mat.n_boundary_rows_;
+	n_boundary_elements_ = mat.n_boundary_elements_;
+	matrix = mat.matrix;
+	boundary_rows = mat.boundary_rows;
+
+}
+
+
 bool BandDiagonal::operator==(const BandDiagonal& m)
 {
 	const double eps = 1.0e-8;
@@ -61,6 +74,37 @@ bool BandDiagonal::operator==(const BandDiagonal& m)
 		return false;
 	}
 }
+
+
+template <class T>
+BandDiagonal BandDiagonal::operator*(T scalar) {
+	
+	BandDiagonal result(*this);
+
+	for (int i = result.n_boundary_rows_; i != result.order_ - result.n_boundary_rows_; ++i) {
+		for (int j = 0; j != result.n_diagonals_; ++j) {
+			result.matrix[j][i] = this->matrix[j][i];
+		}
+	}
+
+	for (int i = 0; i != 2 * result.n_boundary_rows_; ++i) {
+		for (int j = 0; j != result.n_boundary_elements_; ++j) {
+			result.boundary_rows[i][j] = this->boundary_rows[i][j];
+		}
+	}
+
+	return result;
+
+}
+
+
+template <class T>
+BandDiagonal operator*(const T scalar, BandDiagonal rhs) {
+
+	return rhs * scalar;
+
+}
+
 
 
 // Add scalar to main diagonal.

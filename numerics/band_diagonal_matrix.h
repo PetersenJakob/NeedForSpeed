@@ -36,7 +36,12 @@ public:
 		const int _n_boundary_rows,
 		const int _n_boundary_elements);
 
-	bool operator == (const BandDiagonal& m);
+	BandDiagonal(const BandDiagonal& mat);
+
+	bool operator==(const BandDiagonal& m);
+
+	template <class T>
+	BandDiagonal operator*(T scalar);
 
 	int order() const {
 		return order_;
@@ -117,3 +122,7 @@ public:
 };
 
 void print_matrix(BandDiagonal matrix);
+
+
+template <class T>
+BandDiagonal operator*(const T scalar, BandDiagonal rhs);
