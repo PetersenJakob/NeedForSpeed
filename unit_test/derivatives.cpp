@@ -81,10 +81,21 @@ std::vector<double> test_fd_approximation(
 			deriv_fd = dndxn.mat_vec_prod(func);
 		}
 
+		else if (fd_deriv_type == "d1dx1::equidistant::c4b2") {
+			PentaDiagonal dndxn = d1dx1::equidistant::c4b2(n_points, dx);
+			deriv_fd = dndxn.mat_vec_prod(func);
+		}
+
 		else if (fd_deriv_type == "d1dx1::equidistant::c4b4") {
 			PentaDiagonal dndxn = d1dx1::equidistant::c4b4(n_points, dx);
 			deriv_fd = dndxn.mat_vec_prod(func);
 		}
+
+		else if (fd_deriv_type == "d1dx1::nonequidistant::c4b2") {
+			PentaDiagonal dndxn = d1dx1::nonequidistant::c4b2(n_points, grid);
+			deriv_fd = dndxn.mat_vec_prod(func);
+		}
+
 		else if (fd_deriv_type == "d2dx2::equidistant::c2b1") {
 			TriDiagonal dndxn = d2dx2::equidistant::c2b1(n_points, dx);
 			deriv_fd = dndxn.mat_vec_prod(func);
@@ -207,7 +218,7 @@ std::vector<double> test_fd_approximation(
 
 TEST(FirstOrderDerivative, EXPc2b1) {
 
-	std::vector<double> slope = test_fd_approximation(0, 1, "d1dx1::equidistant::c2b1", 51, 5, "equidistant", true, false);
+	std::vector<double> slope = test_fd_approximation(0, 1, "d1dx1::equidistant::c2b1", 51, 5, "equidistant", false, false);
 
 	// Maximum norm.
 	EXPECT_NEAR(slope[0], 1.0, 0.004);
@@ -441,7 +452,7 @@ TEST(SecondOrderDerivative, SUMc4b4) {
 
 
 
-// Non-equidistant grid...
+// TODO: Combine equidistant and non-equidistant tests...
 TEST(FirstOrderDerivativeNonequidistant, EXPc2b1) {
 
 	// Compare FD representations based on equidistant and non-equidistant grids.
@@ -560,5 +571,53 @@ TEST(FirstOrderDerivativeNonequidistant, EXPc2b2) {
 	EXPECT_NEAR(slope_exp[3], 2.0, 0.019);
 
 	EXPECT_NEAR(slope_hyper[3], 2.0, 0.027);
+
+}
+
+
+TEST(FirstOrderDerivativeNonequidistant, EXPc4b2) {
+
+	// Compare FD representations based on equidistant and non-equidistant grids.
+
+	const int n_points = 21;
+
+	// Grid.
+	const std::vector<double> grid_eq = grid::equidistant(-0.4, 0.4, n_points);
+
+	const std::vector<double> grid_exp = grid::exponential(-0.4, 0.4, n_points);
+
+	const std::vector<double> grid_hyper = grid::hyperbolic(-0.4, 0.4, n_points);
+
+
+	// Grid spacing.
+	const double dx = grid_eq[1] - grid_eq[0];
+
+	PentaDiagonal d1dx1_eq = d1dx1::equidistant::c4b2(n_points, dx);
+	PentaDiagonal d1dx1_neq = d1dx1::nonequidistant::c4b2(n_points, grid_eq);
+
+//	print_matrix(d1dx1_eq);
+//	print_matrix(d1dx1_neq);
+
+	EXPECT_TRUE(d1dx1_eq == d1dx1_neq);
+
+	std::vector<double> slope_eq = test_fd_approximation(0, 1, "d1dx1::equidistant::c4b2", 51, 5, "equidistant", true, false);
+
+	std::vector<double> slope_exp = test_fd_approximation(0, 1, "d1dx1::nonequidistant::c4b2", 51, 5, "exponential", true, false);
+
+	std::vector<double> slope_hyper = test_fd_approximation(0, 1, "d1dx1::nonequidistant::c4b2", 51, 5, "hyperbolic", true, false);
+
+	// Maximum norm.
+	EXPECT_NEAR(slope_eq[0], 2.0, 0.008);
+
+	EXPECT_NEAR(slope_exp[0], 2.0, 0.034);
+
+	EXPECT_NEAR(slope_hyper[0], 2.0, 0.056);
+
+	// L1 function norm.
+	EXPECT_NEAR(slope_eq[3], 3.0, 0.009);
+
+	EXPECT_NEAR(slope_exp[3], 3.0, 0.059);
+
+	EXPECT_NEAR(slope_hyper[3], 3.0, 0.084);
 
 }
