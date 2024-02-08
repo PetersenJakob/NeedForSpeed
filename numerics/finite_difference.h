@@ -3,6 +3,16 @@
 #include "band_diagonal_matrix.h"
 
 
+// Spare matrix representation of identity operator.
+namespace identity {
+
+	TriDiagonal tri(const int order);
+
+	PentaDiagonal penta(const int order);
+
+}
+
+
 // Finite difference representations of first order derivative operator.
 namespace d1dx1 {
 

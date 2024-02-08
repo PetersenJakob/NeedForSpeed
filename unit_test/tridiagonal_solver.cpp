@@ -57,13 +57,24 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 
 		// LHS operator.
 		TriDiagonal lhs = deriv_operator;
-		lhs.scalar_prod(-theta * dt);
-		lhs.add_diagonal(1.0);
+
+		lhs *= -theta * dt;
+
+		TriDiagonal iden = identity::tri(n_points);
+
+		lhs = lhs + iden;
+
+//		lhs.add_diagonal(1.0);
 
 		// RHS operator.
 		TriDiagonal rhs = deriv_operator;
-		rhs.scalar_prod((1.0 - theta) * dt);
-		rhs.add_diagonal(1.0);
+
+		rhs *= (1.0 - theta) * dt;
+
+		rhs = rhs + iden;
+
+//rhs.scalar_prod((1.0 - theta) * dt);
+		//rhs.add_diagonal(1.0);
 
 		// FD solution.
 		std::vector<double> solution_fd = func;
