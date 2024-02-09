@@ -36,7 +36,10 @@ public:
 		const int _n_boundary_rows,
 		const int _n_boundary_elements);
 
-	bool operator == (const BandDiagonal& m);
+	BandDiagonal(const BandDiagonal& mat);
+
+	// Why is this inhrited by derived classes?
+	bool operator==(const BandDiagonal& m);
 
 	int order() const {
 		return order_;
@@ -88,6 +91,7 @@ public:
 	
 };
 
+
 // Tri-diagonal matrix stored in compact form.
 class TriDiagonal : public BandDiagonal {
 
@@ -98,9 +102,22 @@ public:
 		const int _n_boundary_rows = 1,
 		const int _n_boundary_elements = 3) : BandDiagonal(_order, 1, _n_boundary_rows, _n_boundary_elements) {}
 
+	TriDiagonal operator*(const double scalar);
+
+	TriDiagonal operator*=(const double scalar);
+
+	TriDiagonal operator+(const TriDiagonal& rhs);
+
+	TriDiagonal operator+=(const TriDiagonal& rhs);
+
+	TriDiagonal operator-(const TriDiagonal& rhs);
+
+	TriDiagonal operator-=(const TriDiagonal& rhs);
+
 	void adjust_boundary(std::vector<double>& column);
 
 };
+
 
 // Penta-diagonal matrix stored in compact form.
 class PentaDiagonal : public BandDiagonal {
@@ -112,8 +129,35 @@ public:
 		const int _n_boundary_rows = 2,
 		const int _n_boundary_elements = 3) : BandDiagonal(_order, 2, _n_boundary_rows, _n_boundary_elements) {}
 
+	PentaDiagonal operator*(const double scalar);
+
+	PentaDiagonal operator*=(const double scalar);
+
+	PentaDiagonal operator+(const PentaDiagonal& rhs);
+
+	PentaDiagonal operator+=(const PentaDiagonal& rhs);
+
+	PentaDiagonal operator-(const PentaDiagonal& rhs);
+
+	PentaDiagonal operator-=(const PentaDiagonal& rhs);
+
 	void adjust_boundary(std::vector<double>& column);
 
 };
 
+
 void print_matrix(BandDiagonal matrix);
+
+
+TriDiagonal operator*(const double scalar, TriDiagonal rhs);
+
+
+PentaDiagonal operator*(const double scalar, PentaDiagonal rhs);
+
+
+template<class T>
+void scalar_multiply_matrix(const double scalar, T& matrix);
+
+
+template<class T>
+void matrix_addition(const T& matrix1, const T& matrix2, T& result);

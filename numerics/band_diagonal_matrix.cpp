@@ -30,6 +30,20 @@ BandDiagonal::BandDiagonal(
 }
 
 
+BandDiagonal::BandDiagonal(const BandDiagonal& mat) {
+
+	order_ = mat.order_;
+	bandwidth_ = mat.bandwidth_;
+	n_diagonals_ = mat.n_diagonals_;
+	n_boundary_rows_ = mat.n_boundary_rows_;
+	n_boundary_elements_ = mat.n_boundary_elements_;
+	matrix = mat.matrix;
+	boundary_rows = mat.boundary_rows;
+	boundary_rows_tmp = mat.boundary_rows_tmp;
+
+}
+
+
 bool BandDiagonal::operator==(const BandDiagonal& m)
 {
 	const double eps = 1.0e-8;
@@ -60,6 +74,118 @@ bool BandDiagonal::operator==(const BandDiagonal& m)
 	else {
 		return false;
 	}
+}
+
+
+TriDiagonal TriDiagonal::operator*(const double scalar) {
+
+	TriDiagonal result(*this);
+
+	scalar_multiply_matrix<TriDiagonal>(scalar, result);
+
+	return result;
+
+}
+
+
+TriDiagonal TriDiagonal::operator*=(const double scalar) {
+
+	scalar_multiply_matrix<TriDiagonal>(scalar, *this);
+
+	return *this;
+
+}
+
+
+TriDiagonal TriDiagonal::operator+(const TriDiagonal& rhs) {
+
+	TriDiagonal result(*this);
+
+	matrix_addition<TriDiagonal>(*this, rhs, result);
+
+	return result;
+
+}
+
+
+TriDiagonal TriDiagonal::operator+=(const TriDiagonal& rhs) {
+
+	matrix_addition<TriDiagonal>(*this, rhs, *this);
+
+	return *this;
+
+}
+
+
+TriDiagonal TriDiagonal::operator-(const TriDiagonal& rhs) {
+
+	return *this + (-1.0) * rhs;
+
+}
+
+
+TriDiagonal TriDiagonal::operator-=(const TriDiagonal& rhs) {
+	
+	*this += (-1.0) * rhs;
+
+	return *this;
+
+}
+
+
+PentaDiagonal PentaDiagonal::operator*(const double scalar) {
+
+	PentaDiagonal result(*this);
+
+	scalar_multiply_matrix<PentaDiagonal>(scalar, result);
+
+	return result;
+
+}
+
+
+PentaDiagonal PentaDiagonal::operator*=(const double scalar) {
+
+	scalar_multiply_matrix<PentaDiagonal>(scalar, *this);
+
+	return *this;
+
+}
+
+
+PentaDiagonal PentaDiagonal::operator+(const PentaDiagonal& rhs) {
+
+	PentaDiagonal result(*this);
+
+	matrix_addition<PentaDiagonal>(*this, rhs, result);
+
+	return result;
+
+}
+
+
+PentaDiagonal PentaDiagonal::operator+=(const PentaDiagonal& rhs) {
+
+	matrix_addition<PentaDiagonal>(*this, rhs, *this);
+
+	return *this;
+
+}
+
+
+PentaDiagonal PentaDiagonal::operator-(const PentaDiagonal& rhs) {
+
+	return *this + (-1.0) * rhs;
+
+}
+
+
+PentaDiagonal PentaDiagonal::operator-=(const PentaDiagonal& rhs) {
+
+	*this += (-1.0) * rhs;
+
+	return *this;
+
 }
 
 
@@ -422,5 +548,76 @@ void print_matrix(BandDiagonal matrix) {
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
+
+}
+
+
+TriDiagonal operator*(const double scalar, TriDiagonal rhs) {
+
+	return rhs * scalar;
+
+}
+
+
+PentaDiagonal operator*(const double scalar, PentaDiagonal rhs) {
+
+	return rhs * scalar;
+
+}
+
+
+// TODO: Should the function be void?
+template<class T>
+void scalar_multiply_matrix(const double scalar, T& matrix) {
+
+	int i_initial = matrix.n_boundary_rows();
+	int i_final = matrix.order() - matrix.n_boundary_rows();
+	int j_initial = 0;
+	int j_final = matrix.n_diagonals();
+
+	for (int i = i_initial; i != i_final; ++i) {
+		for (int j = j_initial; j != j_final; ++j) {
+			matrix.matrix[j][i] *= scalar;
+		}
+	}
+
+	i_initial = 0;
+	i_final = 2 * matrix.n_boundary_rows();
+	j_initial = 0;
+	j_final = matrix.n_boundary_elements();
+
+	for (int i = i_initial; i != i_final; ++i) {
+		for (int j = j_initial; j != j_final; ++j) {
+			matrix.boundary_rows[i][j] *= scalar;
+		}
+	}
+
+}
+
+// TODO: Should the function be void?
+template<class T>
+void matrix_addition(const T& matrix1, const T& matrix2, T& result) {
+
+	int i_initial = result.n_boundary_rows();
+	int i_final = result.order() - result.n_boundary_rows();
+	int j_initial = 0;
+	int j_final = result.n_diagonals();
+
+	for (int i = i_initial; i != i_final; ++i) {
+		for (int j = j_initial; j != j_final; ++j) {
+			result.matrix[j][i] = matrix1.matrix[j][i] + matrix2.matrix[j][i];
+		}
+	}
+
+	i_initial = 0;
+	i_final = 2 * result.n_boundary_rows();
+	j_initial = 0;
+	j_final = result.n_boundary_elements();
+
+	for (int i = i_initial; i != i_final; ++i) {
+		for (int j = j_initial; j != j_final; ++j) {
+			result.boundary_rows[i][j] = matrix1.boundary_rows[i][j] + matrix2.boundary_rows[i][j];
+		}
+	}
 
 }

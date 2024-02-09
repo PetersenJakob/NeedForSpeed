@@ -537,9 +537,7 @@ T setup(
 	T matrix(order, n_boundary_rows, (n_boundary_rows - 1) + n_boundary_elements);
 
 	for (int i = 0; i != coef.size(); ++i) {
-
 		for (int j = n_boundary_rows; j != order - n_boundary_rows; ++j) {
-//		for (int j = 0; j != order; ++j) {
 			matrix.matrix[i][j] = coef[i];
 		}
 	}
@@ -561,6 +559,40 @@ void boundary(const int row_index, const std::vector<double>& coef, T& matrix) {
 	for (int i = 0; i != coef.size(); ++i) {
 		matrix.boundary_rows[row_index][index_tmp + i] = coef[i];
 	}
+
+}
+
+
+// Identity operator; TriDiagonal matrix.
+TriDiagonal identity::tri(const int order, const int n_boundary_elements) {
+
+	TriDiagonal matrix = setup<TriDiagonal>(order, { 0.0, 1.0, 0.0 }, 1, n_boundary_elements);
+
+	std::vector<double> coefficients(n_boundary_elements, 0.0);
+	coefficients[0] = 1.0;
+
+	boundary<TriDiagonal>(0, coefficients, matrix);
+	boundary<TriDiagonal>(1, reverse_order(coefficients), matrix);
+
+	return matrix;
+
+}
+
+
+// Identity operator; PentaDiagonal matrix.
+PentaDiagonal identity::penta(const int order, const int n_boundary_elements) {
+
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, { 0.0, 0.0, 1.0, 0.0, 0.0 }, 2, n_boundary_elements);
+
+	std::vector<double> coefficients(n_boundary_elements, 0.0);
+	coefficients[0] = 1.0;
+
+	boundary<PentaDiagonal>(0, coefficients, matrix);
+	boundary<PentaDiagonal>(1, coefficients, matrix);
+	boundary<PentaDiagonal>(2, reverse_order(coefficients), matrix);
+	boundary<PentaDiagonal>(3, reverse_order(coefficients), matrix);
+
+	return matrix;
 
 }
 
