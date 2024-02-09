@@ -133,7 +133,6 @@
     <ClCompile Include="band_diagonal_matrix.cpp" />
     <ClCompile Include="finite_difference.cpp" />
     <ClCompile Include="grid_generator.cpp" />
-    <ClCompile Include="test_module.cpp" />
     <ClCompile Include="test_util.cpp" />
     <ClCompile Include="tridiagonal_matrix_solver.cpp" />
   </ItemGroup>

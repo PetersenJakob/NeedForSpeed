@@ -62,6 +62,9 @@ namespace d2dx2 {
 	// Finite difference representations on equidistant grid.
 	namespace equidistant {
 
+		// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
+		TriDiagonal c2b0(const int order, const double dx);
+
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const double dx);
 
@@ -75,6 +78,9 @@ namespace d2dx2 {
 
 	// Finite difference representations on non-equidistant grid.
 	namespace nonequidistant {
+
+		// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
+		TriDiagonal c2b0(const int order, const std::vector<double> grid);
 
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const std::vector<double> grid);

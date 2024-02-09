@@ -656,6 +656,19 @@ PentaDiagonal d1dx1::equidistant::c4b4(const int order, const double dx) {
 
 
 // Second order derivative operator.
+// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
+TriDiagonal d2dx2::equidistant::c2b0(const int order, const double dx) {
+
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef2::equidistant::c2(dx), 1, 2);
+	boundary<TriDiagonal>(0, { 0.0, 0.0 }, matrix);
+	boundary<TriDiagonal>(1, { 0.0, 0.0 }, matrix);
+
+	return matrix;
+
+}
+
+
+// Second order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 TriDiagonal d2dx2::equidistant::c2b1(const int order, const double dx) {
 
@@ -814,6 +827,20 @@ PentaDiagonal d1dx1::nonequidistant::c4b2(const int order, const std::vector<dou
 
 	std::vector<double> dx_vec_4 = { 0.0, 0.0, grid[order - 1] - grid[order - 2], grid[order - 2] - grid[order - 3] };
 	boundary<PentaDiagonal>(3, coef1::nonequidistant::b2(dx_vec_4), matrix);
+
+	return matrix;
+
+}
+
+
+// Second order derivative operator.
+// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
+TriDiagonal d2dx2::nonequidistant::c2b0(const int order, const std::vector<double> grid) {
+
+	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef2::nonequidistant::c2, 1, 2);
+
+	boundary<TriDiagonal>(0, { 0.0, 0.0 }, matrix);
+	boundary<TriDiagonal>(1, { 0.0, 0.0 }, matrix);
 
 	return matrix;
 

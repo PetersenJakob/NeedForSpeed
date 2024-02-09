@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 data = pd.read_csv("grid.csv", sep=",", header=None)
 
 plt.plot(data[0], 1 + 0 * data[0], ".b", label="Uniform")
