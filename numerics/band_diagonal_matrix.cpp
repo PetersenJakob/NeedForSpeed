@@ -592,8 +592,6 @@ void scalar_multiply_matrix(const double scalar, T& matrix) {
 		}
 	}
 
-//	return matrix;
-
 }
 
 // TODO: Should the function be void?
@@ -621,7 +619,5 @@ void matrix_addition(const T& matrix1, const T& matrix2, T& result) {
 			result.boundary_rows[i][j] = matrix1.boundary_rows[i][j] + matrix2.boundary_rows[i][j];
 		}
 	}
-
-//	return result;
 
 }

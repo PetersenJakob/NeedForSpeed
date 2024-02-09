@@ -6,9 +6,9 @@
 // Spare matrix representation of identity operator.
 namespace identity {
 
-	TriDiagonal tri(const int order);
+	TriDiagonal tri(const int order, const int n_boundary_elements = 2);
 
-	PentaDiagonal penta(const int order);
+	PentaDiagonal penta(const int order, const int n_boundary_elements = 3);
 
 }
 

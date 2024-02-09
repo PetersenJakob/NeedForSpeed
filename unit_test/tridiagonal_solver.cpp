@@ -60,7 +60,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 
 		lhs *= -theta * dt;
 
-		TriDiagonal iden = identity::tri(n_points);
+		TriDiagonal iden = identity::tri(n_points, 3);
 
 		lhs = lhs + iden;
 
