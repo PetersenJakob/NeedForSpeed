@@ -24,7 +24,7 @@
     <ClCompile Include="grid_generator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tridiagonal_matrix_solver.cpp">
+    <ClCompile Include="matrix_equation_solver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test_util.cpp">
@@ -41,7 +41,7 @@
     <ClInclude Include="grid_generator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tridiagonal_matrix_solver.h">
+    <ClInclude Include="matrix_equation_solver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="test_util.h">

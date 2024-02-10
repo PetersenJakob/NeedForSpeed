@@ -134,14 +134,14 @@
     <ClCompile Include="finite_difference.cpp" />
     <ClCompile Include="grid_generator.cpp" />
     <ClCompile Include="test_util.cpp" />
-    <ClCompile Include="tridiagonal_matrix_solver.cpp" />
+    <ClCompile Include="matrix_equation_solver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="band_diagonal_matrix.h" />
     <ClInclude Include="grid_generator.h" />
     <ClInclude Include="finite_difference.h" />
     <ClInclude Include="test_util.h" />
-    <ClInclude Include="tridiagonal_matrix_solver.h" />
+    <ClInclude Include="matrix_equation_solver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

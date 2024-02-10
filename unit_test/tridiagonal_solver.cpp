@@ -23,6 +23,9 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 	int n_points_start = 51;
 	int n_points = 0;
 
+	// Theta parameter.
+	const double theta = 0.5;
+
 	for (int i = 0; i != 50; ++i) {
 
 		// Step size in time.
@@ -58,9 +61,6 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		// Identity operator.
 		TriDiagonal iden = identity::tri(n_points, 2);
 
-		// Theta parameter.
-		const double theta = 0.5;
-
 		// LHS operator.
 		TriDiagonal lhs = deriv_operator;
 		lhs *= -theta * dt;
@@ -73,6 +73,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 
 		// FD solution.
 		std::vector<double> solution_fd = func;
+
 		for (int i = 0; i != n_steps; ++i) {
 
 			solution_fd = rhs * solution_fd;

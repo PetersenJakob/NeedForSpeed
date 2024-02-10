@@ -2,31 +2,12 @@
 #include <vector>
 
 #include "band_diagonal_matrix.h"
-#include "tridiagonal_matrix_solver.h"
+#include "matrix_equation_solver.h"
 
 
 void tri_solver(TriDiagonal& matrix, std::vector<double>& column) {
 
-#if false
-	print_matrix(matrix);
-	std::cout << "Column vector before: " << std::endl;
-	for (int i = 0; i != column.size(); ++i) {
-		std::cout << column[i] << std::endl;
-	}
-	std::cout << std::endl;
-#endif
-
-//	matrix.adjust_boundary
 	matrix.adjust_boundary(column);
-
-#if false
-	print_matrix(matrix);
-	std::cout << "Column vector after: " << std::endl;
-	for (int i = 0; i != column.size(); ++i) {
-		std::cout << column[i] << std::endl;
-	}
-	std::cout << std::endl;
-#endif
 
 	std::vector<double> vec_tmp(matrix.order(), 0.0);
 
@@ -42,26 +23,7 @@ void tri_solver(TriDiagonal& matrix, std::vector<double>& column) {
 
 void penta_solver(PentaDiagonal& matrix, std::vector<double>& column) {
 
-#if false
-	print_matrix(matrix);
-	std::cout << "Column vector before: " << std::endl;
-	for (int i = 0; i != column.size(); ++i) {
-		std::cout << column[i] << std::endl;
-	}
-	std::cout << std::endl;
-#endif
-
-	//	matrix.adjust_boundary
 	matrix.adjust_boundary(column);
-
-#if false
-	print_matrix(matrix);
-	std::cout << "Column vector after: " << std::endl;
-	for (int i = 0; i != column.size(); ++i) {
-		std::cout << column[i] << std::endl;
-	}
-	std::cout << std::endl;
-#endif
 
 	std::vector<double> sub_tmp(matrix.order(), 0.0);
 	std::vector<double> main_tmp(matrix.order(), 0.0);
