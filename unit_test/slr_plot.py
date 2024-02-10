@@ -46,7 +46,7 @@ print("L2 function norm: ", coef_l2_func)
 poly1d_fn_l2_func = np.poly1d(coef_l2_func)
 plt.plot(data[1], poly1d_fn_l2_func(data[1]), '-y', label="L2 func")
 
-plt.xlabel("log(dx)")
+plt.xlabel("log(step size)")
 plt.ylabel("log(error)")
 plt.legend()
 
