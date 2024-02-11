@@ -9,9 +9,9 @@ TEST(TriDiagonal, Operators) {
 
 	TriDiagonal iden = identity::tri(n_points);
 
-	TriDiagonal tri1 = d1dx1::equidistant::c2b1(n_points, 0.1);
+	TriDiagonal tri1 = d1dx1::uniform::c2b1(n_points, 0.1);
 
-	TriDiagonal tri2 = d1dx1::equidistant::c2b1(n_points, 0.05);
+	TriDiagonal tri2 = d1dx1::uniform::c2b1(n_points, 0.05);
 
 	if (print_data) {
 
@@ -48,12 +48,12 @@ TEST(PentaDiagonal, Operators) {
 
 	PentaDiagonal iden = identity::penta(n_points);
 
-	std::vector<double> grid1 = grid::equidistant(0.0, 1.0, n_points);
-	std::vector<double> grid2 = grid::equidistant(0.0, 0.5, n_points);
+	std::vector<double> grid1 = grid::uniform(0.0, 1.0, n_points);
+	std::vector<double> grid2 = grid::uniform(0.0, 0.5, n_points);
 
-	PentaDiagonal penta1 = d1dx1::nonequidistant::c4b2(n_points, grid1);
+	PentaDiagonal penta1 = d1dx1::nonuniform::c4b2(n_points, grid1);
 
-	PentaDiagonal penta2 = d1dx1::nonequidistant::c4b2(n_points, grid2);
+	PentaDiagonal penta2 = d1dx1::nonuniform::c4b2(n_points, grid2);
 
 	if (print_data) {
 

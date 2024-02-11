@@ -17,7 +17,7 @@ namespace identity {
 namespace d1dx1 {
 
 	// Finite difference representation on uniform grid.
-	namespace equidistant {
+	namespace uniform {
 
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const double dx);
@@ -40,7 +40,7 @@ namespace d1dx1 {
 	}
 
 	// Finite difference representation on non-uniform grid.
-	namespace nonequidistant {
+	namespace nonuniform {
 
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const std::vector<double> grid);
@@ -60,7 +60,7 @@ namespace d1dx1 {
 namespace d2dx2 {
 
 	// Finite difference representation on uniform grid.
-	namespace equidistant {
+	namespace uniform {
 
 		// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
 		TriDiagonal c2b0(const int order, const double dx);
@@ -77,7 +77,7 @@ namespace d2dx2 {
 	}
 
 	// Finite difference representation on non-uniform grid.
-	namespace nonequidistant {
+	namespace nonuniform {
 
 		// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
 		TriDiagonal c2b0(const int order, const std::vector<double> grid);

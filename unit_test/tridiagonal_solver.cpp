@@ -151,9 +151,9 @@ std::vector<double> heat_equation_1d(
 
 		// Time grid.
 		std::vector<double> t_grid;
-		if (t_grid_type == "equidistant")
+		if (t_grid_type == "uniform")
 		{
-			t_grid = grid::equidistant(0.0, t_interval, t_points);
+			t_grid = grid::uniform(0.0, t_interval, t_points);
 		}
 		else if (t_grid_type == "exponential")
 		{
@@ -172,9 +172,9 @@ std::vector<double> heat_equation_1d(
 
 		// Spatial grid. TODO: Chosen such that d2dx2 = 0 at boundary for analytical solution!
 		std::vector<double> x_grid;
-		if (x_grid_type == "equidistant")
+		if (x_grid_type == "uniform")
 		{
-			x_grid = grid::equidistant(-0.5, 0.5, x_points);
+			x_grid = grid::uniform(-0.5, 0.5, x_points);
 		}
 		else if (x_grid_type == "exponential")
 		{
@@ -214,11 +214,11 @@ std::vector<double> heat_equation_1d(
 		// Second order differential operator.
 		TriDiagonal deriv_operator(x_points);
 
-		if (d2dx2_type == "d2dx2::equidistant::c2b0") {
-			deriv_operator = d2dx2::equidistant::c2b0(x_points, dx);
+		if (d2dx2_type == "d2dx2::uniform::c2b0") {
+			deriv_operator = d2dx2::uniform::c2b0(x_points, dx);
 		}
-		else if (d2dx2_type == "d2dx2::nonequidistant::c2b0") {
-			deriv_operator = d2dx2::nonequidistant::c2b0(x_points, x_grid);
+		else if (d2dx2_type == "d2dx2::nonuniform::c2b0") {
+			deriv_operator = d2dx2::nonuniform::c2b0(x_points, x_grid);
 		}
 		else {
 			throw std::invalid_argument("d2dx2_type unknown.");
@@ -320,7 +320,7 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		101,
 		0.03,
 		"exponential",
-		"d2dx2::nonequidistant::c2b0",
+		"d2dx2::nonuniform::c2b0",
 		"cos(pi*x)",
 		20,
 		0.5);
@@ -338,8 +338,8 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		"hyperbolic",
 		201,
 		0.03,
-		"equidistant",
-		"d2dx2::nonequidistant::c2b0",
+		"uniform",
+		"d2dx2::nonuniform::c2b0",
 		"cos(3*pi*x)",
 		20,
 		0.5);
@@ -357,8 +357,8 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 		"hyperbolic",
 		10001,
 		0.03,
-		"equidistant",
-		"d2dx2::nonequidistant::c2b0",
+		"uniform",
+		"d2dx2::nonuniform::c2b0",
 		"cos(pi*x)",
 		20,
 		1.0);
@@ -377,11 +377,11 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 	std::vector<double> time1 = heat_equation_1d(
 		"time",
 		5001,
-		"equidistant",
+		"uniform",
 		11,
 		0.03,
 		"exponential",
-		"d2dx2::equidistant::c2b0",
+		"d2dx2::uniform::c2b0",
 		"cos(pi*x)",
 		20,
 		0.5);
@@ -396,11 +396,11 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 	std::vector<double> time2 = heat_equation_1d(
 		"time",
 		5001,
-		"equidistant",
+		"uniform",
 		11,
 		0.03,
-		"equidistant",
-		"d2dx2::equidistant::c2b0",
+		"uniform",
+		"d2dx2::uniform::c2b0",
 		"cos(3*pi*x)",
 		20,
 		0.5);
@@ -415,11 +415,11 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 	std::vector<double> time3 = heat_equation_1d(
 		"time",
 		5001,
-		"equidistant",
+		"uniform",
 		11,
 		0.03,
-		"equidistant",
-		"d2dx2::equidistant::c2b0",
+		"uniform",
+		"d2dx2::uniform::c2b0",
 		"cos(pi*x)",
 		20,
 		1.0);

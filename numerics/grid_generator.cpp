@@ -4,7 +4,7 @@
 #include "grid_generator.h"
 
 
-std::vector<double> grid::equidistant(
+std::vector<double> grid::uniform(
 	const double x_min, 
 	const double x_max, 
 	const int n_points) {
@@ -34,7 +34,7 @@ std::vector<double> grid::exponential(
 
 	const double eta = (x_max - x_min) / (exp(scaling) - 1.0);
 
-	std::vector<double> grid = grid::equidistant(x_min, x_max, n_points);
+	std::vector<double> grid = grid::uniform(x_min, x_max, n_points);
 
 	double z;
 
@@ -65,7 +65,7 @@ std::vector<double> grid::hyperbolic(
 
 	const double gamma = asinh((x_max - x_center) / beta) - delta;
 	
-	std::vector<double> grid = grid::equidistant(x_min, x_max, n_points);
+	std::vector<double> grid = grid::uniform(x_min, x_max, n_points);
 
 	double z;
 

@@ -7,7 +7,7 @@
 namespace grid {
 
 	// TODO: Rename to uniform
-	std::vector<double> equidistant(
+	std::vector<double> uniform(
 		const double x_min, 
 		const double x_max, 
 		const int n_points);
