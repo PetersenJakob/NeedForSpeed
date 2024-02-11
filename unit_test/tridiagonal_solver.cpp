@@ -103,6 +103,7 @@ std::vector<double> heat_equation_1d(
 	const double t_interval,
 	const std::string t_grid_type,
 	const std::string d2dx2_type,
+	const std::string solution_type,
 	const int n_iterations = 50,
 	const double theta = 0.5) {
 
@@ -120,6 +121,18 @@ std::vector<double> heat_equation_1d(
 
 	int t_points = t_points_start;
 	int x_points = x_points_start;
+
+	// Lambda parameter. See wiki page for heat equation.
+	double lambda = 0.0;
+	if (solution_type == "cos(pi*x)") {
+		lambda = pow(1 * M_PI, 2);
+	}
+	else if (solution_type == "cos(3*pi*x)") {
+		lambda = pow(3 * M_PI, 2);
+	}
+	else {
+		throw std::invalid_argument("Unknown solution type.");
+	}
 
 	// Convergence rate wrt spatial dimension.
 	for (int i = 0; i != n_iterations; ++i) {
@@ -188,15 +201,11 @@ std::vector<double> heat_equation_1d(
 			throw std::invalid_argument("convergence_type unknown.");
 		}
 
-
-
 		// Initial condition.
 		std::vector<double> func(x_points, 0.0);
 		for (int i = 0; i != x_points; ++i) {
-			func[i] = cos(M_PI * x_grid[i]);
+			func[i] = cos(sqrt(lambda) * x_grid[i]);
 		}
-
-
 
 		// ################
 		// Setup operators.
@@ -255,7 +264,7 @@ std::vector<double> heat_equation_1d(
 
 		std::vector<double> analytical(x_points, 0.0);
 		for (int i = 0; i != x_points; ++i) {
-			analytical[i] = exp(-pow(M_PI, 2.0) * t_interval) * func[i];
+			analytical[i] = exp(-lambda * t_interval) * func[i];
 		}
 
 		if (show_output_all) {
@@ -297,32 +306,52 @@ std::vector<double> heat_equation_1d(
 }
 
 
-TEST(TriDiagonalSolver, HeatEquation1D_test) {
+TEST(TriDiagonalSolver, HeatEquation1D) {
 
 	// ####################################
 	// Convergence rate in space dimension.
 	// ####################################
 
-	// Crank-Nicolson.
+	// Crank-Nicolson. cos(pi * x)
 	std::vector<double> space1 = heat_equation_1d(
 		"space",
 		31,
 		"hyperbolic",
 		101,
 		0.03,
-		"equidistant",
+		"exponential",
 		"d2dx2::nonequidistant::c2b0",
+		"cos(pi*x)",
 		20,
 		0.5);
 
 	// Maximum norm.
-	EXPECT_NEAR(space1[0], 2.0, 0.009);
+	EXPECT_NEAR(space1[0], 2.0, 0.008);
 
 	// L1 function norm.
-	EXPECT_NEAR(space1[3], 2.0, 0.013);
+	EXPECT_NEAR(space1[3], 2.0, 0.011);
+
+	// Crank-Nicolson. cos(3 * pi * x)
+	std::vector<double> space2 = heat_equation_1d(
+		"space",
+		51,
+		"hyperbolic",
+		201,
+		0.03,
+		"equidistant",
+		"d2dx2::nonequidistant::c2b0",
+		"cos(3*pi*x)",
+		20,
+		0.5);
+
+	// Maximum norm.
+	EXPECT_NEAR(space2[0], 2.0, 0.009);
+
+	// L1 function norm.
+	EXPECT_NEAR(space2[3], 2.0, 0.009);
 
 	// Fully implicit.
-	std::vector<double> space2 = heat_equation_1d(
+	std::vector<double> space3 = heat_equation_1d(
 		"space",
 		31,
 		"hyperbolic",
@@ -330,14 +359,15 @@ TEST(TriDiagonalSolver, HeatEquation1D_test) {
 		0.03,
 		"equidistant",
 		"d2dx2::nonequidistant::c2b0",
+		"cos(pi*x)",
 		20,
 		1.0);
 
 	// Maximum norm.
-	EXPECT_NEAR(space2[0], 2.0, 0.028);
+	EXPECT_NEAR(space3[0], 2.0, 0.028);
 
 	// L1 function norm.
-	EXPECT_NEAR(space2[3], 2.0, 0.043);
+	EXPECT_NEAR(space3[3], 2.0, 0.043);
 
 	// ###################################
 	// Convergence rate in time dimension.
@@ -350,8 +380,9 @@ TEST(TriDiagonalSolver, HeatEquation1D_test) {
 		"equidistant",
 		11,
 		0.03,
-		"equidistant",
+		"exponential",
 		"d2dx2::equidistant::c2b0",
+		"cos(pi*x)",
 		20,
 		0.5);
 
@@ -361,7 +392,7 @@ TEST(TriDiagonalSolver, HeatEquation1D_test) {
 	// L1 function norm.
 	EXPECT_NEAR(time1[3], 2.0, 0.021);
 
-	// Fully implicit.
+	// Crank-Nicolson. 
 	std::vector<double> time2 = heat_equation_1d(
 		"time",
 		5001,
@@ -370,13 +401,33 @@ TEST(TriDiagonalSolver, HeatEquation1D_test) {
 		0.03,
 		"equidistant",
 		"d2dx2::equidistant::c2b0",
+		"cos(3*pi*x)",
+		20,
+		0.5);
+
+	// Maximum norm.
+	EXPECT_NEAR(time2[0], 2.0, 0.004);
+
+	// L1 function norm.
+	EXPECT_NEAR(time2[3], 2.0, 0.004);
+
+	// Fully implicit.
+	std::vector<double> time3 = heat_equation_1d(
+		"time",
+		5001,
+		"equidistant",
+		11,
+		0.03,
+		"equidistant",
+		"d2dx2::equidistant::c2b0",
+		"cos(pi*x)",
 		20,
 		1.0);
 
 	// Maximum norm.
-	EXPECT_NEAR(time2[0], 1.0, 0.057);
+	EXPECT_NEAR(time3[0], 1.0, 0.057);
 
 	// L1 function norm.
-	EXPECT_NEAR(time2[3], 1.0, 0.057);
+	EXPECT_NEAR(time3[3], 1.0, 0.057);
 
 }
