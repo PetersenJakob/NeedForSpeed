@@ -112,7 +112,7 @@ TriDiagonal TriDiagonal::operator+(const TriDiagonal& rhs) {
 
 	TriDiagonal result(*this);
 
-	matrix_addition<TriDiagonal>(*this, rhs, result);
+	matrix_add_matrix<TriDiagonal>(*this, rhs, result);
 
 	return result;
 
@@ -121,7 +121,7 @@ TriDiagonal TriDiagonal::operator+(const TriDiagonal& rhs) {
 
 TriDiagonal TriDiagonal::operator+=(const TriDiagonal& rhs) {
 
-	matrix_addition<TriDiagonal>(*this, rhs, *this);
+	matrix_add_matrix<TriDiagonal>(*this, rhs, *this);
 
 	return *this;
 
@@ -179,7 +179,7 @@ PentaDiagonal PentaDiagonal::operator+(const PentaDiagonal& rhs) {
 
 	PentaDiagonal result(*this);
 
-	matrix_addition<PentaDiagonal>(*this, rhs, result);
+	matrix_add_matrix<PentaDiagonal>(*this, rhs, result);
 
 	return result;
 
@@ -188,7 +188,7 @@ PentaDiagonal PentaDiagonal::operator+(const PentaDiagonal& rhs) {
 
 PentaDiagonal PentaDiagonal::operator+=(const PentaDiagonal& rhs) {
 
-	matrix_addition<PentaDiagonal>(*this, rhs, *this);
+	matrix_add_matrix<PentaDiagonal>(*this, rhs, *this);
 
 	return *this;
 
@@ -543,7 +543,7 @@ void matrix_multiply_vector(const T& matrix, const std::vector<double>& vector, 
 
 
 template<class T>
-void matrix_addition(const T& matrix1, const T& matrix2, T& result) {
+void matrix_add_matrix(const T& matrix1, const T& matrix2, T& result) {
 
 	int i_initial = result.n_boundary_rows();
 	int i_final = result.order() - result.n_boundary_rows();

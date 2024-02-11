@@ -38,7 +38,7 @@ public:
 
 	BandDiagonal(const BandDiagonal& mat);
 
-	// Why is this inhrited by derived classes?
+	// Why is this inherited by derived classes?
 	bool operator==(const BandDiagonal& m);
 
 	int order() const {
@@ -153,4 +153,4 @@ void matrix_multiply_vector(const T& matrix, const std::vector<double>& vector, 
 
 
 template<class T>
-void matrix_addition(const T& matrix1, const T& matrix2, T& result);
+void matrix_add_matrix(const T& matrix1, const T& matrix2, T& result);

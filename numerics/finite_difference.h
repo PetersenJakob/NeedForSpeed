@@ -3,7 +3,7 @@
 #include "band_diagonal_matrix.h"
 
 
-// Spare matrix representation of identity operator.
+// Matrix representation of identity operator.
 namespace identity {
 
 	TriDiagonal tri(const int order, const int n_boundary_elements = 2);
@@ -13,10 +13,10 @@ namespace identity {
 }
 
 
-// Finite difference representations of first order derivative operator.
+// Finite difference representation of first order derivative operator.
 namespace d1dx1 {
 
-	// Finite difference representations on equidistant grid.
+	// Finite difference representation on uniform grid.
 	namespace equidistant {
 
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
@@ -39,7 +39,7 @@ namespace d1dx1 {
 
 	}
 
-	// Finite difference representations on non-equidistant grid.
+	// Finite difference representation on non-uniform grid.
 	namespace nonequidistant {
 
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
@@ -56,10 +56,10 @@ namespace d1dx1 {
 }
 
 
-// Finite difference representations of second order derivative operator.
+// Finite difference representation of second order derivative operator.
 namespace d2dx2 {
 
-	// Finite difference representations on equidistant grid.
+	// Finite difference representation on uniform grid.
 	namespace equidistant {
 
 		// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
@@ -76,7 +76,7 @@ namespace d2dx2 {
 
 	}
 
-	// Finite difference representations on non-equidistant grid.
+	// Finite difference representation on non-uniform grid.
 	namespace nonequidistant {
 
 		// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
