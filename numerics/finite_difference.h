@@ -3,7 +3,7 @@
 #include "band_diagonal_matrix.h"
 
 
-// Spare matrix representation of identity operator.
+// Matrix representation of identity operator.
 namespace identity {
 
 	TriDiagonal tri(const int order, const int n_boundary_elements = 2);
@@ -13,11 +13,11 @@ namespace identity {
 }
 
 
-// Finite difference representations of first order derivative operator.
+// Finite difference representation of first order derivative operator.
 namespace d1dx1 {
 
-	// Finite difference representations on equidistant grid.
-	namespace equidistant {
+	// Finite difference representation on uniform grid.
+	namespace uniform {
 
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const double dx);
@@ -39,8 +39,8 @@ namespace d1dx1 {
 
 	}
 
-	// Finite difference representations on non-equidistant grid.
-	namespace nonequidistant {
+	// Finite difference representation on non-uniform grid.
+	namespace nonuniform {
 
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const std::vector<double> grid);
@@ -56,11 +56,14 @@ namespace d1dx1 {
 }
 
 
-// Finite difference representations of second order derivative operator.
+// Finite difference representation of second order derivative operator.
 namespace d2dx2 {
 
-	// Finite difference representations on equidistant grid.
-	namespace equidistant {
+	// Finite difference representation on uniform grid.
+	namespace uniform {
+
+		// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
+		TriDiagonal c2b0(const int order, const double dx);
 
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const double dx);
@@ -73,8 +76,11 @@ namespace d2dx2 {
 
 	}
 
-	// Finite difference representations on non-equidistant grid.
-	namespace nonequidistant {
+	// Finite difference representation on non-uniform grid.
+	namespace nonuniform {
+
+		// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
+		TriDiagonal c2b0(const int order, const std::vector<double> grid);
 
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const std::vector<double> grid);

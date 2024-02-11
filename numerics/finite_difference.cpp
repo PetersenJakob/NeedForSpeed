@@ -37,9 +37,9 @@ std::vector<double> adjust_coefficients(std::vector<double> coefficients, const 
 // Finite difference coefficients for first order derivative operator.
 namespace coef1 {
 
-	// Finite difference representations on equidistant grid.
+	// Finite difference representation on uniform grid.
 	// See Fornberg (1988).
-	namespace equidistant {
+	namespace uniform {
 
 		// Central difference; 2nd order accuracy.
 		std::vector<double> c2_coefficients{
@@ -165,9 +165,9 @@ namespace coef1 {
 
 	}
 
-	// Finite difference representations on non-equidistant grid.
+	// Finite difference representation on non-uniform grid.
 	// See Sundqvist and Veronis (1970).
-	namespace nonequidistant {
+	namespace nonuniform {
 
 		// dx_vector: Step size vector with four elements [dx(-2), dx(-1), dx(+1), dx(+2)].
 
@@ -294,9 +294,9 @@ namespace coef1 {
 // Finite difference coefficients for second order derivative operator.
 namespace coef2 {
 
-	// Finite difference representations on equidistant grid.
+	// Finite difference representation on uniform grid.
 	// See Fornberg (1988).
-	namespace equidistant {
+	namespace uniform {
 
 		// Central difference; 2nd order accuracy.
 		std::vector<double> c2_coefficients{
@@ -426,9 +426,9 @@ namespace coef2 {
 
 	}
 
-	// Finite difference representations on non-equidistant grid.
+	// Finite difference representation on non-uniform grid.
 	// See Sundqvist and Veronis (1970).
-	namespace nonequidistant {
+	namespace nonuniform {
 
 		// dx_vector: Step size vector with four elements [dx(-2), dx(-1), dx(+1), dx(+2)].
 
@@ -526,7 +526,7 @@ namespace coef2 {
 }
 
 
-// Setting up finite difference representation of derivative operator on equidistant grid.
+// Setting up finite difference representation of derivative operator on uniform grid.
 template <class T>
 T setup(
 	const int order,
@@ -599,13 +599,13 @@ PentaDiagonal identity::penta(const int order, const int n_boundary_elements) {
 
 // First order derivative operator. 
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
-TriDiagonal d1dx1::equidistant::c2b1(const int order, const double dx) {
+TriDiagonal d1dx1::uniform::c2b1(const int order, const double dx) {
 
 	// TODO: If you choose two boundary rows with f1+f1 and b1+b1, what will the L2 function norm be?
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, coef1::equidistant::c2(dx), 1, 2);
-	boundary<TriDiagonal>(0, coef1::equidistant::f1(dx), matrix);
-	boundary<TriDiagonal>(1, coef1::equidistant::b1(dx), matrix);
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef1::uniform::c2(dx), 1, 2);
+	boundary<TriDiagonal>(0, coef1::uniform::f1(dx), matrix);
+	boundary<TriDiagonal>(1, coef1::uniform::b1(dx), matrix);
 
 	return matrix;
 
@@ -614,11 +614,11 @@ TriDiagonal d1dx1::equidistant::c2b1(const int order, const double dx) {
 
 // First order derivative operator. 
 // Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
-TriDiagonal d1dx1::equidistant::c2b2(const int order, const double dx) {
+TriDiagonal d1dx1::uniform::c2b2(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, coef1::equidistant::c2(dx), 1, 3);
-	boundary<TriDiagonal>(0, coef1::equidistant::f2(dx), matrix);
-	boundary<TriDiagonal>(1, coef1::equidistant::b2(dx), matrix);
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef1::uniform::c2(dx), 1, 3);
+	boundary<TriDiagonal>(0, coef1::uniform::f2(dx), matrix);
+	boundary<TriDiagonal>(1, coef1::uniform::b2(dx), matrix);
 
 	return matrix;
 
@@ -627,13 +627,13 @@ TriDiagonal d1dx1::equidistant::c2b2(const int order, const double dx) {
 
 // First order derivative operator. 
 // Central difference; 4th order accuracy. Boundary; 2nd order accuracy.
-PentaDiagonal d1dx1::equidistant::c4b2(const int order, const double dx) {
+PentaDiagonal d1dx1::uniform::c4b2(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef1::equidistant::c4(dx), 2, 3);
-	boundary<PentaDiagonal>(0, coef1::equidistant::f2(dx), matrix);
-	boundary<PentaDiagonal>(1, coef1::equidistant::f2(dx), matrix);
-	boundary<PentaDiagonal>(2, coef1::equidistant::b2(dx), matrix);
-	boundary<PentaDiagonal>(3, coef1::equidistant::b2(dx), matrix);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef1::uniform::c4(dx), 2, 3);
+	boundary<PentaDiagonal>(0, coef1::uniform::f2(dx), matrix);
+	boundary<PentaDiagonal>(1, coef1::uniform::f2(dx), matrix);
+	boundary<PentaDiagonal>(2, coef1::uniform::b2(dx), matrix);
+	boundary<PentaDiagonal>(3, coef1::uniform::b2(dx), matrix);
 
 	return matrix;
 
@@ -642,13 +642,26 @@ PentaDiagonal d1dx1::equidistant::c4b2(const int order, const double dx) {
 
 // First order derivative operator. 
 // Central difference; 4th order accuracy. Boundary; 4th order accuracy.
-PentaDiagonal d1dx1::equidistant::c4b4(const int order, const double dx) {
+PentaDiagonal d1dx1::uniform::c4b4(const int order, const double dx) {
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef1::equidistant::c4(dx), 2, 5);
-	boundary<PentaDiagonal>(0, coef1::equidistant::f4(dx), matrix);
-	boundary<PentaDiagonal>(1, coef1::equidistant::f4(dx), matrix);
-	boundary<PentaDiagonal>(2, coef1::equidistant::b4(dx), matrix);
-	boundary<PentaDiagonal>(3, coef1::equidistant::b4(dx), matrix);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef1::uniform::c4(dx), 2, 5);
+	boundary<PentaDiagonal>(0, coef1::uniform::f4(dx), matrix);
+	boundary<PentaDiagonal>(1, coef1::uniform::f4(dx), matrix);
+	boundary<PentaDiagonal>(2, coef1::uniform::b4(dx), matrix);
+	boundary<PentaDiagonal>(3, coef1::uniform::b4(dx), matrix);
+
+	return matrix;
+
+}
+
+
+// Second order derivative operator.
+// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
+TriDiagonal d2dx2::uniform::c2b0(const int order, const double dx) {
+
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef2::uniform::c2(dx), 1, 2);
+	boundary<TriDiagonal>(0, { 0.0, 0.0 }, matrix);
+	boundary<TriDiagonal>(1, { 0.0, 0.0 }, matrix);
 
 	return matrix;
 
@@ -657,11 +670,11 @@ PentaDiagonal d1dx1::equidistant::c4b4(const int order, const double dx) {
 
 // Second order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
-TriDiagonal d2dx2::equidistant::c2b1(const int order, const double dx) {
+TriDiagonal d2dx2::uniform::c2b1(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, coef2::equidistant::c2(dx), 1, 3);
-	boundary<TriDiagonal>(0, coef2::equidistant::f1(dx), matrix);
-	boundary<TriDiagonal>(1, coef2::equidistant::b1(dx), matrix);
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef2::uniform::c2(dx), 1, 3);
+	boundary<TriDiagonal>(0, coef2::uniform::f1(dx), matrix);
+	boundary<TriDiagonal>(1, coef2::uniform::b1(dx), matrix);
 
 	return matrix;
 
@@ -670,11 +683,11 @@ TriDiagonal d2dx2::equidistant::c2b1(const int order, const double dx) {
 
 // Second order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
-TriDiagonal d2dx2::equidistant::c2b2(const int order, const double dx) {
+TriDiagonal d2dx2::uniform::c2b2(const int order, const double dx) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, coef2::equidistant::c2(dx), 1, 4);
-	boundary<TriDiagonal>(0, coef2::equidistant::f2(dx), matrix);
-	boundary<TriDiagonal>(1, coef2::equidistant::b2(dx), matrix);
+	TriDiagonal matrix = setup<TriDiagonal>(order, coef2::uniform::c2(dx), 1, 4);
+	boundary<TriDiagonal>(0, coef2::uniform::f2(dx), matrix);
+	boundary<TriDiagonal>(1, coef2::uniform::b2(dx), matrix);
 
 	return matrix;
 
@@ -683,28 +696,28 @@ TriDiagonal d2dx2::equidistant::c2b2(const int order, const double dx) {
 
 // Second order derivative operator.
 // Central difference; 4th order accuracy. Boundary; TODO 1st order accuracy.
-PentaDiagonal d2dx2::equidistant::c4b4(const int order, const double dx) {
+PentaDiagonal d2dx2::uniform::c4b4(const int order, const double dx) {
 
 #if false
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef2::equidistant::c4(dx), 2, 3);
-	boundary<PentaDiagonal>(0, coef2::equidistant::f1(dx), matrix);
-	boundary<PentaDiagonal>(1, coef2::equidistant::f1(dx), matrix);
-	boundary<PentaDiagonal>(2, coef2::equidistant::b1(dx), matrix);
-	boundary<PentaDiagonal>(3, coef2::equidistant::b1(dx), matrix);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef2::uniform::c4(dx), 2, 3);
+	boundary<PentaDiagonal>(0, coef2::uniform::f1(dx), matrix);
+	boundary<PentaDiagonal>(1, coef2::uniform::f1(dx), matrix);
+	boundary<PentaDiagonal>(2, coef2::uniform::b1(dx), matrix);
+	boundary<PentaDiagonal>(3, coef2::uniform::b1(dx), matrix);
 #endif
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef2::equidistant::c4(dx), 2, 6);
-	boundary<PentaDiagonal>(0, coef2::equidistant::f4(dx), matrix);
-	boundary<PentaDiagonal>(1, coef2::equidistant::f4(dx), matrix);
-	boundary<PentaDiagonal>(2, coef2::equidistant::b4(dx), matrix);
-	boundary<PentaDiagonal>(3, coef2::equidistant::b4(dx), matrix);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef2::uniform::c4(dx), 2, 6);
+	boundary<PentaDiagonal>(0, coef2::uniform::f4(dx), matrix);
+	boundary<PentaDiagonal>(1, coef2::uniform::f4(dx), matrix);
+	boundary<PentaDiagonal>(2, coef2::uniform::b4(dx), matrix);
+	boundary<PentaDiagonal>(3, coef2::uniform::b4(dx), matrix);
 
 	return matrix;
 
 }
 
 
-// Setting up finite difference representation of derivative operator on non-equidistant grid.
+// Setting up finite difference representation of derivative operator on non-uniform grid.
 template <class T>
 T setup(
 	const int order,
@@ -762,15 +775,15 @@ T setup(
 
 // First order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
-TriDiagonal d1dx1::nonequidistant::c2b1(const int order, const std::vector<double> grid) {
+TriDiagonal d1dx1::nonuniform::c2b1(const int order, const std::vector<double> grid) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef1::nonequidistant::c2, 1, 2);
+	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef1::nonuniform::c2, 1, 2);
 
 	std::vector<double> dx_vec_first = { 0.0, 0.0, grid[1] - grid[0], 0.0 };
-	boundary<TriDiagonal>(0, coef1::nonequidistant::f1(dx_vec_first), matrix);
+	boundary<TriDiagonal>(0, coef1::nonuniform::f1(dx_vec_first), matrix);
 	// TODO: Should dx_last be reversed?
 	std::vector<double> dx_vec_last = { 0.0, 0.0, grid[order - 1] - grid[order - 2], 0.0 };
-	boundary<TriDiagonal>(1, coef1::nonequidistant::b1(dx_vec_last), matrix);
+	boundary<TriDiagonal>(1, coef1::nonuniform::b1(dx_vec_last), matrix);
 
 	return matrix;
 
@@ -779,16 +792,16 @@ TriDiagonal d1dx1::nonequidistant::c2b1(const int order, const std::vector<doubl
 
 // First order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
-TriDiagonal d1dx1::nonequidistant::c2b2(const int order, const std::vector<double> grid) {
+TriDiagonal d1dx1::nonuniform::c2b2(const int order, const std::vector<double> grid) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef1::nonequidistant::c2, 1, 3);
+	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef1::nonuniform::c2, 1, 3);
 
 	std::vector<double> dx_vec_first = { 0.0, 0.0, grid[1] - grid[0], grid[2] - grid[1] };
-	boundary<TriDiagonal>(0, coef1::nonequidistant::f2(dx_vec_first), matrix);
+	boundary<TriDiagonal>(0, coef1::nonuniform::f2(dx_vec_first), matrix);
 
 	// TODO: Should dx_last be reversed? Yes!
 	std::vector<double> dx_vec_last = { 0.0, 0.0, grid[order - 1] - grid[order - 2], grid[order - 2] - grid[order - 3] };
-	boundary<TriDiagonal>(1, coef1::nonequidistant::b2(dx_vec_last), matrix);
+	boundary<TriDiagonal>(1, coef1::nonuniform::b2(dx_vec_last), matrix);
 
 	return matrix;
 
@@ -797,23 +810,37 @@ TriDiagonal d1dx1::nonequidistant::c2b2(const int order, const std::vector<doubl
 
 // First order derivative operator.
 // Central difference; 4th order accuracy. Boundary; 2nd order accuracy.
-PentaDiagonal d1dx1::nonequidistant::c4b2(const int order, const std::vector<double> grid) {
+PentaDiagonal d1dx1::nonuniform::c4b2(const int order, const std::vector<double> grid) {
 
 	// TODO: Be able to choose c2 as second boundary row, and f1 as first boundary row.
 
-	PentaDiagonal matrix = setup<PentaDiagonal>(order, grid, coef1::nonequidistant::c4, 2, 3);
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, grid, coef1::nonuniform::c4, 2, 3);
 
 	std::vector<double> dx_vec_1 = { 0.0, 0.0, grid[1] - grid[0], grid[2] - grid[1] };
-	boundary<PentaDiagonal>(0, coef1::nonequidistant::f2(dx_vec_1), matrix);
+	boundary<PentaDiagonal>(0, coef1::nonuniform::f2(dx_vec_1), matrix);
 
 	std::vector<double> dx_vec_2 = { 0.0, 0.0, grid[2] - grid[1], grid[3] - grid[2] };
-	boundary<PentaDiagonal>(1, coef1::nonequidistant::f2(dx_vec_2), matrix);
+	boundary<PentaDiagonal>(1, coef1::nonuniform::f2(dx_vec_2), matrix);
 
 	std::vector<double> dx_vec_3 = { 0.0, 0.0, grid[order - 2] - grid[order - 3], grid[order - 3] - grid[order - 4] };
-	boundary<PentaDiagonal>(2, coef1::nonequidistant::b2(dx_vec_3), matrix);
+	boundary<PentaDiagonal>(2, coef1::nonuniform::b2(dx_vec_3), matrix);
 
 	std::vector<double> dx_vec_4 = { 0.0, 0.0, grid[order - 1] - grid[order - 2], grid[order - 2] - grid[order - 3] };
-	boundary<PentaDiagonal>(3, coef1::nonequidistant::b2(dx_vec_4), matrix);
+	boundary<PentaDiagonal>(3, coef1::nonuniform::b2(dx_vec_4), matrix);
+
+	return matrix;
+
+}
+
+
+// Second order derivative operator.
+// Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
+TriDiagonal d2dx2::nonuniform::c2b0(const int order, const std::vector<double> grid) {
+
+	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef2::nonuniform::c2, 1, 2);
+
+	boundary<TriDiagonal>(0, { 0.0, 0.0 }, matrix);
+	boundary<TriDiagonal>(1, { 0.0, 0.0 }, matrix);
 
 	return matrix;
 
@@ -822,15 +849,15 @@ PentaDiagonal d1dx1::nonequidistant::c4b2(const int order, const std::vector<dou
 
 // Second order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
-TriDiagonal d2dx2::nonequidistant::c2b1(const int order, const std::vector<double> grid) {
+TriDiagonal d2dx2::nonuniform::c2b1(const int order, const std::vector<double> grid) {
 
-	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef2::nonequidistant::c2, 1, 3);
+	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef2::nonuniform::c2, 1, 3);
 
 	std::vector<double> dx_vec_first = { 0.0, 0.0, grid[1] - grid[0], grid[2] - grid[1] };
-	boundary<TriDiagonal>(0, coef2::nonequidistant::f1(dx_vec_first), matrix);
+	boundary<TriDiagonal>(0, coef2::nonuniform::f1(dx_vec_first), matrix);
 	// TODO: Should dx_last be reversed?
 	std::vector<double> dx_vec_last = { 0.0, 0.0, grid[order - 1] - grid[order - 2], grid[order - 2] - grid[order - 3] };
-	boundary<TriDiagonal>(1, coef2::nonequidistant::b1(dx_vec_last), matrix);
+	boundary<TriDiagonal>(1, coef2::nonuniform::b1(dx_vec_last), matrix);
 
 	return matrix;
 

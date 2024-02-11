@@ -38,7 +38,7 @@ public:
 
 	BandDiagonal(const BandDiagonal& mat);
 
-	// Why is this inhrited by derived classes?
+	// Why is this inherited by derived classes?
 	bool operator==(const BandDiagonal& m);
 
 	int order() const {
@@ -60,21 +60,6 @@ public:
 	int n_boundary_elements() const {
 		return n_boundary_elements_;
 	}
-
-	// Add scalar to main diagonal.
-	void add_diagonal(const double scalar);
-
-	// Add vector to main diagonal.
-	void add_diagonal(const std::vector<double>& diagonal);
-
-	// Multiply each element with scalar.
-	void scalar_prod(const double scalar);
-
-	// Add two identical matrices.
-	BandDiagonal add_matrix(BandDiagonal mat);
-
-	// Matrix-vector product.
-	std::vector<double> mat_vec_prod(const std::vector<double>& column);
 
 	// ...
 	void gauss_elimination(
@@ -104,6 +89,8 @@ public:
 
 	TriDiagonal operator*(const double scalar);
 
+	std::vector<double> operator*(const std::vector<double>& vector);
+
 	TriDiagonal operator*=(const double scalar);
 
 	TriDiagonal operator+(const TriDiagonal& rhs);
@@ -130,6 +117,8 @@ public:
 		const int _n_boundary_elements = 3) : BandDiagonal(_order, 2, _n_boundary_rows, _n_boundary_elements) {}
 
 	PentaDiagonal operator*(const double scalar);
+
+	std::vector<double> operator*(const std::vector<double>& vector);
 
 	PentaDiagonal operator*=(const double scalar);
 
@@ -159,5 +148,9 @@ template<class T>
 void scalar_multiply_matrix(const double scalar, T& matrix);
 
 
+template <class T>
+void matrix_multiply_vector(const T& matrix, const std::vector<double>& vector, std::vector<double>& result);
+
+
 template<class T>
-void matrix_addition(const T& matrix1, const T& matrix2, T& result);
+void matrix_add_matrix(const T& matrix1, const T& matrix2, T& result);

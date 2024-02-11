@@ -19,5 +19,5 @@
 #include "band_diagonal_matrix.h"
 #include "finite_difference.h"
 #include "grid_generator.h"
+#include "matrix_equation_solver.h"
 #include "test_util.h"
-#include "tridiagonal_matrix_solver.h"
