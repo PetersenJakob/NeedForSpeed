@@ -695,6 +695,32 @@ TriDiagonal d2dx2::uniform::c2b2(const int order, const double dx) {
 
 
 // Second order derivative operator.
+// Central difference; 4th order accuracy. Boundary; 2nd row c2, 1st row d2dx2 = 0.
+PentaDiagonal d2dx2::uniform::c4b0(const int order, const double dx) {
+
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef2::uniform::c4(dx), 2, 3);
+
+	boundary<PentaDiagonal>(0, { 0.0, 0.0, 0.0 }, matrix);
+
+
+	// Central difference at 2nd row.
+	matrix.boundary_rows[1][0] = coef2::uniform::c2(dx)[0];
+	matrix.boundary_rows[1][1] = coef2::uniform::c2(dx)[1];
+	matrix.boundary_rows[1][2] = coef2::uniform::c2(dx)[2];
+
+	matrix.boundary_rows[2][1] = coef2::uniform::c2(dx)[0];
+	matrix.boundary_rows[2][2] = coef2::uniform::c2(dx)[1];
+	matrix.boundary_rows[2][3] = coef2::uniform::c2(dx)[2];
+
+
+	boundary<PentaDiagonal>(3, { 0.0, 0.0, 0.0 }, matrix);
+
+	return matrix;
+
+}
+
+
+// Second order derivative operator.
 // Central difference; 4th order accuracy. Boundary; TODO 1st order accuracy.
 PentaDiagonal d2dx2::uniform::c4b4(const int order, const double dx) {
 
