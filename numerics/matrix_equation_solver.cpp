@@ -127,9 +127,9 @@ void pentadiagonal_matrix_solver(
 	// Remove elements of 2nd sub-diagonal by Gauss elimination.
 	// *********************************************************
 
-
 	// Denominator for normalization of 1st element of main diagonal.
 	double denominator = main[0];
+
 
 	// 1st element of main diagonal after normalization.
 	main_tmp[0] = 1.0;
@@ -149,6 +149,12 @@ void pentadiagonal_matrix_solver(
 	vec_tmp[1] = super_2[1];
 	column[1] += column[0];
 
+#if false
+	sub_tmp[1] = sub_1[1];
+	main_tmp[1] = main[1];
+	super_tmp[1] = super_1[1];
+	vec_tmp[1] = super_2[1];
+#endif
 
 	// Denominator for normalization of 2nd element of 1st sub-diagonal.
 	denominator = sub_tmp[1];
@@ -167,13 +173,8 @@ void pentadiagonal_matrix_solver(
 	column[1] /= denominator;
 
 
-	// SPECIAL CASE, WHERE d2dx2 = 0 at boundaries!
-
-//	main_tmp[n_elements - 2] = main[n_elements - 2];
-//	main_tmp[n_elements - 1] = main[n_elements - 1];
-
-	for (int i = 2; i != n_elements; ++i) {
-//	for (int i = 2; i != n_elements - 2; ++i) {
+	// TODO: The range depends on choice of boundary rows!
+	for (int i = 2; i != n_elements - 2; ++i) {
 
 		idx_tmp = i - 1;
 
@@ -205,6 +206,7 @@ void pentadiagonal_matrix_solver(
 	const int idx_last = n_elements - 1;
 	const int idx_2nd_last = n_elements - 2;
 
+#if false
 	// Denominator for normalization of last element of main diagonal.
 	denominator = main_tmp[idx_last];
 
@@ -238,10 +240,31 @@ void pentadiagonal_matrix_solver(
 
 	// 2nd last element of column vector after normalization.
 	column[idx_2nd_last] /= denominator;
+#endif
 
+	main_tmp[idx_last] = main[idx_last];
 
-	for (int i = n_elements - 3; i != -1; --i) {
-//	for (int i = n_elements - 3; i != 1; --i) {
+	sub_tmp[idx_2nd_last] = sub_1[idx_2nd_last];
+	main_tmp[idx_2nd_last] = main[idx_2nd_last];
+	super_tmp[idx_2nd_last] = super_1[idx_2nd_last];
+
+	// Denominator for normalization of 2nd last element of 1st super-diagonal.
+	denominator = super_tmp[idx_2nd_last];
+
+	// 2nd last element of 1st super-diagonal after normalization.
+	super_tmp[idx_2nd_last] = 1.0;
+
+	// 2nd last element of main diagonal after normalization.
+	main_tmp[idx_2nd_last] /= denominator;
+
+	// 2nd last element of 1st sub-diagonal after normalization.
+	sub_tmp[idx_2nd_last] /= denominator;
+
+	// 2nd last element of column vector after normalization.
+	column[idx_2nd_last] /= denominator;
+
+//	for (int i = n_elements - 3; i != -1; --i) {
+	for (int i = n_elements - 3; i != 1; --i) {
 
 		idx_tmp = i + 1;
 
@@ -252,7 +275,7 @@ void pentadiagonal_matrix_solver(
 		super_tmp[i] = 1.0;
 
 		// (i + 1)'th element of main diagonal after Gauss elimination.
-		main_tmp[i] = (main[i] - vec_tmp[i] * sub_tmp[idx_tmp]) / denominator;
+		main_tmp[i] = (main_tmp[i] - vec_tmp[i] * sub_tmp[idx_tmp]) / denominator;
 
 		// (i + 1)'th element of 1st sub-diagonal after Gauss elimination.
 		sub_tmp[i] /= denominator;
