@@ -58,10 +58,10 @@ void tridiagonal_matrix_solver(
 	// Temporary index.
 	int idx_tmp = 0;
 
-	// *****************************************************
+	// #####################################################
 	// Forward sweep:
 	// Remove elements of sub-diagonal by Gauss elimination.
-	// *****************************************************
+	// #####################################################
 
 	// Denominator for normalization of 1st element of main diagonal.
 	double denominator = main[0];
@@ -87,10 +87,10 @@ void tridiagonal_matrix_solver(
 
 	}
 
-	// *******************************************************
+	// #######################################################
 	// Backward sweep (back substitution):
 	// Remove elements of super-diagonal by Gauss elimination.
-	// *******************************************************
+	// #######################################################
 
 	for (int i = n_elements - 2; i != -1; --i) {
 
@@ -122,10 +122,10 @@ void pentadiagonal_matrix_solver(
 	// Temporary index.
 	int idx_tmp = 0;
 
-	// *********************************************************
+	// #########################################################
 	// Forward sweep:
 	// Remove elements of 2nd sub-diagonal by Gauss elimination.
-	// *********************************************************
+	// #########################################################
 
 	// Denominator for normalization of 1st element of main diagonal.
 	double denominator = main[0];
@@ -196,10 +196,10 @@ void pentadiagonal_matrix_solver(
 
 	}
 
-	// ***********************************************************
+	// ###########################################################
 	// Backward sweep:
 	// Remove elements of 2nd super-diagonal by Gauss elimination.
-	// ***********************************************************
+	// ###########################################################
 
 
 	// Index of last and 2nd last element.
