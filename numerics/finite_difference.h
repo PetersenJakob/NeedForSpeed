@@ -90,6 +90,9 @@ namespace d2dx2 {
 		// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
 		TriDiagonal c2b1(const int order, const std::vector<double> grid);
 
+		// Central difference; 4th order accuracy. Boundary; 2nd row c2, 1st row d2dx2 = 0.
+		PentaDiagonal c4b0(const int order, const std::vector<double> grid);
+
 	}
 
 }

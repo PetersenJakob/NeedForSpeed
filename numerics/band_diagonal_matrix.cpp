@@ -467,26 +467,28 @@ PentaDiagonal operator*(const double scalar, PentaDiagonal rhs) {
 
 
 template<class T>
-void scalar_multiply_matrix(const double scalar, T& matrix) {
+void scalar_multiply_matrix(
+	const double scalar, 
+	T& matrix) {
 
-	int i_initial = matrix.n_boundary_rows();
-	int i_final = matrix.order() - matrix.n_boundary_rows();
-	int j_initial = 0;
-	int j_final = matrix.n_diagonals();
+	const int i_initial_1 = matrix.n_boundary_rows();
+	const int i_final_1 = matrix.order() - matrix.n_boundary_rows();
+	const int j_initial_1 = 0;
+	const int j_final_1 = matrix.n_diagonals();
 
-	for (int i = i_initial; i != i_final; ++i) {
-		for (int j = j_initial; j != j_final; ++j) {
+	for (int i = i_initial_1; i != i_final_1; ++i) {
+		for (int j = j_initial_1; j != j_final_1; ++j) {
 			matrix.matrix[j][i] *= scalar;
 		}
 	}
 
-	i_initial = 0;
-	i_final = 2 * matrix.n_boundary_rows();
-	j_initial = 0;
-	j_final = matrix.n_boundary_elements();
+	const int i_initial_2 = 0;
+	const int i_final_2 = 2 * matrix.n_boundary_rows();
+	const int j_initial_2 = 0;
+	const int j_final_2 = matrix.n_boundary_elements();
 
-	for (int i = i_initial; i != i_final; ++i) {
-		for (int j = j_initial; j != j_final; ++j) {
+	for (int i = i_initial_2; i != i_final_2; ++i) {
+		for (int j = j_initial_2; j != j_final_2; ++j) {
 			matrix.boundary_rows[i][j] *= scalar;
 		}
 	}
@@ -495,7 +497,10 @@ void scalar_multiply_matrix(const double scalar, T& matrix) {
 
 
 template <class T>
-void matrix_multiply_vector(const T& matrix, const std::vector<double>& vector, std::vector<double>& result) {
+void matrix_multiply_vector(
+	const T& matrix, 
+	const std::vector<double>& vector, 
+	std::vector<double>& result) {
 
 	int mr_lower_idx = 0;
 	int mr_upper_idx = 0;
@@ -527,10 +532,10 @@ void matrix_multiply_vector(const T& matrix, const std::vector<double>& vector, 
 		}
 	}
 
-	int i_initial = matrix.n_boundary_rows();
-	int i_final = matrix.order() - matrix.n_boundary_rows();
-	int j_initial = 0;
-	int j_final = matrix.n_diagonals();
+	const int i_initial = matrix.n_boundary_rows();
+	const int i_final = matrix.order() - matrix.n_boundary_rows();
+	const int j_initial = 0;
+	const int j_final = matrix.n_diagonals();
 
 	// Interior rows.
 	for (int i = i_initial; i != i_final; ++i) {
@@ -543,26 +548,29 @@ void matrix_multiply_vector(const T& matrix, const std::vector<double>& vector, 
 
 
 template<class T>
-void matrix_add_matrix(const T& matrix1, const T& matrix2, T& result) {
+void matrix_add_matrix(
+	const T& matrix1, 
+	const T& matrix2, 
+	T& result) {
 
-	int i_initial = result.n_boundary_rows();
-	int i_final = result.order() - result.n_boundary_rows();
-	int j_initial = 0;
-	int j_final = result.n_diagonals();
+	const int i_initial_1 = result.n_boundary_rows();
+	const int i_final_1 = result.order() - result.n_boundary_rows();
+	const int j_initial_1 = 0;
+	const int j_final_1 = result.n_diagonals();
 
-	for (int i = i_initial; i != i_final; ++i) {
-		for (int j = j_initial; j != j_final; ++j) {
+	for (int i = i_initial_1; i != i_final_1; ++i) {
+		for (int j = j_initial_1; j != j_final_1; ++j) {
 			result.matrix[j][i] = matrix1.matrix[j][i] + matrix2.matrix[j][i];
 		}
 	}
 
-	i_initial = 0;
-	i_final = 2 * result.n_boundary_rows();
-	j_initial = 0;
-	j_final = result.n_boundary_elements();
+	const int i_initial_2 = 0;
+	const int i_final_2 = 2 * result.n_boundary_rows();
+	const int j_initial_2 = 0;
+	const int j_final_2 = result.n_boundary_elements();
 
-	for (int i = i_initial; i != i_final; ++i) {
-		for (int j = j_initial; j != j_final; ++j) {
+	for (int i = i_initial_2; i != i_final_2; ++i) {
+		for (int j = j_initial_2; j != j_final_2; ++j) {
 			result.boundary_rows[i][j] = matrix1.boundary_rows[i][j] + matrix2.boundary_rows[i][j];
 		}
 	}

@@ -63,7 +63,7 @@ void tridiagonal_matrix_solver(
 	// Remove elements of sub-diagonal by Gauss elimination.
 	// #####################################################
 
-	// Denominator for normalization of 1st element of main diagonal.
+	// Denominator for normalization of 1st element of main diagonal.          
 	double denominator = main[0];
 
 	// 1st element of super-diagonal after normalization.
@@ -76,7 +76,7 @@ void tridiagonal_matrix_solver(
 
 		idx_tmp = i - 1;
 
-		// Denominator for normalization of (i + 1)'th element of main diagonal.
+		// Denominator for normalization of (i + 1)'th element of main diagonal.        
 		denominator = main[i] - sub[i] * vec_tmp[idx_tmp];
 
 		// (i + 1)'th element of super-diagonal after Gauss elimination.

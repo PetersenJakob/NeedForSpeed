@@ -226,6 +226,11 @@ std::vector<double> heat_equation_1d(
 		else if (d2dx2_type == "d2dx2::nonuniform::c2b0") {
 			deriv_operator = d2dx2::nonuniform::c2b0(x_points, x_grid);
 		}
+
+		else if (d2dx2_type == "d2dx2::nonuniform::c4b0") {
+			deriv_operator_p = d2dx2::nonuniform::c4b0(x_points, x_grid);
+		}
+
 		else {
 			throw std::invalid_argument("d2dx2_type unknown.");
 		}
@@ -240,7 +245,7 @@ std::vector<double> heat_equation_1d(
 
 		std::vector<double> solution = func;
 
-		if (d2dx2_type != "d2dx2::uniform::c4b0") {
+		if (d2dx2_type != "d2dx2::uniform::c4b0" && d2dx2_type != "d2dx2::nonuniform::c4b0") {
 
 			TriDiagonal lhs(x_points);
 			TriDiagonal rhs(x_points);
@@ -476,14 +481,36 @@ TEST(PentaDiagonalSolver, HeatEquation1D) {
 	// Crank-Nicolson. cos(pi * x)
 	std::vector<double> space1 = heat_equation_1d(
 		"space",
-		11,
+		21,
 		"uniform",
 		101,
 		0.03,
 		"uniform",
 		"d2dx2::uniform::c4b0",
 		"cos(pi*x)",
-		2,
+		11,
+		0.5);
+
+	const int n_points = 11;
+	std::vector<double> grid_new = grid::uniform(-0.5, 0.5, n_points);
+	const double dx = grid_new[1] - grid_new[0];
+	PentaDiagonal deriv = d2dx2::uniform::c4b0(n_points, dx);
+	print_matrix(deriv);
+
+	PentaDiagonal deriv_non = d2dx2::nonuniform::c4b0(n_points, grid_new);
+	print_matrix(deriv_non);
+
+	// Crank-Nicolson. cos(pi * x)
+	std::vector<double> space2 = heat_equation_1d(
+		"space",
+		21,
+		"hyperbolic",
+		101,
+		0.03,
+		"uniform",
+		"d2dx2::nonuniform::c4b0",
+		"cos(pi*x)",
+		11,
 		0.5);
 
 }
