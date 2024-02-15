@@ -213,48 +213,91 @@ std::vector<double> heat_equation_1d(
 
 		// Second order differential operator.
 		TriDiagonal deriv_operator(x_points);
+		PentaDiagonal deriv_operator_p(x_points);
 
 		if (d2dx2_type == "d2dx2::uniform::c2b0") {
 			deriv_operator = d2dx2::uniform::c2b0(x_points, dx);
 		}
+
+		else if (d2dx2_type == "d2dx2::uniform::c4b0") {
+			deriv_operator_p = d2dx2::uniform::c4b0(x_points, dx);
+		}
+
 		else if (d2dx2_type == "d2dx2::nonuniform::c2b0") {
 			deriv_operator = d2dx2::nonuniform::c2b0(x_points, x_grid);
 		}
+
+		else if (d2dx2_type == "d2dx2::nonuniform::c4b0") {
+			deriv_operator_p = d2dx2::nonuniform::c4b0(x_points, x_grid);
+		}
+
 		else {
 			throw std::invalid_argument("d2dx2_type unknown.");
 		}
 
 		// Identity operator.
 		TriDiagonal iden = identity::tri(x_points, deriv_operator.n_boundary_elements());
+		PentaDiagonal iden_p = identity::penta(x_points, deriv_operator_p.n_boundary_elements() - 1);
 
 		// ############
 		// FD solution.
 		// ############
 
-		TriDiagonal lhs(x_points);
-		TriDiagonal rhs(x_points);
-
 		std::vector<double> solution = func;
 
-		for (int i = 0; i != t_points - 1; ++i) {
+		if (d2dx2_type != "d2dx2::uniform::c4b0" && d2dx2_type != "d2dx2::nonuniform::c4b0") {
 
-			double dt_tmp = t_grid[i + 1] - t_grid[i];
+			TriDiagonal lhs(x_points);
+			TriDiagonal rhs(x_points);
 
-			// LHS operator.
-			lhs = deriv_operator;
-			lhs *= -theta * dt_tmp;
-			lhs += iden;
+			for (int i = 0; i != t_points - 1; ++i) {
 
-			// RHS operator.
-			rhs = deriv_operator;
-			rhs *= (1.0 - theta) * dt_tmp;
-			rhs += iden;
+				double dt_tmp = t_grid[i + 1] - t_grid[i];
 
-			// Evaluation RHS.
-			solution = rhs * solution;
+				// LHS operator.
+				lhs = deriv_operator;
+				lhs *= -theta * dt_tmp;
+				lhs += iden;
 
-			// Solve matrix equation.
-			tri_solver(lhs, solution);
+				// RHS operator.
+				rhs = deriv_operator;
+				rhs *= (1.0 - theta) * dt_tmp;
+				rhs += iden;
+
+				// Evaluation RHS.
+				solution = rhs * solution;
+
+				// Solve matrix equation.
+				tri_solver(lhs, solution);
+
+			}
+		}
+		else {
+
+			PentaDiagonal lhs(x_points, 2, deriv_operator_p.n_boundary_elements() - 1);
+			PentaDiagonal rhs(x_points, 2, deriv_operator_p.n_boundary_elements() - 1);
+
+			for (int i = 0; i != t_points - 1; ++i) {
+
+				double dt_tmp = t_grid[i + 1] - t_grid[i];
+
+				// LHS operator.
+				lhs = deriv_operator_p;
+				lhs *= -theta * dt_tmp;
+				lhs += iden_p;
+
+				// RHS operator.
+				rhs = deriv_operator_p;
+				rhs *= (1.0 - theta) * dt_tmp;
+				rhs += iden_p;
+
+				// Evaluation RHS.
+				solution = rhs * solution;
+
+				// Solve matrix equation.
+				penta_solver(lhs, solution);
+
+			}
 
 		}
 
@@ -429,5 +472,45 @@ TEST(TriDiagonalSolver, HeatEquation1D) {
 
 	// L1 function norm.
 	EXPECT_NEAR(time3[3], 1.0, 0.057);
+
+}
+
+
+TEST(PentaDiagonalSolver, HeatEquation1D) {
+
+	// Crank-Nicolson. cos(pi * x)
+	std::vector<double> space1 = heat_equation_1d(
+		"space",
+		21,
+		"uniform",
+		101,
+		0.03,
+		"uniform",
+		"d2dx2::uniform::c4b0",
+		"cos(pi*x)",
+		11,
+		0.5);
+
+	const int n_points = 11;
+	std::vector<double> grid_new = grid::uniform(-0.5, 0.5, n_points);
+	const double dx = grid_new[1] - grid_new[0];
+	PentaDiagonal deriv = d2dx2::uniform::c4b0(n_points, dx);
+	print_matrix(deriv);
+
+	PentaDiagonal deriv_non = d2dx2::nonuniform::c4b0(n_points, grid_new);
+	print_matrix(deriv_non);
+
+	// Crank-Nicolson. cos(pi * x)
+	std::vector<double> space2 = heat_equation_1d(
+		"space",
+		21,
+		"hyperbolic",
+		101,
+		0.03,
+		"uniform",
+		"d2dx2::nonuniform::c4b0",
+		"cos(pi*x)",
+		11,
+		0.5);
 
 }

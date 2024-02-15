@@ -43,11 +43,9 @@ namespace coef1 {
 
 		// Central difference; 2nd order accuracy.
 		std::vector<double> c2_coefficients{
-
 			-1.0 / 2.0,
 			 0.0,
 			 1.0 / 2.0
-
 		};
 
 		std::vector<double> c2(const double dx) {
@@ -58,13 +56,11 @@ namespace coef1 {
 
 		// Central difference; 4th order accuracy.
 		std::vector<double> c4_coefficients{
-
 			 1.0 / 12.0,
 			-2.0 / 3.0,
 			 0.0,
 			 2.0 / 3.0,
 			-1.0 / 12.0
-
 		};
 
 		std::vector<double> c4(const double dx) {
@@ -75,10 +71,8 @@ namespace coef1 {
 
 		// Forward difference; 1st order accuracy.
 		std::vector<double> f1_coefficients{
-
 			-1.0,
 			 1.0
-
 		};
 
 		std::vector<double> f1(const double dx) {
@@ -89,11 +83,9 @@ namespace coef1 {
 
 		// Forward difference; 2nd order accuracy.
 		std::vector<double> f2_coefficients{
-
 			-3.0 / 2.0,
 			 2.0,
 			-1.0 / 2.0
-
 		};
 
 		std::vector<double> f2(const double dx) {
@@ -104,12 +96,10 @@ namespace coef1 {
 
 		// Forward difference; 3rd order accuracy.
 		std::vector<double> f3_coefficients{
-
 			-11.0 / 6.0,
 			 3.0,
 			-3.0 / 2.0,
 			 1.0 / 3.0
-
 		};
 
 		std::vector<double> f3(const double dx) {
@@ -120,13 +110,11 @@ namespace coef1 {
 
 		// Forward difference; 4th order accuracy.
 		std::vector<double> f4_coefficients{
-
 			-25.0 / 12.0,
 			 4.0,
 			-3.0,
 			 4.0 / 3.0,
 			-1.0 / 4.0
-
 		};
 
 		std::vector<double> f4(const double dx) {
@@ -169,23 +157,27 @@ namespace coef1 {
 	// See Sundqvist and Veronis (1970).
 	namespace nonuniform {
 
-		// dx_vector: Step size vector with four elements [dx(-2), dx(-1), dx(+1), dx(+2)].
+		// dx_vector; step size vector with four elements:
+		// [0] dx_m2 = x_m1 - x_m2  TODO: Correct sign?
+		// [1] dx_m1 = x - x_m1     TODO: Correct sign?
+		// [2] dx_p1 = x_p1 - x  
+		// [3] dx_p2 = x_p2 - x_p1
 
 		// Central difference; 2nd order accuracy.
 		std::vector<double> c2(const std::vector<double>& dx_vector) {
 
-			const double dx_m = dx_vector[1];
-			const double dx_p = dx_vector[2];
+			const double dx_m1 = dx_vector[1];
+			const double dx_p1 = dx_vector[2];
 
 			std::vector<double> row(3, 0.0);
 
-			const double denominator = dx_p * (1.0 + dx_p / dx_m);
+			const double denominator = dx_p1 * (1.0 + dx_p1 / dx_m1);
 
 			// Coefficient of 1st sub-diagonal.
-			row[0] = -pow(dx_p / dx_m, 2) / denominator;
+			row[0] = -pow(dx_p1 / dx_m1, 2) / denominator;
 
 			// Coefficient of main diagonal.
-			row[1] = -(1.0 - pow(dx_p / dx_m, 2)) / denominator;
+			row[1] = -(1.0 - pow(dx_p1 / dx_m1, 2)) / denominator;
 
 			// Coefficient of 1st super-diagonal.
 			row[2] = 1.0 / denominator;
@@ -232,11 +224,11 @@ namespace coef1 {
 		// Forward difference; 1st order accuracy.
 		std::vector<double> f1(const std::vector<double>& dx_vector) {
 
-			const double dx_p = dx_vector[2];
+			const double dx_p1 = dx_vector[2];
 
 			std::vector<double> row(2, 0.0);
 
-			const double denominator = dx_p;
+			const double denominator = dx_p1;
 
 			// Coefficient of main diagonal.
 			row[0] = -1.0 / denominator;
@@ -271,7 +263,7 @@ namespace coef1 {
 
 		}
 
-		// TODO: For backward differenc, reverse order of dx_vector??
+		// TODO: For backward difference, reverse order of dx_vector?
 		// Backward difference; 1st order accuracy.
 		std::vector<double> b1(const std::vector<double>& dx_vector) {
 
@@ -279,6 +271,7 @@ namespace coef1 {
 
 		}
 
+		// TODO: For backward difference, reverse order of dx_vector?
 		// Backward difference; 2nd order accuracy.
 		std::vector<double> b2(const std::vector<double>& dx_vector) {
 
@@ -300,11 +293,9 @@ namespace coef2 {
 
 		// Central difference; 2nd order accuracy.
 		std::vector<double> c2_coefficients{
-
 			 1.0,
 			-2.0,
 			 1.0
-
 		};
 
 		std::vector<double> c2(const double dx) {
@@ -315,13 +306,11 @@ namespace coef2 {
 
 		// Central difference; 4th order accuracy.
 		std::vector<double> c4_coefficients{
-
 			-1.0 / 12.0,
 			 4.0 / 3.0,
 			-5.0 / 2.0,
 			 4.0 / 3.0,
 			-1.0 / 12.0
-
 		};
 
 		std::vector<double> c4(const double dx) {
@@ -332,11 +321,9 @@ namespace coef2 {
 
 		// Forward difference; 1st order accuracy.
 		std::vector<double> f1_coefficients{
-
 			 1.0,
 			-2.0,
 			 1.0
-
 		};
 
 		std::vector<double> f1(const double dx) {
@@ -347,12 +334,10 @@ namespace coef2 {
 
 		// Forward difference; 2nd order accuracy.
 		std::vector<double> f2_coefficients{
-
 			 2.0,
 			-5.0,
 			 4.0,
 			-1.0
-
 		};
 		
 		std::vector<double> f2(const double dx) {
@@ -363,13 +348,11 @@ namespace coef2 {
 
 		// Forward difference; 3rd order accuracy.
 		std::vector<double> f3_coefficients{
-
 			 35.0 / 12.0,
 			-26.0 / 3.0,
 			 19.0 / 2.0,
 			-14.0 / 3.0,
 			 11.0 / 12.0
-
 		};
 
 		std::vector<double> f3(const double dx) {
@@ -380,14 +363,12 @@ namespace coef2 {
 
 		// Forward difference; 4th order accuracy.
 		std::vector<double> f4_coefficients{
-
 			 15.0 / 4.0,
 			-77.0 / 6.0,
 			 107.0 / 6.0,
 			-13.0,
 			 61.0 / 12.0,
 			-5.0 / 6.0
-
 		};
 
 		std::vector<double> f4(const double dx) {
@@ -430,23 +411,27 @@ namespace coef2 {
 	// See Sundqvist and Veronis (1970).
 	namespace nonuniform {
 
-		// dx_vector: Step size vector with four elements [dx(-2), dx(-1), dx(+1), dx(+2)].
+		// dx_vector; step size vector with four elements:
+		// [0] dx_m2 = x_m1 - x_m2  TODO: Correct sign?
+		// [1] dx_m1 = x - x_m1     TODO: Correct sign?
+		// [2] dx_p1 = x_p1 - x  
+		// [3] dx_p2 = x_p2 - x_p1
 
 		// Central difference; ~2nd order accuracy.
 		std::vector<double> c2(const std::vector<double>& dx_vector) {
 
-			const double dx_m = dx_vector[1];
-			const double dx_p = dx_vector[2];
+			const double dx_m1 = dx_vector[1];
+			const double dx_p1 = dx_vector[2];
 
 			std::vector<double> row(3, 0.0);
 
-			const double denominator = dx_p * dx_m * (1.0 + dx_p / dx_m);
+			const double denominator = dx_p1 * dx_m1 * (1.0 + dx_p1 / dx_m1);
 
 			// Sub-diagonal element.
-			row[0] = 2.0 * (dx_p / dx_m) / denominator;
+			row[0] = 2.0 * (dx_p1 / dx_m1) / denominator;
 
 			// Main diagonal element.
-			row[1] = -2.0 * (1.0 + dx_p / dx_m) / denominator;
+			row[1] = -2.0 * (1.0 + dx_p1 / dx_m1) / denominator;
 
 			// Super-diagonal element.
 			row[2] = 2.0 / denominator;
@@ -513,7 +498,7 @@ namespace coef2 {
 
 		}
 
-		// TODO: For backward difference, reverse order of dx_vector??
+		// TODO: For backward difference, reverse order of dx_vector?
 		// Backward difference; 1st order accuracy.
 		std::vector<double> b1(const std::vector<double>& dx_vector) {
 
@@ -695,6 +680,32 @@ TriDiagonal d2dx2::uniform::c2b2(const int order, const double dx) {
 
 
 // Second order derivative operator.
+// Central difference; 4th order accuracy. Boundary; 2nd row c2, 1st row d2dx2 = 0.
+PentaDiagonal d2dx2::uniform::c4b0(const int order, const double dx) {
+
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef2::uniform::c4(dx), 2, 3);
+
+	boundary<PentaDiagonal>(0, { 0.0, 0.0, 0.0 }, matrix);
+
+
+	// Central difference at 2nd row.
+	matrix.boundary_rows[1][0] = coef2::uniform::c2(dx)[0];
+	matrix.boundary_rows[1][1] = coef2::uniform::c2(dx)[1];
+	matrix.boundary_rows[1][2] = coef2::uniform::c2(dx)[2];
+
+	matrix.boundary_rows[2][1] = coef2::uniform::c2(dx)[0];
+	matrix.boundary_rows[2][2] = coef2::uniform::c2(dx)[1];
+	matrix.boundary_rows[2][3] = coef2::uniform::c2(dx)[2];
+
+
+	boundary<PentaDiagonal>(3, { 0.0, 0.0, 0.0 }, matrix);
+
+	return matrix;
+
+}
+
+
+// Second order derivative operator.
 // Central difference; 4th order accuracy. Boundary; TODO 1st order accuracy.
 PentaDiagonal d2dx2::uniform::c4b4(const int order, const double dx) {
 
@@ -858,6 +869,38 @@ TriDiagonal d2dx2::nonuniform::c2b1(const int order, const std::vector<double> g
 	// TODO: Should dx_last be reversed?
 	std::vector<double> dx_vec_last = { 0.0, 0.0, grid[order - 1] - grid[order - 2], grid[order - 2] - grid[order - 3] };
 	boundary<TriDiagonal>(1, coef2::nonuniform::b1(dx_vec_last), matrix);
+
+	return matrix;
+
+}
+
+
+// Second order derivative operator.
+// Central difference; 4th order accuracy. Boundary; 2nd row c2, 1st row d2dx2 = 0.
+PentaDiagonal d2dx2::nonuniform::c4b0(const int order, const std::vector<double> grid) {
+
+	PentaDiagonal matrix = setup<PentaDiagonal>(order, grid, coef2::nonuniform::c4, 2, 3);
+
+	std::vector<double> dx_vec_1 = { 0.0, 0.0, 0.0, 0.0 };
+	boundary<PentaDiagonal>(0, dx_vec_1, matrix);
+
+
+
+	// Central difference at 2nd row.
+	std::vector<double> dx_vec_2 = { 0.0, grid[1] - grid[0], grid[2] - grid[1], 0.0 };
+	matrix.boundary_rows[1][0] = coef2::nonuniform::c2(dx_vec_2)[0];
+	matrix.boundary_rows[1][1] = coef2::nonuniform::c2(dx_vec_2)[1];
+	matrix.boundary_rows[1][2] = coef2::nonuniform::c2(dx_vec_2)[2];
+
+	std::vector<double> dx_vec_3 = { 0.0, grid[order - 2] - grid[order - 3], grid[order - 1] - grid[order - 2], 0.0 };
+	matrix.boundary_rows[2][1] = coef2::nonuniform::c2(dx_vec_3)[0];
+	matrix.boundary_rows[2][2] = coef2::nonuniform::c2(dx_vec_3)[1];
+	matrix.boundary_rows[2][3] = coef2::nonuniform::c2(dx_vec_3)[2];
+
+
+
+	std::vector<double> dx_vec_4 = { 0.0, 0.0, 0.0, 0.0 };
+	boundary<PentaDiagonal>(3, dx_vec_4, matrix);
 
 	return matrix;
 
