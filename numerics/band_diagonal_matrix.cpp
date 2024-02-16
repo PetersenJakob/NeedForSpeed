@@ -3,6 +3,8 @@
 #include <stdexcept>
 
 #include "band_diagonal_matrix.h"
+#include "coefficients.h"
+#include "utility.h"
 
 
 BandDiagonal::BandDiagonal(
@@ -144,6 +146,21 @@ TriDiagonal TriDiagonal::operator-=(const TriDiagonal& rhs) {
 }
 
 
+TriDiagonal TriDiagonal::identity() {
+
+	TriDiagonal matrix = setup<TriDiagonal>((*this).order(), {0.0, 1.0, 0.0}, 1, (*this).n_boundary_elements());
+
+	std::vector<double> coefficients((*this).n_boundary_elements(), 0.0);
+	coefficients[0] = 1.0;
+
+	boundary<TriDiagonal>(0, coefficients, matrix);
+	boundary<TriDiagonal>(1, reverse_order(coefficients), matrix);
+
+	return matrix;
+
+}
+
+
 PentaDiagonal PentaDiagonal::operator*(const double scalar) {
 
 	PentaDiagonal result(*this);
@@ -207,6 +224,23 @@ PentaDiagonal PentaDiagonal::operator-=(const PentaDiagonal& rhs) {
 	*this += (-1.0) * rhs;
 
 	return *this;
+
+}
+
+
+PentaDiagonal PentaDiagonal::identity() {
+
+	PentaDiagonal matrix = setup<PentaDiagonal>((*this).order(), {0.0, 0.0, 1.0, 0.0, 0.0}, 2, (*this).n_boundary_elements());
+
+	std::vector<double> coefficients((*this).n_boundary_elements(), 0.0);
+	coefficients[0] = 1.0;
+
+	boundary<PentaDiagonal>(0, coefficients, matrix);
+	boundary<PentaDiagonal>(1, coefficients, matrix);
+	boundary<PentaDiagonal>(2, reverse_order(coefficients), matrix);
+	boundary<PentaDiagonal>(3, reverse_order(coefficients), matrix);
+
+	return matrix;
 
 }
 

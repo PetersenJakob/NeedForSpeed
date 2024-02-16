@@ -13,39 +13,81 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\LinearAlgebra">
+      <UniqueIdentifier>{a1594fa6-ca77-464d-9d5c-2767d256c1fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FiniteDifference">
+      <UniqueIdentifier>{bf236f6c-e5de-4af7-bbda-d3443468a5f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility">
+      <UniqueIdentifier>{1413deb1-7a44-4b3c-8858-f142436e6e15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\LinearAlgebra">
+      <UniqueIdentifier>{e6cab056-08da-4198-a48c-af093e0e69d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FiniteDifference">
+      <UniqueIdentifier>{20270576-40e2-4251-9355-19453c4454ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility">
+      <UniqueIdentifier>{e34b7a5b-11a0-4bc5-b861-f6b3396eefe5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="finite_difference.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="band_diagonal_matrix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grid_generator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="matrix_equation_solver.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="test_util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="grid.cpp">
+      <Filter>Source Files\FiniteDifference</Filter>
+    </ClCompile>
+    <ClCompile Include="band_diagonal_matrix.cpp">
+      <Filter>Source Files\LinearAlgebra</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix_equation_solver.cpp">
+      <Filter>Source Files\LinearAlgebra</Filter>
+    </ClCompile>
+    <ClCompile Include="derivative.cpp">
+      <Filter>Source Files\FiniteDifference</Filter>
+    </ClCompile>
+    <ClCompile Include="coefficients.cpp">
+      <Filter>Source Files\FiniteDifference</Filter>
+    </ClCompile>
+    <ClCompile Include="utility.cpp">
+      <Filter>Source Files\FiniteDifference</Filter>
+    </ClCompile>
+    <ClCompile Include="norm.cpp">
+      <Filter>Source Files\LinearAlgebra</Filter>
+    </ClCompile>
+    <ClCompile Include="regression.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="band_diagonal_matrix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="finite_difference.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="grid_generator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="matrix_equation_solver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="test_util.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grid.h">
+      <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
+    <ClInclude Include="band_diagonal_matrix.h">
+      <Filter>Header Files\LinearAlgebra</Filter>
+    </ClInclude>
+    <ClInclude Include="derivative.h">
+      <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
+    <ClInclude Include="coefficients.h">
+      <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix_equation_solver.h">
+      <Filter>Header Files\LinearAlgebra</Filter>
+    </ClInclude>
+    <ClInclude Include="norm.h">
+      <Filter>Header Files\LinearAlgebra</Filter>
+    </ClInclude>
+    <ClInclude Include="regression.h">
+      <Filter>Header Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

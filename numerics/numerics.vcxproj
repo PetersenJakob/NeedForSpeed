@@ -131,17 +131,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="band_diagonal_matrix.cpp" />
-    <ClCompile Include="finite_difference.cpp" />
-    <ClCompile Include="grid_generator.cpp" />
+    <ClCompile Include="coefficients.cpp" />
+    <ClCompile Include="derivative.cpp" />
+    <ClCompile Include="grid.cpp" />
+    <ClCompile Include="norm.cpp" />
+    <ClCompile Include="regression.cpp" />
     <ClCompile Include="test_util.cpp" />
     <ClCompile Include="matrix_equation_solver.cpp" />
+    <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="band_diagonal_matrix.h" />
-    <ClInclude Include="grid_generator.h" />
-    <ClInclude Include="finite_difference.h" />
+    <ClInclude Include="coefficients.h" />
+    <ClInclude Include="derivative.h" />
+    <ClInclude Include="grid.h" />
+    <ClInclude Include="norm.h" />
+    <ClInclude Include="regression.h" />
     <ClInclude Include="test_util.h" />
     <ClInclude Include="matrix_equation_solver.h" />
+    <ClInclude Include="utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
