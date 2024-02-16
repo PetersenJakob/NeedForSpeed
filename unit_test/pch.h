@@ -17,7 +17,11 @@
 #include "gtest/gtest.h"
 
 #include "band_diagonal_matrix.h"
-#include "finite_difference.h"
-#include "grid_generator.h"
+#include "coefficients.h"
+#include "derivative.h"
+#include "grid.h"
 #include "matrix_equation_solver.h"
+#include "norm.h"
+#include "regression.h"
 #include "test_util.h"
+#include "utility.h"

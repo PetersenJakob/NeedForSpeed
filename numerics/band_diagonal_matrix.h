@@ -73,11 +73,13 @@ public:
 
 	// ...
 	virtual void adjust_boundary(std::vector<double>& column) {}
-	
+
 };
 
 
 // Tri-diagonal matrix stored in compact form.
+// TODO: Assumed, in other places, to have one boundary row!
+// Remove _n_boundary_rows from parameter list!
 class TriDiagonal : public BandDiagonal {
 
 public:
@@ -101,12 +103,16 @@ public:
 
 	TriDiagonal operator-=(const TriDiagonal& rhs);
 
+	TriDiagonal identity();
+
 	void adjust_boundary(std::vector<double>& column);
 
 };
 
 
 // Penta-diagonal matrix stored in compact form.
+// TODO: Assumed, in other places, to have two boundary row!
+// Remove _n_boundary_rows from parameter list!
 class PentaDiagonal : public BandDiagonal {
 
 public:
@@ -130,12 +136,11 @@ public:
 
 	PentaDiagonal operator-=(const PentaDiagonal& rhs);
 
+	PentaDiagonal identity();
+
 	void adjust_boundary(std::vector<double>& column);
 
 };
-
-
-void print_matrix(BandDiagonal matrix);
 
 
 TriDiagonal operator*(const double scalar, TriDiagonal rhs);
@@ -154,3 +159,6 @@ void matrix_multiply_vector(const T& matrix, const std::vector<double>& vector, 
 
 template<class T>
 void matrix_add_matrix(const T& matrix1, const T& matrix2, T& result);
+
+
+void print_matrix(BandDiagonal matrix);

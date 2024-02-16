@@ -124,17 +124,17 @@ std::vector<double> test_fd_approximation(
 		}
 
 		// Difference vector.
-		std::vector<double> diff = test_util::vector_diff(deriv, deriv_fd);
+		std::vector<double> diff = norm::vector_diff(deriv, deriv_fd);
 
-		max_norm.push_back(test_util::max_norm(diff));
+		max_norm.push_back(norm::vector::max(diff));
 
-		l1_vec_norm.push_back(test_util::l1_vector_norm(diff));
+		l1_vec_norm.push_back(norm::vector::l1(diff));
 
-		l2_vec_norm.push_back(test_util::l2_vector_norm(diff));
+		l2_vec_norm.push_back(norm::vector::l2(diff));
 
-		l1_func_norm.push_back(test_util::l1_function_norm(grid, diff));
+		l1_func_norm.push_back(norm::function::l1(grid, diff));
 
-		l2_func_norm.push_back(test_util::l2_function_norm(grid, diff));
+		l2_func_norm.push_back(norm::function::l2(grid, diff));
 
 	}
 
@@ -156,11 +156,11 @@ std::vector<double> test_fd_approximation(
 
 	}
 
-	std::vector<double> slr_max = test_util::slr(dx_vec_log, max_norm_log);
-	std::vector<double> slr_l1_vec = test_util::slr(dx_vec_log, l1_vec_norm_log);
-	std::vector<double> slr_l2_vec = test_util::slr(dx_vec_log, l2_vec_norm_log);
-	std::vector<double> slr_l1_func = test_util::slr(dx_vec_log, l1_func_norm_log);
-	std::vector<double> slr_l2_func = test_util::slr(dx_vec_log, l2_func_norm_log);
+	std::vector<double> slr_max = regression::slr(dx_vec_log, max_norm_log);
+	std::vector<double> slr_l1_vec = regression::slr(dx_vec_log, l1_vec_norm_log);
+	std::vector<double> slr_l2_vec = regression::slr(dx_vec_log, l2_vec_norm_log);
+	std::vector<double> slr_l1_func = regression::slr(dx_vec_log, l1_func_norm_log);
+	std::vector<double> slr_l2_func = regression::slr(dx_vec_log, l2_func_norm_log);
 
 	std::vector<double> result{ slr_max[0], 
 		slr_l1_vec[0], slr_l2_vec[0], 
