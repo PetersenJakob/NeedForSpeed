@@ -126,7 +126,7 @@ std::vector<double> test_fd_approximation(
 		// Difference vector.
 		std::vector<double> diff = norm::vector_diff(deriv, deriv_fd);
 
-		max_norm.push_back(norm::vector::max(diff));
+		max_norm.push_back(norm::vector::infinity(diff));
 
 		l1_vec_norm.push_back(norm::vector::l1(diff));
 
@@ -684,7 +684,7 @@ TEST(SecondOrderMixedDerivative, Test1) {
 
 	std::vector<std::vector<double>> d2dxdy_xy = d2dxdy<TriDiagonal>(d1dx1_x, d1dx1_y, func_xy);
 
-
+#if false
 	std::cout << std::scientific << std::setprecision(5);
 
 	for (int i = 0; i != n_points_x; ++i) {
@@ -697,5 +697,5 @@ TEST(SecondOrderMixedDerivative, Test1) {
 
 		}
 	}
-
+#endif
 }

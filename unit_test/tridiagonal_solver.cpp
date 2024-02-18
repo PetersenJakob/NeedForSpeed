@@ -332,7 +332,7 @@ std::vector<double> heat_equation_1d(
 		// Difference vector.
 		std::vector<double> diff = norm::vector_diff(analytical, solution);
 
-		max_norm.push_back(norm::vector::max(diff));
+		max_norm.push_back(norm::vector::infinity(diff));
 
 		l1_vec_norm.push_back(norm::vector::l1(diff));
 
@@ -492,7 +492,7 @@ TEST(PentaDiagonalSolver, HeatEquation1D) {
 		"cos(pi*x)",
 		11,
 		0.5);
-
+#if false
 	const int n_points = 11;
 	std::vector<double> grid_new = grid::uniform(-0.5, 0.5, n_points);
 	const double dx = grid_new[1] - grid_new[0];
@@ -501,7 +501,7 @@ TEST(PentaDiagonalSolver, HeatEquation1D) {
 
 	PentaDiagonal deriv_non = d2dx2::nonuniform::c4b0(n_points, grid_new);
 	print_matrix(deriv_non);
-
+#endif
 	// Crank-Nicolson. cos(pi * x)
 	std::vector<double> space2 = heat_equation_1d(
 		"space",
