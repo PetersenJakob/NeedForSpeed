@@ -39,7 +39,7 @@ func_average(const std::vector<std::vector<double>>& func) {
 
 
 // Infinity norm.
-double norm::vector::infinity(std::vector<double> vec) {
+double norm::vector::infinity(const std::vector<double>& vec) {
 
 	double norm = 0.0;
 
@@ -55,7 +55,7 @@ double norm::vector::infinity(std::vector<double> vec) {
 
 
 // l1 vector norm.
-double norm::vector::l1(std::vector<double> vec) {
+double norm::vector::l1(const std::vector<double>& vec) {
 
 	double norm = 0.0;
 
@@ -69,7 +69,7 @@ double norm::vector::l1(std::vector<double> vec) {
 
 
 // l2 vector norm.
-double norm::vector::l2(std::vector<double> vec) {
+double norm::vector::l2(const std::vector<double>& vec) {
 
 	double norm = 0.0;
 
@@ -83,7 +83,7 @@ double norm::vector::l2(std::vector<double> vec) {
 
 
 // Infinity norm (1-dimension).
-double norm::function::infinity(std::vector<double> func) {
+double norm::function::infinity(const std::vector<double>& func) {
 
 	return norm::vector::infinity(func);
 
@@ -91,7 +91,7 @@ double norm::function::infinity(std::vector<double> func) {
 
 
 // Infinity norm (2-dimension).
-double infinity(std::vector<std::vector<double>> func) {
+double norm::function::infinity(const std::vector<std::vector<double>>& func) {
 
 	double norm = 0.0;
 	double norm_row = 0.0;
@@ -111,7 +111,7 @@ double infinity(std::vector<std::vector<double>> func) {
 // L1 function norm (1-dimension).
 double norm::function::l1(
 	const double dx, 
-	std::vector<double> func) {
+	const std::vector<double>& func) {
 
 	double norm = 0.0;
 
@@ -130,7 +130,7 @@ double norm::function::l1(
 // L1 function norm (1-dimension).
 double norm::function::l1(
 	const std::vector<double>& grid, 
-	std::vector<double> func) {
+	const std::vector<double>& func) {
 
 	double norm = 0.0;
 	double dx = 0.0;
@@ -152,7 +152,7 @@ double norm::function::l1(
 double norm::function::l1(
 	const double dx,
 	const double dy,
-	std::vector<std::vector<double>> func) {
+	const std::vector<std::vector<double>>& func) {
 
 	double norm = 0.0;
 
@@ -174,7 +174,7 @@ double norm::function::l1(
 double norm::function::l1(
 	const std::vector<double>& grid_x,
 	const std::vector<double>& grid_y,
-	std::vector<std::vector<double>> func) {
+	const std::vector<std::vector<double>>& func) {
 
 	double norm = 0.0;
 	double dx = 0.0;
@@ -199,7 +199,7 @@ double norm::function::l1(
 // L2 function norm (1-dimension).
 double norm::function::l2(
 	const double dx, 
-	std::vector<double> func) {
+	const std::vector<double>& func) {
 
 	double norm = 0.0;
 
@@ -218,7 +218,7 @@ double norm::function::l2(
 // L2 function norm (1-dimension).
 double norm::function::l2(
 	const std::vector<double>& grid, 
-	std::vector<double> func) {
+	const std::vector<double>& func) {
 
 	double norm = 0.0;
 
@@ -235,10 +235,10 @@ double norm::function::l2(
 
 
 // L2 function norm (2-dimension).
-double l2(
+double norm::function::l2(
 	const double dx,
 	const double dy,
-	std::vector<std::vector<double>> func) {
+	const std::vector<std::vector<double>>& func) {
 
 	double norm = 0.0;
 
@@ -257,10 +257,10 @@ double l2(
 
 
 // L2 function norm (2-dimension).
-double l2(
+double norm::function::l2(
 	const std::vector<double>& grid_x,
 	const std::vector<double>& grid_y,
-	std::vector<std::vector<double>> func) {
+	const std::vector<std::vector<double>>& func) {
 
 	double norm = 0.0;
 	double dx = 0.0;

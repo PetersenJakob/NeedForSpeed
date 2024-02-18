@@ -684,6 +684,12 @@ TEST(SecondOrderMixedDerivative, Test1) {
 
 	std::vector<std::vector<double>> d2dxdy_xy = d2dxdy<TriDiagonal>(d1dx1_x, d1dx1_y, func_xy);
 
+	std::vector<std::vector<double>> diff = norm::matrix_diff(deriv_xy, d2dxdy_xy);
+
+	std::cout << std::scientific << std::setprecision(5);
+
+	std::cout << std::setw(14) << norm::function::l2(grid_x, grid_y, diff) << std::endl;
+
 #if false
 	std::cout << std::scientific << std::setprecision(5);
 
