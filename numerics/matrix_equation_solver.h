@@ -5,10 +5,19 @@
 #include "band_diagonal_matrix.h"
 
 
-void tri_solver(TriDiagonal& matrix, std::vector<double>& column);
+namespace solver {
 
+	// Tri-diagonal matrix equation solver.
+	void tri(
+		TriDiagonal& matrix, 
+		std::vector<double>& column);
 
-void penta_solver(PentaDiagonal& matrix, std::vector<double>& column);
+	// Penta-diagonal matrix equation solver.
+	void penta(
+		PentaDiagonal& matrix, 
+		std::vector<double>& column);
+
+}
 
 
 void tridiagonal_matrix_solver(

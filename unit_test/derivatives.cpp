@@ -126,7 +126,7 @@ std::vector<double> test_fd_approximation(
 		// Difference vector.
 		std::vector<double> diff = norm::vector_diff(deriv, deriv_fd);
 
-		max_norm.push_back(norm::vector::max(diff));
+		max_norm.push_back(norm::vector::infinity(diff));
 
 		l1_vec_norm.push_back(norm::vector::l1(diff));
 
@@ -650,4 +650,58 @@ TEST(SecondOrderDerivativeNonuniform, EXPc2b1) {
 
 	EXPECT_NEAR(slope_hyper[3], 2.0, 0.066);
 
+}
+
+
+TEST(SecondOrderMixedDerivative, Test1) {
+
+	const int n_points_x = 21;
+	const int n_points_y = 21;
+
+	const std::vector<double> grid_x = grid::uniform(-0.4, 0.4, n_points_x);
+	const std::vector<double> grid_y = grid::uniform(-0.4, 0.4, n_points_y);
+
+	TriDiagonal d1dx1_x = d1dx1::uniform::c2b1(n_points_x, grid_x[1] - grid_x[0]);
+	TriDiagonal d1dx1_y = d1dx1::uniform::c2b1(n_points_y, grid_y[1] - grid_y[0]);
+
+	// Function.
+	const std::vector<double> func_x = test_util::test_function(grid_x, 0, 0);
+	const std::vector<double> deriv_x = test_util::test_function(grid_x, 0, 1);
+
+	const std::vector<double> func_y = test_util::test_function(grid_y, 1, 0);
+	const std::vector<double> deriv_y = test_util::test_function(grid_y, 1, 1);
+
+	std::vector<double> inner(n_points_y, 0.0);
+	std::vector<std::vector<double>> func_xy(n_points_x, inner);
+	std::vector<std::vector<double>> deriv_xy(n_points_x, inner);
+
+	for (int i = 0; i != n_points_x; ++i) {
+		for (int j = 0; j != n_points_y; ++j) {
+			func_xy[i][j] = func_x[i] * func_y[j];
+			deriv_xy[i][j] = deriv_x[i] * deriv_y[j];
+		}
+	}
+
+	std::vector<std::vector<double>> d2dxdy_xy = d2dxdy<TriDiagonal>(d1dx1_x, d1dx1_y, func_xy);
+
+	std::vector<std::vector<double>> diff = norm::matrix_diff(deriv_xy, d2dxdy_xy);
+
+	std::cout << std::scientific << std::setprecision(5);
+
+	std::cout << std::setw(14) << norm::function::l2(grid_x, grid_y, diff) << std::endl;
+
+#if false
+	std::cout << std::scientific << std::setprecision(5);
+
+	for (int i = 0; i != n_points_x; ++i) {
+		for (int j = 0; j != n_points_y; ++j) {
+
+			std::cout
+				<< std::setw(14) << deriv_xy[i][j] 
+				<< std::setw(14) << d2dxdy_xy[i][j]
+				<< std::setw(14) << abs(deriv_xy[i][j] - d2dxdy_xy[i][j]) << std::endl;
+
+		}
+	}
+#endif
 }

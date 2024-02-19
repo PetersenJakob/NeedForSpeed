@@ -232,7 +232,7 @@ PentaDiagonal PentaDiagonal::identity() {
 
 	PentaDiagonal matrix = setup<PentaDiagonal>((*this).order(), {0.0, 0.0, 1.0, 0.0, 0.0}, 2, (*this).n_boundary_elements());
 
-	std::vector<double> coefficients((*this).n_boundary_elements(), 0.0);
+	std::vector<double> coefficients((*this).n_boundary_elements() - 1, 0.0);
 	coefficients[0] = 1.0;
 
 	boundary<PentaDiagonal>(0, coefficients, matrix);
