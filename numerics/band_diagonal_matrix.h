@@ -30,6 +30,8 @@ public:
 
 	std::vector<std::vector<double>> boundary_rows_tmp;
 
+	BandDiagonal() {}
+
 	BandDiagonal(
 		const int _order,
 		const int _bandwidth,
@@ -84,10 +86,13 @@ class TriDiagonal : public BandDiagonal {
 
 public:
 
+	TriDiagonal() {}
+
 	TriDiagonal(
 		const int _order,
 		const int _n_boundary_rows = 1,
-		const int _n_boundary_elements = 3) : BandDiagonal(_order, 1, _n_boundary_rows, _n_boundary_elements) {}
+		const int _n_boundary_elements = 3) : 
+		BandDiagonal(_order, 1, _n_boundary_rows, _n_boundary_elements) {}
 
 	TriDiagonal operator*(const double scalar);
 
@@ -117,10 +122,13 @@ class PentaDiagonal : public BandDiagonal {
 
 public:
 
+	PentaDiagonal() {}
+
 	PentaDiagonal(
 		const int _order,
 		const int _n_boundary_rows = 2,
-		const int _n_boundary_elements = 3) : BandDiagonal(_order, 2, _n_boundary_rows, _n_boundary_elements) {}
+		const int _n_boundary_elements = 3) : 
+		BandDiagonal(_order, 2, _n_boundary_rows, _n_boundary_elements) {}
 
 	PentaDiagonal operator*(const double scalar);
 
@@ -143,22 +151,34 @@ public:
 };
 
 
-TriDiagonal operator*(const double scalar, TriDiagonal rhs);
+TriDiagonal operator*(
+	const double scalar, 
+	TriDiagonal rhs);
 
 
-PentaDiagonal operator*(const double scalar, PentaDiagonal rhs);
+PentaDiagonal operator*(
+	const double scalar, 
+	PentaDiagonal rhs);
 
 
 template<class T>
-void scalar_multiply_matrix(const double scalar, T& matrix);
+void scalar_multiply_matrix(
+	const double scalar, 
+	T& matrix);
 
 
 template <class T>
-void matrix_multiply_vector(const T& matrix, const std::vector<double>& vector, std::vector<double>& result);
+void matrix_multiply_vector(
+	const T& matrix, 
+	const std::vector<double>& vector, 
+	std::vector<double>& result);
 
 
 template<class T>
-void matrix_add_matrix(const T& matrix1, const T& matrix2, T& result);
+void matrix_add_matrix(
+	const T& matrix1, 
+	const T& matrix2, 
+	T& result);
 
 
 void print_matrix(BandDiagonal matrix);

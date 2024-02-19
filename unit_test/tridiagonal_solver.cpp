@@ -236,9 +236,7 @@ std::vector<double> heat_equation_1d(
 		}
 
 		// Identity operator.
-//		TriDiagonal iden = identity::tri(x_points, deriv_operator.n_boundary_elements());
 		TriDiagonal iden = deriv_operator.identity();
-//		PentaDiagonal iden_p = identity::penta(x_points, deriv_operator_p.n_boundary_elements() - 1);
 		PentaDiagonal iden_p = deriv_operator_p.identity();
 
 		// ############
@@ -249,8 +247,8 @@ std::vector<double> heat_equation_1d(
 
 		if (d2dx2_type != "d2dx2::uniform::c4b0" && d2dx2_type != "d2dx2::nonuniform::c4b0") {
 
-			TriDiagonal lhs(x_points);
-			TriDiagonal rhs(x_points);
+			TriDiagonal lhs;
+			TriDiagonal rhs;
 
 			for (int i = 0; i != t_points - 1; ++i) {
 
@@ -270,14 +268,14 @@ std::vector<double> heat_equation_1d(
 				solution = rhs * solution;
 
 				// Solve matrix equation.
-				tri_solver(lhs, solution);
+				solver::tri(lhs, solution);
 
 			}
 		}
 		else {
 
-			PentaDiagonal lhs(x_points, 2, deriv_operator_p.n_boundary_elements() - 1);
-			PentaDiagonal rhs(x_points, 2, deriv_operator_p.n_boundary_elements() - 1);
+			PentaDiagonal lhs;
+			PentaDiagonal rhs;
 
 			for (int i = 0; i != t_points - 1; ++i) {
 
@@ -297,7 +295,7 @@ std::vector<double> heat_equation_1d(
 				solution = rhs * solution;
 
 				// Solve matrix equation.
-				penta_solver(lhs, solution);
+				solver::penta(lhs, solution);
 
 			}
 
@@ -483,15 +481,22 @@ TEST(PentaDiagonalSolver, HeatEquation1D) {
 	// Crank-Nicolson. cos(pi * x)
 	std::vector<double> space1 = heat_equation_1d(
 		"space",
-		21,
+		11,
 		"uniform",
-		101,
+		501,
 		0.03,
 		"uniform",
 		"d2dx2::uniform::c4b0",
 		"cos(pi*x)",
 		11,
 		0.5);
+
+	// Maximum norm.
+	EXPECT_NEAR(space1[0], 4.8, 0.017);
+
+	// L1 function norm.
+	EXPECT_NEAR(space1[3], 4.6, 0.059);
+
 #if false
 	const int n_points = 11;
 	std::vector<double> grid_new = grid::uniform(-0.5, 0.5, n_points);
@@ -502,17 +507,24 @@ TEST(PentaDiagonalSolver, HeatEquation1D) {
 	PentaDiagonal deriv_non = d2dx2::nonuniform::c4b0(n_points, grid_new);
 	print_matrix(deriv_non);
 #endif
+
 	// Crank-Nicolson. cos(pi * x)
 	std::vector<double> space2 = heat_equation_1d(
 		"space",
 		21,
 		"hyperbolic",
-		101,
+		1001,
 		0.03,
 		"uniform",
 		"d2dx2::nonuniform::c4b0",
 		"cos(pi*x)",
 		11,
 		0.5);
+
+	// Maximum norm.
+	EXPECT_NEAR(space2[0], 3.5, 0.02);
+
+	// L1 function norm.
+	EXPECT_NEAR(space2[3], 3.5, 0.01);
 
 }

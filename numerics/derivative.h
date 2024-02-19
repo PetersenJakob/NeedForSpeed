@@ -101,6 +101,7 @@ namespace d2dx2 {
 }
 
 
+// Finite difference representation of second order mixed derivative operator.
 template <class T>
 std::vector<std::vector<double>> d2dxdy(
 	T& d1dx1,

@@ -247,9 +247,8 @@ PentaDiagonal d2dx2::nonuniform::c4b0(const int order, const std::vector<double>
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, grid, coef_x2::nonuniform::c4, 2, 3);
 
-	std::vector<double> dx_vec_1 = { 0.0, 0.0, 0.0, 0.0 };
+	std::vector<double> dx_vec_1 = { 0.0, 0.0, 0.0 };
 	boundary<PentaDiagonal>(0, dx_vec_1, matrix);
-
 
 
 	// Central difference at 2nd row.
@@ -264,8 +263,7 @@ PentaDiagonal d2dx2::nonuniform::c4b0(const int order, const std::vector<double>
 	matrix.boundary_rows[2][3] = coef_x2::nonuniform::c2(dx_vec_3)[2];
 
 
-
-	std::vector<double> dx_vec_4 = { 0.0, 0.0, 0.0, 0.0 };
+	std::vector<double> dx_vec_4 = { 0.0, 0.0, 0.0 };
 	boundary<PentaDiagonal>(3, dx_vec_4, matrix);
 
 	return matrix;
