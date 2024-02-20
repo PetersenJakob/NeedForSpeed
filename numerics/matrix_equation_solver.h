@@ -17,6 +17,16 @@ namespace solver {
 		PentaDiagonal& matrix, 
 		std::vector<double>& column);
 
+	// Tri-diagonal matrix equation solver.
+	void tri_test(
+		BandDiagonal& matrix,
+		std::vector<double>& column);
+
+	// Penta-diagonal matrix equation solver.
+	void penta_test(
+		BandDiagonal& matrix,
+		std::vector<double>& column);
+
 }
 
 

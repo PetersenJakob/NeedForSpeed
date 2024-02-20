@@ -102,14 +102,14 @@ namespace d2dx2 {
 
 
 // Finite difference representation of second order mixed derivative operator.
-template <class T>
+template <class T1, class T2>
 std::vector<std::vector<double>> d2dxdy(
-	T& d1dx1,
-	T& d1dy1,
+	T1& d1dx1,
+	T2& d1dy1,
 	std::vector<std::vector<double>> func) {
 
-	const int n_points_x = func.size();
-	const int n_points_y = func[0].size();
+	const int n_points_x = (int)func.size();
+	const int n_points_y = (int)func[0].size();
 
 	std::vector<double> vec_x(n_points_x, 0.0);
 	std::vector<double> vec_y(n_points_y, 0.0);

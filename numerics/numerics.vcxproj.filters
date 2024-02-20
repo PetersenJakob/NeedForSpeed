@@ -89,5 +89,8 @@
     <ClInclude Include="regression.h">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="theta.h">
+      <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
