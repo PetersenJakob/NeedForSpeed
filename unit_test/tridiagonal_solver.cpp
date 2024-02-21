@@ -247,38 +247,15 @@ std::vector<double> heat_equation_1d(
 
 		if (d2dx2_type != "d2dx2::uniform::c4b0" && d2dx2_type != "d2dx2::nonuniform::c4b0") {
 
-//			TriDiagonal lhs;
-//			TriDiagonal rhs;
-
 			for (int i = 0; i != t_points - 1; ++i) {
 
 				double dt_tmp = t_grid[i + 1] - t_grid[i];
 
 				theta_propagator(dt_tmp, iden, deriv_operator, solution, theta);
 
-#if false
-				// LHS operator.
-				lhs = deriv_operator;
-				lhs *= -theta * dt_tmp;
-				lhs += iden;
-
-				// RHS operator.
-				rhs = deriv_operator;
-				rhs *= (1.0 - theta) * dt_tmp;
-				rhs += iden;
-
-				// Evaluation RHS.
-				solution = rhs * solution;
-
-				// Solve matrix equation.
-				solver::tri(lhs, solution);
-#endif
 			}
 		}
 		else {
-
-//			PentaDiagonal lhs;
-//			PentaDiagonal rhs;
 
 			for (int i = 0; i != t_points - 1; ++i) {
 
@@ -286,23 +263,6 @@ std::vector<double> heat_equation_1d(
 
 				theta_propagator(dt_tmp, iden_p, deriv_operator_p, solution, theta);
 
-#if false
-				// LHS operator.
-				lhs = deriv_operator_p;
-				lhs *= -theta * dt_tmp;
-				lhs += iden_p;
-
-				// RHS operator.
-				rhs = deriv_operator_p;
-				rhs *= (1.0 - theta) * dt_tmp;
-				rhs += iden_p;
-
-				// Evaluation RHS.
-				solution = rhs * solution;
-
-				// Solve matrix equation.
-				solver::penta(lhs, solution);
-#endif 
 			}
 
 		}
