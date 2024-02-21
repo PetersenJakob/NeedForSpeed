@@ -58,7 +58,7 @@ void tridiagonal_matrix_solver(
 	std::vector<double>& vec_tmp) {
 
 	// Number of elements along main diagonal.
-	const int n_elements = main.size();
+	const int n_elements = (int)main.size();
 
 	// Temporary index.
 	int idx_tmp = 0;
@@ -122,7 +122,7 @@ void pentadiagonal_matrix_solver(
 	std::vector<double>& vec_tmp) {
 
 	// Number of elements along main diagonal.
-	const int n_elements = main.size();
+	const int n_elements = (int)main.size();
 
 	// Temporary index.
 	int idx_tmp = 0;

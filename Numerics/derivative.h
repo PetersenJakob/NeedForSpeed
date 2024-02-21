@@ -108,8 +108,8 @@ std::vector<std::vector<double>> d2dxdy(
 	T& d1dy1,
 	std::vector<std::vector<double>> func) {
 
-	const int n_points_x = func.size();
-	const int n_points_y = func[0].size();
+	const int n_points_x = (int)func.size();
+	const int n_points_y = (int)func[0].size();
 
 	std::vector<double> vec_x(n_points_x, 0.0);
 	std::vector<double> vec_y(n_points_y, 0.0);
