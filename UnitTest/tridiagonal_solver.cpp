@@ -251,7 +251,7 @@ std::vector<double> heat_equation_1d(
 
 				double dt_tmp = t_grid[i + 1] - t_grid[i];
 
-				theta_propagator(dt_tmp, iden, deriv_operator, solution, theta);
+				propagator::theta(dt_tmp, iden, deriv_operator, solution, theta);
 
 			}
 		}
@@ -261,7 +261,7 @@ std::vector<double> heat_equation_1d(
 
 				double dt_tmp = t_grid[i + 1] - t_grid[i];
 
-				theta_propagator(dt_tmp, iden_p, deriv_operator_p, solution, theta);
+				propagator::theta(dt_tmp, iden_p, deriv_operator_p, solution, theta);
 
 			}
 

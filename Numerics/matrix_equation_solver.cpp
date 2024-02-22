@@ -1,57 +1,32 @@
+#include <stdexcept>
+#include <typeinfo>
 #include <vector>
 
 #include "band_diagonal_matrix.h"
 #include "matrix_equation_solver.h"
 
 
+// Band-diagonal matrix equation solver.
+void solver::band(
+	BandDiagonal& matrix,
+	std::vector<double>& column) {
+
+	// Solve matrix equation.
+	if (typeid(matrix) == typeid(TriDiagonal)) {
+		solver::tri(matrix, column);
+	}
+	else if (typeid(matrix) == typeid(PentaDiagonal)) {
+		solver::penta(matrix, column);
+	}
+	else {
+		throw std::invalid_argument("Matrix type unknown.");
+	}
+
+}
+
+
 // Tri-diagonal matrix equation solver.
 void solver::tri(
-	TriDiagonal& matrix, 
-	std::vector<double>& column) {
-
-	matrix.adjust_boundary(column);
-
-	std::vector<double> vec_tmp(matrix.order(), 0.0);
-
-	tridiagonal_matrix_solver(
-		matrix.matrix[0],
-		matrix.matrix[1],
-		matrix.matrix[2],
-		column,
-		vec_tmp);
-
-}
-
-
-// Penta-diagonal matrix equation solver.
-void solver::penta(
-	PentaDiagonal& matrix, 
-	std::vector<double>& column) {
-
-	matrix.adjust_boundary(column);
-
-	std::vector<double> sub_tmp(matrix.order(), 0.0);
-	std::vector<double> main_tmp(matrix.order(), 0.0);
-	std::vector<double> super_tmp(matrix.order(), 0.0);
-	std::vector<double> vec_tmp(matrix.order(), 0.0);
-
-	pentadiagonal_matrix_solver(
-		matrix.matrix[0],
-		matrix.matrix[1],
-		matrix.matrix[2],
-		matrix.matrix[3],
-		matrix.matrix[4],
-		column,
-		sub_tmp,
-		main_tmp,
-		super_tmp,
-		vec_tmp);
-
-}
-
-
-// Tri-diagonal matrix equation solver.
-void solver::tri_test(
 	BandDiagonal& matrix,
 	std::vector<double>& column) {
 
@@ -70,7 +45,7 @@ void solver::tri_test(
 
 
 // Penta-diagonal matrix equation solver.
-void solver::penta_test(
+void solver::penta(
 	BandDiagonal& matrix,
 	std::vector<double>& column) {
 
@@ -97,9 +72,9 @@ void solver::penta_test(
 
 
 void tridiagonal_matrix_solver(
-	std::vector<double>& sub,
-	std::vector<double>& main,
-	std::vector<double>& super,
+	const std::vector<double>& sub,
+	const std::vector<double>& main,
+	const std::vector<double>& super,
 	std::vector<double>& column,
 	std::vector<double>& vec_tmp) {
 
@@ -156,11 +131,11 @@ void tridiagonal_matrix_solver(
 
 
 void pentadiagonal_matrix_solver(
-	std::vector<double>& sub_2,
-	std::vector<double>& sub_1,
-	std::vector<double>& main,
-	std::vector<double>& super_1,
-	std::vector<double>& super_2,
+	const std::vector<double>& sub_2,
+	const std::vector<double>& sub_1,
+	const std::vector<double>& main,
+	const std::vector<double>& super_1,
+	const std::vector<double>& super_2,
 	std::vector<double>& column,
 	std::vector<double>& sub_tmp,
 	std::vector<double>& main_tmp,

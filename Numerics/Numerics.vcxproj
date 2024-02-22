@@ -150,7 +150,7 @@
     <ClInclude Include="regression.h" />
     <ClInclude Include="test_util.h" />
     <ClInclude Include="matrix_equation_solver.h" />
-    <ClInclude Include="theta.h" />
+    <ClInclude Include="propagator.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
