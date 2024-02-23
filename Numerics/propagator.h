@@ -16,7 +16,7 @@ namespace propagator {
 		const double time_step,
 		const T& identity_operator,
 		const T& derivative_operator,
-		std::vector<double>& column,
+		std::vector<double>& func,
 		const double theta_parameter = 0.5) {
 
 		// Left-hand-side operator.
@@ -30,10 +30,10 @@ namespace propagator {
 		rhs += identity_operator;
 
 		// Evaluation of righ-hand-side.
-		column = rhs * column;
+		func = rhs * func;
 
 		// Solve matrix equation.
-		solver::band(lhs, column);
+		solver::band(lhs, func);
 
 	}
 
@@ -48,8 +48,78 @@ namespace propagator {
 			const T2& identity_operator_2,
 			const T1& derivative_operator_1,
 			const T2& derivative_operator_2,
-			std::vector<std::vector<double>>& column,
+			std::vector<std::vector<double>>& func,
 			const double theta_parameter = 0.5) {
+
+			const int n_points_1 = identity_operator_1.order();
+			const int n_points_2 = identity_operator_2.order();
+
+			std::vector<double> inner(n_points_2, 0.0);
+			std::vector<std::vector<double>> func_tmp(n_points_1, inner);
+
+			// Eq. (2.68), right-hand-side.
+			T2 lhs_2 = derivative_operator_2;
+			lhs_2 *= time_step;
+			for (int i = 0; i != n_points_1; ++i) {
+				func_tmp[i] = lhs_2 * func[i];
+			}
+
+			T1 lhs_1 = derivative_operator_1;
+			lhs_1 *= (1.0 - theta_parameter) * time_step;
+			lhs_1 += identity_operator_1;
+
+			for (int i = 0; i != n_points_2; ++i) {
+
+				std::vector<double> func_strip(n_points_1, 0.0);
+
+				for (int j = 0; j != n_points_1; ++i) {
+					func_strip[j] = func[j][i];
+				}
+
+				func_strip = lhs_1 * func_strip;
+
+				for (int j = 0; j != n_points_1; ++i) {
+					func[j][i] = func_tmp[j][i] + func_strip[j];
+				}
+
+			}
+
+			// Eq. (2.68), left-hand-side.
+			T1 rhs_1 = derivative_operator_1;
+			rhs_1 *= -theta_parameter * time_step;
+			rhs_1 += identity_operator_1;
+
+			for (int i = 0; i != n_points_2; ++i) {
+			
+				std::vector<double> func_strip(n_points_1, 0.0);
+
+				for (int j = 0; j != n_points_1; ++i) {
+					func_strip[j] = func[j][i];
+				}
+
+				solver::band(rhs_1, func_strip);
+
+				for (int j = 0; j != n_points_1; ++i) {
+					func[j][i] = func_strip[j];
+				}
+
+			}
+
+			// Eq. (2.69), left-hand-side.
+			for (int i = 0; i != n_points_1; ++i) {
+				for (int j = 0; j != n_points_2; ++j) {
+					func[i][j] -= theta_parameter * func_tmp[i][j];
+				}
+			}
+
+			// Eq. (2.69), left-hand-side.
+			T2 rhs_2 = derivative_operator_2;
+			rhs_2 *= -theta_parameter;
+			rhs_2 += identity_operator_2;
+
+			for (int i = 0; i != n_points_1; ++i) {
+				solver::band(rhs_2, func[i]);
+			}
 
 		}
 
