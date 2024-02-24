@@ -131,7 +131,7 @@ namespace propagator {
 			const T2& identity_operator_2,
 			const T1& derivative_operator_1,
 			const T2& derivative_operator_2,
-			std::vector<std::vector<double>>& column,
+			std::vector<std::vector<double>>& func,
 			const double theta_parameter = 0.5) {
 
 		}
@@ -146,7 +146,7 @@ namespace propagator {
 			const T1& derivative_operator_1,
 			const T2& derivative_operator_2,
 			const T3& derivative_operator_3,
-			std::vector<std::vector<std::vector<double>>>& column,
+			std::vector<std::vector<std::vector<double>>>& func,
 			const double theta_parameter = 0.5) {
 
 		}
@@ -161,30 +161,44 @@ namespace propagator {
 			const T1& derivative_operator_1,
 			const T2& derivative_operator_2,
 			const T3& derivative_operator_3,
-			std::vector<std::vector<std::vector<double>>>& column,
+			std::vector<std::vector<std::vector<double>>>& func,
 			const double theta_parameter = 0.5) {
 
 		}
 
 		// Douglas-Rachford N-dimensional scheme.
 		template <class T>
-		void dr_2d(
+		void dr_nd(
 			const double time_step,
 			const std::vector<T>& identity_operator,
 			const std::vector<T>& derivative_operator,
-			std::vector<double>& column,
+			std::vector<double>& func,
 			const double theta_parameter = 0.5) {
+
+			const int n_dimensions = (int)identity_operator.size();
+			
+			std::vector<int> n_points(n_dimensions, 0);
+			for (int i = 0; i != n_dimensions; ++i) {
+				n_points[i] = identity_operator[i].order();
+			}
 
 		}
 
 		// Craig-Sneyd N-dimensional scheme.
 		template <class T>
-		void cs_2d(
+		void cs_nd(
 			const double time_step,
 			const std::vector<T>& identity_operator,
 			const std::vector<T>& derivative_operator,
-			std::vector<double>& column,
+			std::vector<double>& func,
 			const double theta_parameter = 0.5) {
+
+			const int n_dimensions = (int)identity_operator.size();
+
+			std::vector<int> n_points(n_dimensions, 0);
+			for (int i = 0; i != n_dimensions; ++i) {
+				n_points[i] = identity_operator[i].order();
+			}
 
 		}
 
