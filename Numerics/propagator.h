@@ -50,7 +50,6 @@ namespace propagator {
 			lhs *= -theta * dt;
 			lhs += identity;
 
-			// Solve matrix equation.
 			solver::band(lhs, func);
 
 		}
@@ -76,7 +75,7 @@ namespace propagator {
 	// Alternating direction implicit schemes.
 	namespace adi {
 
-		// Douglas-Rachford 2-dimensional scheme.
+		// Douglas-Rachford scheme, 2-dimensional.
 		// References
 		// - AP: Andersen and Piterbarg (2010).
 		template <class T1, class T2>
@@ -89,9 +88,9 @@ namespace propagator {
 			std::vector<double>& func,
 			const double theta = 0.5) {
 
-			const int n_points_1 = identity_1.order();
-			const int n_points_2 = identity_2.order();
-			const int n_points = n_points_1 * n_points_2;
+			const int n_p_1 = identity_1.order();
+			const int n_p_2 = identity_2.order();
+			const int n_points = n_p_1 * n_p_2;
 
 			std::vector<double> func_tmp_1(n_points, 0.0);
 			std::vector<double> func_tmp_2(n_points, 0.0);
@@ -122,15 +121,15 @@ namespace propagator {
 			// ############
 			
 			// AP Eq. (2.68), right-hand-side.
-			func_tmp_1 = action_2d(n_points_1, n_points_2, 1, false, rhs_1, func);
-			func_tmp_2 = action_2d(n_points_2, n_points_1, 2, false, rhs_2, func);
+			func_tmp_1 = action_2d(n_p_1, n_p_2, 1, false, rhs_1, func);
+			func_tmp_2 = action_2d(n_p_2, n_p_1, 2, false, rhs_2, func);
 
 			for (int i = 0; i != n_points; ++i) {
 				func[i] = func_tmp_1[i] + func_tmp_2[i];
 			}
 
 			// AP Eq. (2.68), left-hand-side.
-			func = action_2d(n_points_1, n_points_2, 1, true, lhs_1, func);
+			func = action_2d(n_p_1, n_p_2, 1, true, lhs_1, func);
 
 			// AP Eq. (2.69), right-hand-side.
 			for (int i = 0; i != n_points; ++i) {
@@ -138,11 +137,11 @@ namespace propagator {
 			}
 
 			// AP Eq. (2.69), left-hand-side.
-			func = action_2d(n_points_2, n_points_1, 2, true, lhs_2, func);
+			func = action_2d(n_p_2, n_p_1, 2, true, lhs_2, func);
 
 		}
 
-		// Craig-Sneyd 2-dimensional scheme.
+		// Craig-Sneyd scheme, 2-dimensional.
 		// References
 		// - AP: Andersen and Piterbarg (2010).
 		template <class T1, class T2>
@@ -152,18 +151,16 @@ namespace propagator {
 			const T2& identity_2,
 			const T1& derivative_1,
 			const T2& derivative_2,
-
-			std::function<std::vector<double>(std::vector<double>)> derivative_12,
-
+			MixedDerivative<T1, T2>& mixed,
 			std::vector<double>& func,
 			const double theta = 0.5,
 			const double lambda = 0.5,
 			const int n_iterations = 1) {
 
-			const int n_points_1 = identity_1.order();
-			const int n_points_2 = identity_2.order();
+			const int n_p_1 = identity_1.order();
+			const int n_p_2 = identity_2.order();
 
-			const int n_points = n_points_1 * n_points_2;
+			const int n_points = n_p_1 * n_p_2;
 
 			std::vector<double> func_tmp_1(n_points, 0.0);
 			std::vector<double> func_tmp_2(n_points, 0.0);
@@ -201,16 +198,16 @@ namespace propagator {
 				// ###############
 
 				// AP Eq. (2.88), right-hand-side.
-				func_tmp_1 = action_2d(n_points_1, n_points_2, 1, false, rhs_1, func);
-				func_tmp_2 = action_2d(n_points_2, n_points_1, 2, false, rhs_2, func);
-				func_tmp_3 = derivative_12(func);
+				func_tmp_1 = action_2d(n_p_1, n_p_2, 1, false, rhs_1, func);
+				func_tmp_2 = action_2d(n_p_2, n_p_1, 2, false, rhs_2, func);
+				func_tmp_3 = mixed.d2dxdy(func);
 
 				for (int i = 0; i != n_points; ++i) {
 					func[i] = func_tmp_1[i] + func_tmp_2[i] + dt * func_tmp_3[i];
 				}
 
 				// AP Eq. (2.88), left-hand-side.
-				func = action_2d(n_points_1, n_points_2, 1, true, lhs_1, func);
+				func = action_2d(n_p_1, n_p_2, 1, true, lhs_1, func);
 
 				// AP Eq. (2.89), right-hand-side.
 				for (int i = 0; i != n_points; ++i) {
@@ -218,23 +215,23 @@ namespace propagator {
 				}
 
 				// AP Eq. (2.89), left-hand-side.
-				func = action_2d(n_points_2, n_points_1, 2, true, lhs_2, func);
+				func = action_2d(n_p_2, n_p_1, 2, true, lhs_2, func);
 
 				// ###############
 				// Corrector step.
 				// ###############
 
 				// AP Eq. (2.90), right-hand-side.
-				func = derivative_12(func);
+				func = mixed(func);
 
 				for (int i = 0; i != n_points; ++i) {
 					func[i] *= lambda * dt;
-					func[i] = func_tmp_1[i] + func_tmp_2[i] 
+					func[i] += func_tmp_1[i] + func_tmp_2[i] 
 						+ (1.0 - lambda) * dt * func_tmp_3[i];
 				}
 
 				// AP Eq. (2.90), left-hand-side.
-				func = action_2d(n_points_1, n_points_2, 1, true, lhs_1, func);
+				func = action_2d(n_p_1, n_p_2, 1, true, lhs_1, func);
 
 				// AP Eq. (2.91), right-hand-side.
 				for (int i = 0; i != n_points; ++i) {
@@ -242,32 +239,40 @@ namespace propagator {
 				}
 
 				// AP Eq. (2.91), left-hand-side.
-				func = action_2d(n_points_2, n_points_1, 2, true, lhs_2, func);
+				func = action_2d(n_p_2, n_p_1, 2, true, lhs_2, func);
 
 			}
 
 		}
 
-		// Douglas-Rachford 3-dimensional scheme.
+		// Douglas-Rachford scheme, 3-dimensional.
 		template <class T1, class T2, class T3>
 		void dr_3d(
 			const double dt,
-			const std::vector<T1&> identity,
-			const std::vector<T1&> derivative,
+			const T1& identity_1,
+			const T2& identity_2,
+			const T3& identity_3,
+			const T1& derivative_1,
+			const T2& derivative_2,
+			const T3& derivative_3,
 			std::vector<double>& func,
 			const double theta = 0.5) {
 
 		}
 
-		// Craig-Sneyd 3-dimensional scheme.
+		// Craig-Sneyd scheme, 3-dimensional.
 		template <class T1, class T2, class T3>
 		void cs_3d(
 			const double dt,
-			const std::vector<T1&> identity,
-			const std::vector<T1&> derivative,
-
-			std::function<std::vector<double>(std::vector<double>)> derivative_12,
-
+			const T1& identity_1,
+			const T2& identity_2,
+			const T3& identity_3,
+			const T1& derivative_1,
+			const T2& derivative_2,
+			const T3& derivative_3,
+			MixedDerivative<T1, T2>& mixed_12,
+			MixedDerivative<T1, T3>& mixed_13,
+			MixedDerivative<T2, T3>& mixed_23,
 			std::vector<double>& func,
 			const double theta = 0.5,
 			const double lambda = 0.5,
@@ -275,7 +280,7 @@ namespace propagator {
 
 		}
 
-		// Douglas-Rachford N-dimensional scheme.
+		// Douglas-Rachford scheme, N-dimensional.
 		template <class T>
 		void dr_nd(
 			const double dt,
@@ -293,14 +298,17 @@ namespace propagator {
 
 		}
 
-		// Craig-Sneyd N-dimensional scheme.
+		// Craig-Sneyd scheme, N-dimensional.
 		template <class T>
 		void cs_nd(
 			const double dt,
 			const std::vector<T>& identity,
 			const std::vector<T>& derivative,
+			std::vector<MixedDerivative<T, T>>& mixed,
 			std::vector<double>& func,
-			const double theta = 0.5) {
+			const double theta = 0.5,
+			const double lambda = 0.5,
+			const int n_iterations = 1) {
 
 			const int n_dimensions = (int)identity.size();
 
