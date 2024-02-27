@@ -4,8 +4,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include "matrix_equation_solver.h"
 
-// TODO: Why should these template functions be defined in the header file?
 
 // Setting up finite difference representation of derivative operator on uniform grid.
 template <class T>
@@ -96,5 +96,129 @@ void boundary(const int row_index, const std::vector<double>& coef, T& matrix) {
 	for (int i = 0; i != coef.size(); ++i) {
 		matrix.boundary_rows[row_index][index_tmp + i] = coef[i];
 	}
+
+}
+
+
+// Evaulation of derivative operator wrt. first coordinate, 2-dimensional.
+template <class T>
+std::vector<double> action_2d(
+	const int n_1,
+	const int n_2,
+	const int increment,
+	const bool solve_equation,
+	const T& derivative,
+	const std::vector<double>& func) {
+
+	std::vector<double> func_tmp(n_1 * n_2, 0.0);
+
+	std::vector<double> func_strip(n_1, 0.0);
+
+	int index = 0;
+
+	int factor_i = 1;
+	int factor_j = 1;
+	if (increment == 1) {
+		// Function strip along x-dimension. TODO: (x, y)!
+		factor_i = 1;
+		factor_j = n_2;
+	}
+	else if (increment == 2) {
+		// Function strip along y-dimension. TODO: (y, x)!
+		factor_i = n_1;
+		factor_j = 1;
+	}
+	else {
+		throw std::invalid_argument("Unknown increment.");
+	}
+
+	for (int i = 0; i != n_2; ++i) {
+		for (int j = 0; j != n_1; ++j) {
+			index = factor_i * i + factor_j * j;
+			func_strip[j] = func[index];
+		}
+
+		if (solve_equation) {
+			solver::band(derivative, func_strip);
+		}
+		else {
+			func_strip = derivative * func_strip;
+		}
+
+		for (int j = 0; j != n_1; ++j) {
+			index = factor_i * i + factor_j * j;
+			func_tmp[index] = func_strip[j];
+		}
+	}
+
+	return func_tmp;
+
+}
+
+
+// Evaulation of derivative operator wrt. first coordinate, 3-dimensional.
+template <class T>
+std::vector<double> action_3d(
+	const int n_1,
+	const int n_2,
+	const int n_3,
+	const int increment,
+	const bool solve_equation,
+	const T& derivative,
+	const std::vector<double>& func) {
+
+	std::vector<double> func_tmp(n_1 * n_2 * n_3, 0.0);
+
+	std::vector<double> func_strip(n_1, 0.0);
+
+	int index = 0;
+
+	int factor_i = 1;
+	int factor_j = 1;
+	int factor_k = 1;
+	if (increment == 1) {
+		// Function strip along x-dimension. TODO: (x, y, z)!
+		factor_i = n_3;
+		factor_j = 1;
+		factor_k = n_2 * n_3;
+	}
+	else if (increment == 2) {
+		// Function strip along y-dimension. TODO: (y, x, z)!
+		factor_i = n_1 * n_3;
+		factor_j = 1;
+		factor_k = n_3;
+	}
+	else if (increment == 3) {
+		// Function strip along z-dimension. TODO: (z, x, y)!
+		factor_i = n_1 * n_3;
+		factor_j = n_1;
+		factor_k = 1;
+	}
+	else {
+		throw std::invalid_argument("Unknown increment.");
+	}
+
+	for (int i = 0; i != n_2; ++i) {
+		for (int j = 0; j != n_3; ++j) {
+			for (int k = 0; k != n_1; ++k) {
+				index = factor_i * i + factor_j * j + factor_k * k;
+				func_strip[k] = func[index];
+			}
+
+			if (solve_equation) {
+				solver::band(derivative, func_strip);
+			}
+			else {
+				func_strip = derivative * func_strip;
+			}
+
+			for (int k = 0; k != n_1; ++k) {
+				index = factor_i * i + factor_j * j + factor_k * k;
+				func_tmp[index] = func_strip[k];
+			}
+		}
+	}
+
+	return func_tmp;
 
 }

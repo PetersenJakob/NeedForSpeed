@@ -6,6 +6,8 @@
 #include <vector>
 
 #include "band_diagonal_matrix.h"
+#include "matrix_equation_solver.h"
+#include "utility.h"
 
 
 // Time propagation schemes.
@@ -84,81 +86,59 @@ namespace propagator {
 			const T2& identity_2,
 			const T1& derivative_1,
 			const T2& derivative_2,
-			std::vector<std::vector<double>>& func,
+			std::vector<double>& func,
 			const double theta = 0.5) {
-
-			// TODO: Change func to ordinary std::vector<double>?
 
 			const int n_points_1 = identity_1.order();
 			const int n_points_2 = identity_2.order();
+			const int n_points = n_points_1 * n_points_2;
 
-			std::vector<double> inner(n_points_2, 0.0);
-			std::vector<std::vector<double>> func_tmp(n_points_1, inner);
+			std::vector<double> func_tmp_1(n_points, 0.0);
+			std::vector<double> func_tmp_2(n_points, 0.0);
 
-			std::vector<double> func_strip(n_points_1, 0.0);
+			// ##########
+			// Operators.
+			// ##########
 
-			// AP Eq. (2.68), right-hand-side.
-			T2 rhs_2 = derivative_2;
-			rhs_2 *= dt;
-
-			for (int i = 0; i != n_points_1; ++i) {
-				func_tmp[i] = rhs_2 * func[i];
-			}
-
+			// AP Eq. (2.68) and (2.69), right-hand-side.
 			T1 rhs_1 = derivative_1;
 			rhs_1 *= (1.0 - theta) * dt;
 			rhs_1 += identity_1;
 
-			for (int i = 0; i != n_points_2; ++i) {
+			T2 rhs_2 = derivative_2;
+			rhs_2 *= dt;
 
-				std::vector<double> func_strip(n_points_1, 0.0);
+			// AP Eq. (2.68) and (2.69), left-hand-side.
+			T1 lhs_1 = derivative_1;
+			lhs_1 *= -theta * dt;
+			lhs_1 += identity_1;
 
-				for (int j = 0; j != n_points_1; ++i) {
-					func_strip[j] = func[j][i];
-				}
+			T2 lhs_2 = derivative_2;
+			lhs_2 *= -theta * dt;
+			lhs_2 += identity_2;
 
-				func_strip = rhs_1 * func_strip;
+			// ############
+			// Propagation.
+			// ############
+			
+			// AP Eq. (2.68), right-hand-side.
+			func_tmp_1 = action_2d(n_points_1, n_points_2, 1, false, rhs_1, func);
+			func_tmp_2 = action_2d(n_points_2, n_points_1, 2, false, rhs_2, func);
 
-				for (int j = 0; j != n_points_1; ++i) {
-					func[j][i] = func_strip[j] + func_tmp[j][i];
-				}
-
+			for (int i = 0; i != n_points; ++i) {
+				func[i] = func_tmp_1[i] + func_tmp_2[i];
 			}
 
 			// AP Eq. (2.68), left-hand-side.
-			T1 lhs_1 = derivative_1;
-			lhs_1 *= - theta * dt;
-			lhs_1 += identity_1;
-
-			for (int i = 0; i != n_points_2; ++i) {
-			
-				for (int j = 0; j != n_points_1; ++i) {
-					func_strip[j] = func[j][i];
-				}
-
-				solver::band(lhs_1, func_strip);
-
-				for (int j = 0; j != n_points_1; ++i) {
-					func[j][i] = func_strip[j];
-				}
-
-			}
+			func = action_2d(n_points_1, n_points_2, 1, true, lhs_1, func);
 
 			// AP Eq. (2.69), right-hand-side.
-			for (int i = 0; i != n_points_1; ++i) {
-				for (int j = 0; j != n_points_2; ++j) {
-					func[i][j] -= theta * func_tmp[i][j];
-				}
+			for (int i = 0; i != n_points; ++i) {
+				func[i] -= theta * func_tmp_2[i];
 			}
 
 			// AP Eq. (2.69), left-hand-side.
-			T2 lhs_2 = derivative_2;
-			lhs_2 *= - theta * dt;
-			lhs_2 += identity_2;
-
-			for (int i = 0; i != n_points_1; ++i) {
-				solver::band(lhs_2, func[i]);
-			}
+			func = action_2d(n_points_2, n_points_1, 2, true, lhs_2, func);
 
 		}
 
@@ -173,11 +153,9 @@ namespace propagator {
 			const T1& derivative_1,
 			const T2& derivative_2,
 
-			std::function<std::vector<std::vector<double>>(
-				std::vector<std::vector<double>>)> derivative_12,
+			std::function<std::vector<double>(std::vector<double>)> derivative_12,
 
-			std::vector<std::vector<double>>& func,
-
+			std::vector<double>& func,
 			const double theta = 0.5,
 			const double lambda = 0.5,
 			const int n_iterations = 1) {
@@ -185,12 +163,11 @@ namespace propagator {
 			const int n_points_1 = identity_1.order();
 			const int n_points_2 = identity_2.order();
 
-			std::vector<double> inner(n_points_2, 0.0);
-			std::vector<std::vector<double>> func_tmp_1(n_points_1, inner);
-			std::vector<std::vector<double>> func_tmp_2(n_points_1, inner);
-			std::vector<std::vector<double>> func_tmp_3(n_points_1, inner);
+			const int n_points = n_points_1 * n_points_2;
 
-			std::vector<double> func_strip(n_points_1, 0.0);
+			std::vector<double> func_tmp_1(n_points, 0.0);
+			std::vector<double> func_tmp_2(n_points, 0.0);
+			std::vector<double> func_tmp_3(n_points, 0.0);
 
 			// ##########
 			// Operators.
@@ -213,6 +190,10 @@ namespace propagator {
 			lhs_2 *= - theta * dt;
 			lhs_2 += identity_2;
 
+			// ############
+			// Propagation.
+			// ############
+
 			for (int n = 0; n != n_interations; ++n) {
 
 				// ###############
@@ -220,59 +201,24 @@ namespace propagator {
 				// ###############
 
 				// AP Eq. (2.88), right-hand-side.
-				for (int i = 0; i != n_points_2; ++i) {
-
-					for (int j = 0; j != n_points_1; ++j) {
-						func_strip[j] = func[j][i];
-					}
-
-					func_strip = rhs_1 * func_strip;
-
-					for (int j = 0; j != n_points_1; ++j) {
-						func_tmp_1[j][i] = func_strip[j];
-					}
-
-				}
-
-				for (int i = 0; i != n_points_1; ++i) {
-					func_tmp_2[i] = rhs_2 * func[i];
-				}
-
+				func_tmp_1 = action_2d(n_points_1, n_points_2, 1, false, rhs_1, func);
+				func_tmp_2 = action_2d(n_points_2, n_points_1, 2, false, rhs_2, func);
 				func_tmp_3 = derivative_12(func);
 
-				for (int i = 0; i != n_points_1; ++i) {
-					for (int j = 0; j != n_points_2; ++j) {
-						func[i][j] = func_tmp_1[i][j] + func_tmp_2[i][j] 
-							+ dt * func_tmp_3[i][j];
-					}
+				for (int i = 0; i != n_points; ++i) {
+					func[i] = func_tmp_1[i] + func_tmp_2[i] + dt * func_tmp_3[i];
 				}
 
 				// AP Eq. (2.88), left-hand-side.
-				for (int i = 0; i != n_points_2; ++i) {
-
-					for (int j = 0; j != n_points_1; ++j) {
-						func_strip[j] = func[j][i];
-					}
-
-					solver::band(lhs_1, func_strip);
-
-					for (int j = 0; j != n_points_1; ++j) {
-						func[j][i] = func_strip[j];
-					}
-
-				}
+				func = action_2d(n_points_1, n_points_2, 1, true, lhs_1, func);
 
 				// AP Eq. (2.89), right-hand-side.
-				for (int i = 0; i != n_points_1; ++i) {
-					for (int j = 0; j != n_points_2; ++j) {
-						func[i][j] -= theta * func_tmp_2[i][j];
-					}
+				for (int i = 0; i != n_points; ++i) {
+					func[i] -= theta * func_tmp_2[i];
 				}
 
 				// AP Eq. (2.89), left-hand-side.
-				for (int i = 0; i != n_points_1; ++i) {
-					solver::band(lhs_2, func[i]);
-				}
+				func = action_2d(n_points_2, n_points_1, 2, true, lhs_2, func);
 
 				// ###############
 				// Corrector step.
@@ -281,40 +227,22 @@ namespace propagator {
 				// AP Eq. (2.90), right-hand-side.
 				func = derivative_12(func);
 
-				for (int i = 0; i != n_points_1; ++i) {
-					for (int j = 0; j != n_points_2; ++j) {
-						func[i][j] *= lambda * dt;
-						func[i][j] = func_tmp_1[i][j] + func_tmp_2[i][j]
-							+ (1.0 - lambda) * dt * func_tmp_3[i][j];
-					}
+				for (int i = 0; i != n_points; ++i) {
+					func[i] *= lambda * dt;
+					func[i] = func_tmp_1[i] + func_tmp_2[i] 
+						+ (1.0 - lambda) * dt * func_tmp_3[i];
 				}
 
 				// AP Eq. (2.90), left-hand-side.
-				for (int i = 0; i != n_points_2; ++i) {
-
-					for (int j = 0; j != n_points_1; ++j) {
-						func_strip[j] = func[j][i];
-					}
-
-					solver::band(lhs_1, func_strip);
-
-					for (int j = 0; j != n_points_1; ++j) {
-						func[j][i] = func_strip[j];
-					}
-
-				}
+				func = action_2d(n_points_1, n_points_2, 1, true, lhs_1, func);
 
 				// AP Eq. (2.91), right-hand-side.
-				for (int i = 0; i != n_points_1; ++i) {
-					for (int j = 0; j != n_points_2; ++j) {
-						func[i][j] -= theta * func_tmp_2[i][j];
-					}
+				for (int i = 0; i != n_points; ++i) {
+					func[i] -= theta * func_tmp_2[i];
 				}
 
 				// AP Eq. (2.91), left-hand-side.
-				for (int i = 0; i != n_points_1; ++i) {
-					solver::band(lhs_2, func[i]);
-				}
+				func = action_2d(n_points_2, n_points_1, 2, true, lhs_2, func);
 
 			}
 
@@ -324,13 +252,9 @@ namespace propagator {
 		template <class T1, class T2, class T3>
 		void dr_3d(
 			const double dt,
-			const T1& identity_1,
-			const T2& identity_2,
-			const T3& identity_3,
-			const T1& derivative_1,
-			const T2& derivative_2,
-			const T3& derivative_3,
-			std::vector<std::vector<std::vector<double>>>& func,
+			const std::vector<T1&> identity,
+			const std::vector<T1&> derivative,
+			std::vector<double>& func,
 			const double theta = 0.5) {
 
 		}
@@ -339,14 +263,15 @@ namespace propagator {
 		template <class T1, class T2, class T3>
 		void cs_3d(
 			const double dt,
-			const T1& identity_1,
-			const T2& identity_2,
-			const T3& identity_3,
-			const T1& derivative_1,
-			const T2& derivative_2,
-			const T3& derivative_3,
-			std::vector<std::vector<std::vector<double>>>& func,
-			const double theta = 0.5) {
+			const std::vector<T1&> identity,
+			const std::vector<T1&> derivative,
+
+			std::function<std::vector<double>(std::vector<double>)> derivative_12,
+
+			std::vector<double>& func,
+			const double theta = 0.5,
+			const double lambda = 0.5,
+			const int n_iterations = 1) {
 
 		}
 
