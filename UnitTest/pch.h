@@ -22,6 +22,7 @@
 #include "grid.h"
 #include "matrix_equation_solver.h"
 #include "norm.h"
+#include "propagator.h"
 #include "regression.h"
 #include "test_util.h"
 #include "utility.h"

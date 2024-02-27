@@ -24,6 +24,7 @@
     <ProjectGuid>{748dd6fd-5729-4b56-a90c-47af1b337fe1}</ProjectGuid>
     <RootNamespace>theta</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Python</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -655,53 +655,151 @@ TEST(SecondOrderDerivativeNonuniform, EXPc2b1) {
 
 TEST(SecondOrderMixedDerivative, Test1) {
 
-	const int n_points_x = 21;
-	const int n_points_y = 21;
+	const int n_iterations = 21;
 
-	const std::vector<double> grid_x = grid::uniform(-0.4, 0.4, n_points_x);
-	const std::vector<double> grid_y = grid::uniform(-0.4, 0.4, n_points_y);
+	std::vector<double> dx_vec;
+	std::vector<double> dy_vec;
+	std::vector<double> max_norm;
+	std::vector<double> l1_norm;
+	std::vector<double> l2_norm;
 
-	TriDiagonal d1dx1_x = d1dx1::uniform::c2b1(n_points_x, grid_x[1] - grid_x[0]);
-	TriDiagonal d1dx1_y = d1dx1::uniform::c2b1(n_points_y, grid_y[1] - grid_y[0]);
+	for (int i = 0; i != n_iterations; ++i) {
 
-	// Function.
-	const std::vector<double> func_x = test_util::test_function(grid_x, 0, 0);
-	const std::vector<double> deriv_x = test_util::test_function(grid_x, 0, 1);
+		const int n_points_x = 21 + i * 5;
+		const int n_points_y = 21 + i * 5;
 
-	const std::vector<double> func_y = test_util::test_function(grid_y, 1, 0);
-	const std::vector<double> deriv_y = test_util::test_function(grid_y, 1, 1);
+		const std::vector<double> grid_x = grid::uniform(-0.4, 0.4, n_points_x);
+		const std::vector<double> grid_y = grid::uniform(-0.4, 0.4, n_points_y);
 
-	std::vector<double> inner(n_points_y, 0.0);
-	std::vector<std::vector<double>> func_xy(n_points_x, inner);
-	std::vector<std::vector<double>> deriv_xy(n_points_x, inner);
 
-	for (int i = 0; i != n_points_x; ++i) {
-		for (int j = 0; j != n_points_y; ++j) {
-			func_xy[i][j] = func_x[i] * func_y[j];
-			deriv_xy[i][j] = deriv_x[i] * deriv_y[j];
+		// (Average) Grid spacing.
+		double dx_sum = 0.0;
+		for (int i = 0; i != grid_x.size() - 1; ++i) {
+			dx_sum += grid_x[i + 1] - grid_x[i];
 		}
+		const double dx = dx_sum / (grid_x.size() - 1);
+		dx_vec.push_back(dx);
+
+		double dy_sum = 0.0;
+		for (int i = 0; i != grid_y.size() - 1; ++i) {
+			dy_sum += grid_y[i + 1] - grid_y[i];
+		}
+		const double dy = dy_sum / (grid_y.size() - 1);
+		dy_vec.push_back(dy);
+
+
+		PentaDiagonal d1dx1_x = d1dx1::nonuniform::c4b2(n_points_x, grid_x);
+		PentaDiagonal d1dx1_y = d1dx1::nonuniform::c4b2(n_points_y, grid_y);
+
+		// Function.
+		const std::vector<double> func_x = test_util::test_function(grid_x, 0, 0);
+		const std::vector<double> deriv_x = test_util::test_function(grid_x, 0, 1);
+
+		const std::vector<double> func_y = test_util::test_function(grid_y, 1, 0);
+		const std::vector<double> deriv_y = test_util::test_function(grid_y, 1, 1);
+
+		std::vector<double> inner(n_points_y, 0.0);
+		std::vector<std::vector<double>> func_xy(n_points_x, inner);
+		std::vector<std::vector<double>> deriv_xy(n_points_x, inner);
+
+		for (int i = 0; i != n_points_x; ++i) {
+			for (int j = 0; j != n_points_y; ++j) {
+				func_xy[i][j] = func_x[i] * func_y[j];
+				deriv_xy[i][j] = deriv_x[i] * deriv_y[j];
+			}
+		}
+
+		std::vector<std::vector<double>> d2dxdy_xy = d2dxdy(d1dx1_x, d1dx1_y, func_xy);
+
+		std::vector<std::vector<double>> diff = norm::matrix_diff(deriv_xy, d2dxdy_xy);
+
+		max_norm.push_back(norm::function::infinity(diff));
+
+		l1_norm.push_back(norm::function::l1(grid_x, grid_y, diff));
+
+		l2_norm.push_back(norm::function::l2(grid_x, grid_y, diff));
+
 	}
 
-	std::vector<std::vector<double>> d2dxdy_xy = d2dxdy<TriDiagonal>(d1dx1_x, d1dx1_y, func_xy);
+	std::vector<double> dx_vec_log(dx_vec.size(), 0.0);
+	std::vector<double> dy_vec_log(dy_vec.size(), 0.0);
+	std::vector<double> max_norm_log(max_norm.size(), 0.0);
+	std::vector<double> l1_norm_log(l1_norm.size(), 0.0);
+	std::vector<double> l2_norm_log(l2_norm.size(), 0.0);
 
-	std::vector<std::vector<double>> diff = norm::matrix_diff(deriv_xy, d2dxdy_xy);
+	for (int i = 0; i != dx_vec.size(); ++i) {
 
-	std::cout << std::scientific << std::setprecision(5);
+		dx_vec_log[i] = log(dx_vec[i]);
+		dy_vec_log[i] = log(dy_vec[i]);
+		max_norm_log[i] = log(max_norm[i]);
+		l1_norm_log[i] = log(l1_norm[i]);
+		l2_norm_log[i] = log(l2_norm[i]);
 
-	std::cout << std::setw(14) << norm::function::l2(grid_x, grid_y, diff) << std::endl;
+	}
 
-#if false
-	std::cout << std::scientific << std::setprecision(5);
+	std::vector<double> slr_max_x = regression::slr(dx_vec_log, max_norm_log);
+	std::vector<double> slr_l1_func_x = regression::slr(dx_vec_log, l1_norm_log);
+	std::vector<double> slr_l2_func_x = regression::slr(dx_vec_log, l2_norm_log);
 
-	for (int i = 0; i != n_points_x; ++i) {
-		for (int j = 0; j != n_points_y; ++j) {
+	std::vector<double> slr_max_y = regression::slr(dy_vec_log, max_norm_log);
+	std::vector<double> slr_l1_func_y = regression::slr(dy_vec_log, l1_norm_log);
+	std::vector<double> slr_l2_func_y = regression::slr(dy_vec_log, l2_norm_log);
 
-			std::cout
-				<< std::setw(14) << deriv_xy[i][j] 
-				<< std::setw(14) << d2dxdy_xy[i][j]
-				<< std::setw(14) << abs(deriv_xy[i][j] - d2dxdy_xy[i][j]) << std::endl;
+	const bool show_output_basic = true;
+
+	if (show_output_basic) {
+
+		std::cout << std::scientific << std::setprecision(5);
+
+		std::cout
+			<< "X) SLR max-norm: " << std::endl
+			<< std::setw(14) << slr_max_x[0]
+			<< std::setw(14) << slr_max_x[1] << std::endl;
+
+		std::cout <<
+			"X) SLR L1 function norm: " << std::endl
+			<< std::setw(14) << slr_l1_func_x[0]
+			<< std::setw(14) << slr_l1_func_x[1] << std::endl;
+
+		std::cout <<
+			"X) SLR L2 function norm: " << std::endl
+			<< std::setw(14) << slr_l2_func_x[0]
+			<< std::setw(14) << slr_l2_func_x[1] << std::endl << std::endl;
+
+		std::cout
+			<< "Y) SLR max-norm: " << std::endl
+			<< std::setw(14) << slr_max_y[0]
+			<< std::setw(14) << slr_max_y[1] << std::endl;
+
+		std::cout <<
+			"Y) SLR L1 function norm: " << std::endl
+			<< std::setw(14) << slr_l1_func_y[0]
+			<< std::setw(14) << slr_l1_func_y[1] << std::endl;
+
+		std::cout <<
+			"Y) SLR L2 function norm: " << std::endl
+			<< std::setw(14) << slr_l2_func_y[0]
+			<< std::setw(14) << slr_l2_func_y[1] << std::endl << std::endl;
+
+		std::ofstream myfile("slr.csv");
+		myfile << std::scientific << std::setprecision(12);
+		for (int i = 0; i != dx_vec.size(); ++i) {
+
+			myfile
+				<< std::setw(22) << dx_vec[i] << ","
+				<< std::setw(22) << dx_vec_log[i] << ","
+				<< std::setw(22) << dy_vec[i] << ","
+				<< std::setw(22) << dy_vec_log[i] << ","
+				<< std::setw(22) << max_norm[i] << ","
+				<< std::setw(22) << max_norm_log[i] << ","
+				<< std::setw(22) << l1_norm[i] << ","
+				<< std::setw(22) << l1_norm_log[i] << ","
+				<< std::setw(22) << l2_norm[i] << ","
+				<< std::setw(22) << l2_norm_log[i] << std::endl;
 
 		}
+		myfile.close();
+
 	}
-#endif
+
 }

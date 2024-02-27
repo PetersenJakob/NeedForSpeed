@@ -1,12 +1,33 @@
+#include <stdexcept>
+#include <typeinfo>
 #include <vector>
 
 #include "band_diagonal_matrix.h"
 #include "matrix_equation_solver.h"
 
 
+// Band-diagonal matrix equation solver.
+void solver::band(
+	BandDiagonal& matrix,
+	std::vector<double>& column) {
+
+	// Solve matrix equation.
+	if (typeid(matrix) == typeid(TriDiagonal)) {
+		solver::tri(matrix, column);
+	}
+	else if (typeid(matrix) == typeid(PentaDiagonal)) {
+		solver::penta(matrix, column);
+	}
+	else {
+		throw std::invalid_argument("Matrix type unknown.");
+	}
+
+}
+
+
 // Tri-diagonal matrix equation solver.
 void solver::tri(
-	TriDiagonal& matrix, 
+	BandDiagonal& matrix,
 	std::vector<double>& column) {
 
 	matrix.adjust_boundary(column);
@@ -25,7 +46,7 @@ void solver::tri(
 
 // Penta-diagonal matrix equation solver.
 void solver::penta(
-	PentaDiagonal& matrix, 
+	BandDiagonal& matrix,
 	std::vector<double>& column) {
 
 	matrix.adjust_boundary(column);
@@ -51,9 +72,9 @@ void solver::penta(
 
 
 void tridiagonal_matrix_solver(
-	std::vector<double>& sub,
-	std::vector<double>& main,
-	std::vector<double>& super,
+	const std::vector<double>& sub,
+	const std::vector<double>& main,
+	const std::vector<double>& super,
 	std::vector<double>& column,
 	std::vector<double>& vec_tmp) {
 
@@ -110,11 +131,11 @@ void tridiagonal_matrix_solver(
 
 
 void pentadiagonal_matrix_solver(
-	std::vector<double>& sub_2,
-	std::vector<double>& sub_1,
-	std::vector<double>& main,
-	std::vector<double>& super_1,
-	std::vector<double>& super_2,
+	const std::vector<double>& sub_2,
+	const std::vector<double>& sub_1,
+	const std::vector<double>& main,
+	const std::vector<double>& super_1,
+	const std::vector<double>& super_2,
 	std::vector<double>& column,
 	std::vector<double>& sub_tmp,
 	std::vector<double>& main_tmp,
