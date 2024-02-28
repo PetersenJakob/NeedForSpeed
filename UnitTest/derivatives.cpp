@@ -709,8 +709,32 @@ TEST(SecondOrderMixedDerivative, Test1) {
 			}
 		}
 
-		std::vector<std::vector<double>> d2dxdy_xy = d2dxdy(d1dx1_x, d1dx1_y, func_xy);
 
+		std::vector<double> func_trans(n_points_x * n_points_y, 0.0);
+		int index = 0;
+		for (int i = 0; i != n_points_x; ++i) {
+			for (int j = 0; j != n_points_y; ++j) {
+				func_trans[index] = func_xy[i][j];
+				++index;
+			}
+		}
+		
+		MixedDerivative<PentaDiagonal, PentaDiagonal> d2dxdy_class =
+			MixedDerivative<PentaDiagonal, PentaDiagonal>(d1dx1_x, d1dx1_y);
+		
+		std::vector<double> d2dxdy_test = d2dxdy_class.d2dxdy(func_trans);
+
+		std::vector<std::vector<double>> d2dxdy_xy(n_points_x, inner);
+
+		index = 0;
+		for (int i = 0; i != n_points_x; ++i) {
+			for (int j = 0; j != n_points_y; ++j) {
+				d2dxdy_xy[i][j] = d2dxdy_test[index];
+				++index;
+			}
+		}
+
+		
 		std::vector<std::vector<double>> diff = norm::matrix_diff(deriv_xy, d2dxdy_xy);
 
 		max_norm.push_back(norm::function::infinity(diff));

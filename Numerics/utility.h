@@ -107,7 +107,7 @@ std::vector<double> action_2d(
 	const int n_2,
 	const int increment,
 	const bool solve_equation,
-	const T& derivative,
+	T& derivative,
 	const std::vector<double>& func) {
 
 	std::vector<double> func_tmp(n_1 * n_2, 0.0);
@@ -164,7 +164,7 @@ std::vector<double> action_3d(
 	const int n_3,
 	const int increment,
 	const bool solve_equation,
-	const T& derivative,
+	T& derivative,
 	const std::vector<double>& func) {
 
 	std::vector<double> func_tmp(n_1 * n_2 * n_3, 0.0);
