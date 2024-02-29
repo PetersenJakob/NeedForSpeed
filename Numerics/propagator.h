@@ -18,6 +18,7 @@ namespace propagator {
 	// - AP: Andersen and Piterbarg (2010).
 	namespace theta_1d {
 
+		// AP Eq. (2.18), right-hand-side.
 		template <class T>
 		void step_1(
 			const double dt,
@@ -26,7 +27,6 @@ namespace propagator {
 			std::vector<double>& func,
 			const double theta = 0.5) {
 
-			// AP Eq. (2.18), right-hand-side operator.
 			// Operator evaluated at time t + dt (see AP Remarks 2.2.4).
 			T rhs = derivative;
 			rhs *= (1.0 - theta) * dt;
@@ -36,6 +36,7 @@ namespace propagator {
 
 		}
 
+		// AP Eq. (2.18), left-hand-side.
 		template <class T>
 		void step_2(
 			const double dt,
@@ -44,7 +45,6 @@ namespace propagator {
 			std::vector<double>& func,
 			const double theta = 0.5) {
 
-			// AP Eq. (2.18), right-hand-side operator.
 			// Operator evaluated at time t (see AP Remarks 2.2.4).
 			T lhs = derivative;
 			lhs *= -theta * dt;
@@ -54,6 +54,7 @@ namespace propagator {
 
 		}
 
+		// AP Eq. (2.18).
 		template <class T>
 		void full(
 			const double dt,
@@ -65,7 +66,7 @@ namespace propagator {
 			// Step one is carried out at time t + dt.
 			step_1(dt, identity, derivative, func, theta);
 
-			// Step one is carried out at time t.
+			// Step two is carried out at time t.
 			step_2(dt, identity, derivative, func, theta);
 
 		}
