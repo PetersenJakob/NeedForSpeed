@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "band_diagonal_matrix.h"
+#include "utility.h"
 
 
 // Finite difference representation of first order derivative operator.
@@ -103,122 +104,46 @@ namespace d2dx2 {
 
 // Finite difference representation of second order mixed derivative operator.
 template <class T1, class T2>
-std::vector<std::vector<double>> d2dxdy(
-	T1& d1dx1,
-	T2& d1dy1,
-	std::vector<std::vector<double>> func) {
-
-	const int n_points_x = (int)func.size();
-	const int n_points_y = (int)func[0].size();
-
-	std::vector<double> vec_x(n_points_x, 0.0);
-	std::vector<double> vec_y(n_points_y, 0.0);
-
-	// Evaluate partial derivative wrt y.
-	for (int i = 0; i != n_points_x; ++i) {
-
-		for (int j = 0; j != n_points_y; ++j) {
-			vec_y[j] = func[i][j];
-		}
-
-		vec_y = d1dy1 * vec_y;
-
-		for (int j = 0; j != n_points_y; ++j) {
-			func[i][j] = vec_y[j];
-		}
-
-	}
-
-	// Evaluate partial derivative wrt x.
-	for (int i = 0; i != n_points_y; ++i) {
-
-		for (int j = 0; j != n_points_x; ++j) {
-			vec_x[j] = func[j][i];
-		}
-
-		vec_x = d1dx1 * vec_x;
-
-		for (int j = 0; j != n_points_x; ++j) {
-			func[j][i] = vec_x[j];
-		}
-
-	}
-
-	return func;
-
-}
-
-
-// Finite difference representation of second order mixed derivative operator.
-template <class T1, class T2>
-class MixedOperator {
+class MixedDerivative {
 
 private:
 
-	T1& d1dx1;
-	T2& d1dy1;
-	std::vector<std::vector<double>> coefficient;
+	T1 d1dx1;
+	T2 d1dy1;
+	std::vector<double> prefactors;
 
 public:
 
-	MixedOperator(
-		const T1& d1dx1_, 
-		const T2& d1dy1_) {
+	MixedDerivative(
+		T1& d1dx1_, 
+		T2& d1dy1_) {
+
 		d1dx1 = d1dx1_;
 		d1dy1 = d1dy1_;
 
-		std::vector<double> inner(d1dy1.order(), 1.0);
-		std::vector<std::vector<double>> func(d1dx1.order(), inner);
-		coefficient = func;
+		std::vector<double> tmp(d1dx1.order() * d1dy1.order(), 1.0);
+		prefactors = tmp;
 
 	}
 
+	std::vector<double> d2dxdy(
+		std::vector<double> func) {
 
+		const int n_x = d1dx1.order();
+		const int n_y = d1dy1.order();
 
-	std::vector<std::vector<double>> d2dxdy(
-		std::vector<std::vector<double>> func) {
+		std::vector<double> vec_x(n_x, 0.0);
+		std::vector<double> vec_y(n_y, 0.0);
 
-		const int n_points_x = (int)func.size();
-		const int n_points_y = (int)func[0].size();
+		// Evaluate first order partial derivative wrt y.
+		func = action_2d(n_y, n_x, 2, false, d1dy1, func);
 
-		std::vector<double> vec_x(n_points_x, 0.0);
-		std::vector<double> vec_y(n_points_y, 0.0);
+		// Evaluate first order partial derivative wrt x.
+		func = action_2d(n_x, n_y, 1, false, d1dx1, func);
 
-		// Evaluate partial derivative wrt y.
-		for (int i = 0; i != n_points_x; ++i) {
-
-			for (int j = 0; j != n_points_y; ++j) {
-				vec_y[j] = func[i][j];
-			}
-
-			vec_y = d1dy1 * vec_y;
-
-			for (int j = 0; j != n_points_y; ++j) {
-				func[i][j] = vec_y[j];
-			}
-
-		}
-
-		// Evaluate partial derivative wrt x.
-		for (int i = 0; i != n_points_y; ++i) {
-
-			for (int j = 0; j != n_points_x; ++j) {
-				vec_x[j] = func[j][i];
-			}
-
-			vec_x = d1dx1 * vec_x;
-
-			for (int j = 0; j != n_points_x; ++j) {
-				func[j][i] = vec_x[j];
-			}
-
-		}
-
-		// Multiply coefficient function...
-		for (int i = 0; i != n_points_x; ++i) {
-			for (int j = 0; j != n_points_y; ++j) {
-				func[i][j] *= coefficient[i][j];
-			}
+		// Multiply prefactors.
+		for (int i = 0; i != n_x * n_y; ++i) {
+			func[i] *= prefactors[i];
 		}
 
 		return func;
