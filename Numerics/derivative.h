@@ -135,10 +135,10 @@ public:
 		std::vector<double> vec_x(n_x, 0.0);
 		std::vector<double> vec_y(n_y, 0.0);
 
-		// Evaluate partial derivative wrt y.
+		// Evaluate first order partial derivative wrt y.
 		func = action_2d(n_y, n_x, 2, false, d1dy1, func);
 
-		// Evaluate partial derivative wrt x.
+		// Evaluate first order partial derivative wrt x.
 		func = action_2d(n_x, n_y, 1, false, d1dx1, func);
 
 		// Multiply prefactors.
