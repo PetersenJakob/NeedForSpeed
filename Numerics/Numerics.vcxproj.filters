@@ -60,6 +60,9 @@
     <ClCompile Include="regression.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="heat_equation.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test_util.h">
@@ -91,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="propagator.h">
       <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
+    <ClInclude Include="heat_equation.h">
+      <Filter>Header Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

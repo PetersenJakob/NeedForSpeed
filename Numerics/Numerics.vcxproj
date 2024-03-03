@@ -135,6 +135,7 @@
     <ClCompile Include="coefficients.cpp" />
     <ClCompile Include="derivative.cpp" />
     <ClCompile Include="grid.cpp" />
+    <ClCompile Include="heat_equation.cpp" />
     <ClCompile Include="norm.cpp" />
     <ClCompile Include="regression.cpp" />
     <ClCompile Include="test_util.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="coefficients.h" />
     <ClInclude Include="derivative.h" />
     <ClInclude Include="grid.h" />
+    <ClInclude Include="heat_equation.h" />
     <ClInclude Include="norm.h" />
     <ClInclude Include="regression.h" />
     <ClInclude Include="test_util.h" />
