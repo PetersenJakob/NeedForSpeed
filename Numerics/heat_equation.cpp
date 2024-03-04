@@ -11,38 +11,34 @@
 //		V(t,x,y,z) = T(t) * X(x) * Y(y) * Z(z),
 // the heat equation becomes
 //		T' / (k * T) = X'' / X + Y'' / Y + Z'' / Z = -(a_x^2 + a_y^2 + a_z^2).
-//  
+// 
 // Assuming x in [0, L_x], t > 0, and defining
-//		a_x(i) = i * pi / L_x,
+//		a_x(i) = i * pi / L_x, i \in N,
 // a particular solution for the x-component, i.e., X'' = -a_x^2 * X, is given by
 //		X_i(x) = sin(a_x(i) * x),
 // where Dirichlet boundary conditions are used
 //		X(0) = X(L_x) = 0.
 // 
 // Similar particular solutions for the y- and z-components are given by
-// 		Y_j(y) = sin(a_y(j) * y)
-// 		Z_k(z) = sin(a_z(k) * z),
+// 		Y_j(y) = sin(a_y(j) * y), j \in N,
+// 		Z_k(z) = sin(a_z(k) * z), k \in N,
 // where 
-//		a_y(j) = j * pi / L_y
+//		a_y(j) = j * pi / L_y,
 //		a_z(k) = k * pi / L_z.
 // 
 // The corresponding particular solution for the t-component is given by
 //		T_{i,j,k}(t) = exp(-c_{i,j,k} * t),
 // where
-//		c_{i,j,k} = a_x(i)^2 + a_y(j)^2 + a_z(k)^2.
+//		c_{i,j,k} = k * (a_x(i)^2 + a_y(j)^2 + a_z(k)^2).
 //
 // The full solution reads
 //		V(t,x,y,z) = 
-//			\sum_{i,j,k} d_{i,j,k} * T_{i,j,k}(t) * V_i(x) * V_j(y) * V_k(z),
+//			\sum_{i,j,k} d_{i,j,k} * T_{i,j,k}(t) * X_i(x) * Y_j(y) * Z_k(z),
 // where d_{i,j,k} = 
 //		(2 / L_x) * (2 / L_y) * (2 / L_z) * 
 //			int_0^L_x int_0^L_y int_0^L_z 
-//				f(x,y,z) * sin(a_x(i) * x) * sin(a_y(j) * y) * sin(a_z(k) * z) 
+//				V(x,y,z) * sin(a_x(i) * x) * sin(a_y(j) * y) * sin(a_z(k) * z) 
 //					dx dy dz,
-// or
-//		d_{i,j,k} = d_i * d_j * d_k,
-// where 
-//		d_i = (2 / L_x) * int_0^L_x f(x) * sin(a_x(i) * x) dx.
 //  
 
 
