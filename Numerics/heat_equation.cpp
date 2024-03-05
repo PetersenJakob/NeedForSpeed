@@ -1,5 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <stdexcept>
 #include <vector>
 
 #include "heat_equation.h"
@@ -76,7 +77,7 @@ double solution_time(
 }
 
 
-// ...
+// Full solution.
 std::vector<double> solution_full(
 	const double time,
 	const std::vector<std::vector<double>>& grid,
@@ -157,6 +158,28 @@ std::vector<double> solution_full(
 					}
 				}
 			}
+		}
+		else if (grid.size() == 5) {
+			for (int x1 = 0; x1 != grid[0].size(); ++x1) {
+				for (int x2 = 0; x2 != grid[1].size(); ++x2) {
+					for (int x3 = 0; x3 != grid[2].size(); ++x3) {
+						for (int x4 = 0; x4 != grid[3].size(); ++x4) {
+							for (int x5 = 0; x5 != grid[4].size(); ++x5) {
+								solution[index] +=
+									particular_solutions[0][x1] *
+									particular_solutions[1][x2] *
+									particular_solutions[2][x3] *
+									particular_solutions[3][x4] *
+									particular_solutions[4][x5];
+								++index;
+							}
+						}
+					}
+				}
+			}
+		}
+		else {
+			throw std::invalid_argument("Dimension should be less than 6.");
 		}
 
 	}
