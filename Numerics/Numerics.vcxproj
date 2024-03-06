@@ -149,6 +149,7 @@
     <ClInclude Include="grid.h" />
     <ClInclude Include="heat_equation.h" />
     <ClInclude Include="norm.h" />
+    <ClInclude Include="propagation.h" />
     <ClInclude Include="regression.h" />
     <ClInclude Include="test_util.h" />
     <ClInclude Include="matrix_equation_solver.h" />

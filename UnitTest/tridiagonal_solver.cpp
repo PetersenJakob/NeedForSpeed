@@ -247,23 +247,12 @@ std::vector<double> heat_equation_1d(
 
 		if (d2dx2_type != "d2dx2::uniform::c4b0" && d2dx2_type != "d2dx2::nonuniform::c4b0") {
 
-			for (int i = 0; i != t_points - 1; ++i) {
+			propagation::theta_1d::full(t_grid, deriv_operator, solution, theta);
 
-				double dt_tmp = t_grid[i + 1] - t_grid[i];
-
-				propagator::theta_1d::full(dt_tmp, iden, deriv_operator, solution, theta);
-
-			}
 		}
 		else {
 
-			for (int i = 0; i != t_points - 1; ++i) {
-
-				double dt_tmp = t_grid[i + 1] - t_grid[i];
-
-				propagator::theta_1d::full(dt_tmp, iden_p, deriv_operator_p, solution, theta);
-
-			}
+			propagation::theta_1d::full(t_grid, deriv_operator_p, solution, theta);
 
 		}
 

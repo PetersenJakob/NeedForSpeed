@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "band_diagonal_matrix.h"
+#include "derivative.h"
 #include "matrix_equation_solver.h"
 #include "utility.h"
 

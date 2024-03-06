@@ -98,5 +98,8 @@
     <ClInclude Include="heat_equation.h">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="propagation.h">
+      <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
