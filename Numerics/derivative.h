@@ -16,19 +16,19 @@ namespace d1dx1 {
 
 		// Interior: Central difference, 2nd order accuracy. 
 		// Boundary: 1st order accuracy.
-		TriDiagonal c2b1(const int order, const double dx);
+		TriDiagonal c2b1(const std::vector<double>& grid);
 
 		// Interior: Central difference, 2nd order accuracy. 
 		// Boundary: 2nd order accuracy.
-		TriDiagonal c2b2(const int order, const double dx);
+		TriDiagonal c2b2(const std::vector<double>& grid);
 
 		// Interior: Central difference, 4th order accuracy.
 		// Boundary: 2nd order accuracy.
-		PentaDiagonal c4b2(const int order, const double dx);
+		PentaDiagonal c4b2(const std::vector<double>& grid);
 
 		// Interior: Central difference, 4th order accuracy. 
 		// Boundary: 4th order accuracy.
-		PentaDiagonal c4b4(const int order, const double dx);
+		PentaDiagonal c4b4(const std::vector<double>& grid);
 
 	}
 
@@ -37,15 +37,15 @@ namespace d1dx1 {
 
 		// Interior: Central difference, 2nd order accuracy. 
 		// Boundary: 1st order accuracy.
-		TriDiagonal c2b1(const int order, const std::vector<double> grid);
+		TriDiagonal c2b1(const std::vector<double>& grid);
 
 		// Interior: Central difference, 2nd order accuracy. 
 		// Boundary: 2nd order accuracy.
-		TriDiagonal c2b2(const int order, const std::vector<double> grid);
+		TriDiagonal c2b2(const std::vector<double>& grid);
 
 		// Interior: Central difference, 4th order accuracy. 
 		// Boundary. 2nd order accuracy.
-		PentaDiagonal c4b2(const int order, const std::vector<double> grid);
+		PentaDiagonal c4b2(const std::vector<double>& grid);
 
 	}
 

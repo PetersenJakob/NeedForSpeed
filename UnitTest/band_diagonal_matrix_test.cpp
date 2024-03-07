@@ -7,9 +7,14 @@ TEST(TriDiagonal, Operators) {
 
 	const int n_points = 21;
 
-	TriDiagonal tri1 = d1dx1::uniform::c2b1(n_points, 0.1);
+	std::vector<double> grid_1 = grid::uniform(0.0, 2.0, n_points);
+	std::vector<double> grid_2 = grid::uniform(0.0, 1.0, n_points);
 
-	TriDiagonal tri2 = d1dx1::uniform::c2b1(n_points, 0.05);
+//	TriDiagonal tri1 = d1dx1::uniform::c2b1(n_points, 0.1);
+	TriDiagonal tri1 = d1dx1::uniform::c2b1(grid_1);
+
+//	TriDiagonal tri2 = d1dx1::uniform::c2b1(n_points, 0.05);
+	TriDiagonal tri2 = d1dx1::uniform::c2b1(grid_2);
 
 	TriDiagonal iden = tri1.identity();
 
@@ -49,9 +54,9 @@ TEST(PentaDiagonal, Operators) {
 	std::vector<double> grid1 = grid::uniform(0.0, 1.0, n_points);
 	std::vector<double> grid2 = grid::uniform(0.0, 0.5, n_points);
 
-	PentaDiagonal penta1 = d1dx1::nonuniform::c4b2(n_points, grid1);
+	PentaDiagonal penta1 = d1dx1::nonuniform::c4b2(grid1);
 
-	PentaDiagonal penta2 = d1dx1::nonuniform::c4b2(n_points, grid2);
+	PentaDiagonal penta2 = d1dx1::nonuniform::c4b2(grid2);
 
 	PentaDiagonal iden = penta1.identity();
 
