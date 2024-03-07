@@ -193,7 +193,7 @@ namespace propagator {
 			// Propagation.
 			// ############
 
-			for (int n = 0; n != n_interations; ++n) {
+			for (int n = 0; n != n_iterations; ++n) {
 
 				// ###############
 				// Predictor step.

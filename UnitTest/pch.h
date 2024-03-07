@@ -18,8 +18,10 @@
 
 #include "band_diagonal_matrix.h"
 #include "coefficients.h"
+#include "convergence.h"
 #include "derivative.h"
 #include "grid.h"
+#include "heat_equation.h"
 #include "matrix_equation_solver.h"
 #include "norm.h"
 #include "propagation.h"

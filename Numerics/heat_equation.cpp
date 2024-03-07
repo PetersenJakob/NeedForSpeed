@@ -44,7 +44,7 @@
 
 
 // Particular solution for a spatial component.
-std::vector<double> solution_space(
+std::vector<double> heat_eq::solution_space(
 	const std::vector<double>& grid,
 	const int order) {
 
@@ -62,7 +62,7 @@ std::vector<double> solution_space(
 
 
 // Particular solution for time component (for a given spatial component).
-double solution_time(
+double heat_eq::solution_time(
 	const double time,
 	const std::vector<double>& grid,
 	const int order,
@@ -78,7 +78,7 @@ double solution_time(
 
 
 // Full solution.
-std::vector<double> solution_full(
+std::vector<double> heat_eq::solution_full(
 	const double time,
 	const std::vector<std::vector<double>>& grid,
 	const std::vector<std::vector<int>>& order,
@@ -185,5 +185,21 @@ std::vector<double> solution_full(
 	}
 
 	return solution;
+
+}
+
+
+std::function<std::vector<double>
+	(const double, const std::vector<std::vector<double>>&)>
+	heat_eq::solution_func(
+		const std::vector<std::vector<int>>& order,
+		const std::vector<std::vector<double>>& prefactor,
+		const double diffusivity) {
+
+	return [order, prefactor, diffusivity](
+		const double time_,
+		const std::vector<std::vector<double>>& grid_) {
+			return heat_eq::solution_full(time_, grid_, order, prefactor, diffusivity);
+		};
 
 }

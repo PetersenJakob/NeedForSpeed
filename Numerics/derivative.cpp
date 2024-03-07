@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "band_diagonal_matrix.h"
 #include "coefficients.h"
 #include "derivative.h"

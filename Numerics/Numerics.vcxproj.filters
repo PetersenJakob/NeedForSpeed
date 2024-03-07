@@ -63,6 +63,9 @@
     <ClCompile Include="heat_equation.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="convergence.cpp">
+      <Filter>Source Files\FiniteDifference</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test_util.h">
@@ -99,6 +102,9 @@
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="propagation.h">
+      <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
+    <ClInclude Include="convergence.h">
       <Filter>Header Files\FiniteDifference</Filter>
     </ClInclude>
   </ItemGroup>

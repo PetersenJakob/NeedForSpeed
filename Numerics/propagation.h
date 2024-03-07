@@ -82,7 +82,7 @@ namespace propagation {
 					dt,
 					identity_1, identity_2,
 					derivative_1, derivative_2,
-					mixed
+					mixed,
 					func,
 					theta, lambda, n_iterations);
 
@@ -147,7 +147,7 @@ namespace propagation {
 
 }
 
-
+#if false
 // Move to .cpp file in UnitTest
 
 void grid_increment(
@@ -207,7 +207,8 @@ namespace convergence {
 			std::vector<double>& solution,
 			std::string dimension,
 			const int n_iterations,
-			const int n_increments) {
+			const int n_increments,
+			const double theta = 0.5) {
 	
 		std::vector<std::vector<double>> norm = norm_vector(n_iterations);
 
@@ -238,9 +239,9 @@ namespace convergence {
 
 			norm[3][i] = norm::vector::l2(diff);
 
-			norm[4][i] = norm::function::l1(spatil_grid[0], diff);
+			norm[4][i] = norm::function::l1(spatial_grid, diff);
 
-			norm[5][i] = norm::function::l2(spatil_grid[0], diff);
+			norm[5][i] = norm::function::l2(spatial_grid, diff);
 
 		}
 
@@ -316,3 +317,4 @@ namespace convergence {
 	}
 
 }
+#endif
