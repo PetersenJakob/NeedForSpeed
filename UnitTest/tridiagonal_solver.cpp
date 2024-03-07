@@ -216,19 +216,19 @@ std::vector<double> heat_equation_1d(
 		PentaDiagonal deriv_operator_p(x_points);
 
 		if (d2dx2_type == "d2dx2::uniform::c2b0") {
-			deriv_operator = d2dx2::uniform::c2b0(x_points, dx);
+			deriv_operator = d2dx2::uniform::c2b0(x_grid);
 		}
 
 		else if (d2dx2_type == "d2dx2::uniform::c4b0") {
-			deriv_operator_p = d2dx2::uniform::c4b0(x_points, dx);
+			deriv_operator_p = d2dx2::uniform::c4b0(x_grid);
 		}
 
 		else if (d2dx2_type == "d2dx2::nonuniform::c2b0") {
-			deriv_operator = d2dx2::nonuniform::c2b0(x_points, x_grid);
+			deriv_operator = d2dx2::nonuniform::c2b0(x_grid);
 		}
 
 		else if (d2dx2_type == "d2dx2::nonuniform::c4b0") {
-			deriv_operator_p = d2dx2::nonuniform::c4b0(x_points, x_grid);
+			deriv_operator_p = d2dx2::nonuniform::c4b0(x_grid);
 		}
 
 		else {

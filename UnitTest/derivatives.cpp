@@ -98,21 +98,21 @@ std::vector<double> test_fd_approximation(
 		}
 
 		else if (fd_deriv_type == "d2dx2::uniform::c2b1") {
-			TriDiagonal dndxn = d2dx2::uniform::c2b1(n_points, dx);
+			TriDiagonal dndxn = d2dx2::uniform::c2b1(grid);
 			deriv_fd = dndxn * func;
 		}
 
 		else if (fd_deriv_type == "d2dx2::nonuniform::c2b1") {
-			TriDiagonal dndxn = d2dx2::nonuniform::c2b1(n_points, grid);
+			TriDiagonal dndxn = d2dx2::nonuniform::c2b1(grid);
 			deriv_fd = dndxn * func;
 		}
 
 		else if (fd_deriv_type == "d2dx2::uniform::c2b2") {
-			TriDiagonal dndxn = d2dx2::uniform::c2b2(n_points, dx);
+			TriDiagonal dndxn = d2dx2::uniform::c2b2(grid);
 			deriv_fd = dndxn * func;
 		}
 		else if (fd_deriv_type == "d2dx2::uniform::c4b4") {
-			PentaDiagonal dndxn = d2dx2::uniform::c4b4(n_points, dx);
+			PentaDiagonal dndxn = d2dx2::uniform::c4b4(grid);
 			deriv_fd = dndxn * func;
 
 		}
@@ -630,8 +630,8 @@ TEST(SecondOrderDerivativeNonuniform, EXPc2b1) {
 	// Grid spacing.
 	const double dx = grid_eq[1] - grid_eq[0];
 
-	TriDiagonal d2dx2_eq = d2dx2::uniform::c2b1(n_points, dx);
-	TriDiagonal d2dx2_neq = d2dx2::nonuniform::c2b1(n_points, grid_eq);
+	TriDiagonal d2dx2_eq = d2dx2::uniform::c2b1(grid_eq);
+	TriDiagonal d2dx2_neq = d2dx2::nonuniform::c2b1(grid_eq);
 
 	EXPECT_TRUE(d2dx2_eq == d2dx2_neq);
 
