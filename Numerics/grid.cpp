@@ -23,7 +23,7 @@ std::vector<double> grid::uniform(
 
 
 // TODO: Ref. Richard White, 2013 ("Numerical methods for PDEs...", OpenGamma)
-std::vector<double> grid::exponential(
+std::vector<double> grid::exponential_full(
 	const double x_min,
 	const double x_max,
 	const int n_points,
@@ -51,8 +51,18 @@ std::vector<double> grid::exponential(
 }
 
 
+std::vector<double> grid::exponential(
+	const double x_min,
+	const double x_max,
+	const int n_points) {
+
+	return grid::exponential_full(x_min, x_max, n_points);
+
+}
+
+
 // TODO: Ref. Richard White, 2013 ("Numerical methods for PDEs...", OpenGamma)
-std::vector<double> grid::hyperbolic(
+std::vector<double> grid::hyperbolic_full(
 	const double x_min,
 	const double x_max,
 	const int n_points,
@@ -78,6 +88,16 @@ std::vector<double> grid::hyperbolic(
 	}
 
 	return grid;
+
+}
+
+
+std::vector<double> grid::hyperbolic(
+	const double x_min,
+	const double x_max,
+	const int n_points) {
+
+	return grid::hyperbolic_full(x_min, x_max, n_points);
 
 }
 

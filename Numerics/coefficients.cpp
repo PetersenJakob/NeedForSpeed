@@ -208,7 +208,7 @@ namespace coef_x1 {
 			return row;
 
 		}
-
+		 
 		// Forward difference; 2nd order accuracy.
 		std::vector<double> f2(const std::vector<double>& dx_vector) {
 

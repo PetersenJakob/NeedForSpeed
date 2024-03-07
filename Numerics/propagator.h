@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "band_diagonal_matrix.h"
+#include "derivative.h"
 #include "matrix_equation_solver.h"
 #include "utility.h"
 
@@ -192,7 +193,7 @@ namespace propagator {
 			// Propagation.
 			// ############
 
-			for (int n = 0; n != n_interations; ++n) {
+			for (int n = 0; n != n_iterations; ++n) {
 
 				// ###############
 				// Predictor step.

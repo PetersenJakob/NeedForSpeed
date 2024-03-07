@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "band_diagonal_matrix.h"
 #include "coefficients.h"
 #include "derivative.h"
@@ -6,9 +8,12 @@
 
 // First order derivative operator. 
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
-TriDiagonal d1dx1::uniform::c2b1(const int order, const double dx) {
+TriDiagonal d1dx1::uniform::c2b1(const std::vector<double>& grid) {
 
 	// TODO: If you choose two boundary rows with f1+f1 and b1+b1, what will the L2 function norm be?
+
+	const int order = (int)grid.size();
+	const double dx = grid[1] - grid[0];
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, coef_x1::uniform::c2(dx), 1, 2);
 	boundary<TriDiagonal>(0, coef_x1::uniform::f1(dx), matrix);
@@ -21,7 +26,10 @@ TriDiagonal d1dx1::uniform::c2b1(const int order, const double dx) {
 
 // First order derivative operator. 
 // Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
-TriDiagonal d1dx1::uniform::c2b2(const int order, const double dx) {
+TriDiagonal d1dx1::uniform::c2b2(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
+	const double dx = grid[1] - grid[0];
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, coef_x1::uniform::c2(dx), 1, 3);
 	boundary<TriDiagonal>(0, coef_x1::uniform::f2(dx), matrix);
@@ -34,7 +42,10 @@ TriDiagonal d1dx1::uniform::c2b2(const int order, const double dx) {
 
 // First order derivative operator. 
 // Central difference; 4th order accuracy. Boundary; 2nd order accuracy.
-PentaDiagonal d1dx1::uniform::c4b2(const int order, const double dx) {
+PentaDiagonal d1dx1::uniform::c4b2(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
+	const double dx = grid[1] - grid[0];
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef_x1::uniform::c4(dx), 2, 3);
 	boundary<PentaDiagonal>(0, coef_x1::uniform::f2(dx), matrix);
@@ -49,7 +60,10 @@ PentaDiagonal d1dx1::uniform::c4b2(const int order, const double dx) {
 
 // First order derivative operator. 
 // Central difference; 4th order accuracy. Boundary; 4th order accuracy.
-PentaDiagonal d1dx1::uniform::c4b4(const int order, const double dx) {
+PentaDiagonal d1dx1::uniform::c4b4(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
+	const double dx = grid[1] - grid[0];
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef_x1::uniform::c4(dx), 2, 5);
 	boundary<PentaDiagonal>(0, coef_x1::uniform::f4(dx), matrix);
@@ -64,7 +78,10 @@ PentaDiagonal d1dx1::uniform::c4b4(const int order, const double dx) {
 
 // Second order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
-TriDiagonal d2dx2::uniform::c2b0(const int order, const double dx) {
+TriDiagonal d2dx2::uniform::c2b0(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
+	const double dx = grid[1] - grid[0];
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, coef_x2::uniform::c2(dx), 1, 2);
 	boundary<TriDiagonal>(0, { 0.0, 0.0 }, matrix);
@@ -77,7 +94,10 @@ TriDiagonal d2dx2::uniform::c2b0(const int order, const double dx) {
 
 // Second order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
-TriDiagonal d2dx2::uniform::c2b1(const int order, const double dx) {
+TriDiagonal d2dx2::uniform::c2b1(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
+	const double dx = grid[1] - grid[0];
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, coef_x2::uniform::c2(dx), 1, 3);
 	boundary<TriDiagonal>(0, coef_x2::uniform::f1(dx), matrix);
@@ -90,7 +110,10 @@ TriDiagonal d2dx2::uniform::c2b1(const int order, const double dx) {
 
 // Second order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
-TriDiagonal d2dx2::uniform::c2b2(const int order, const double dx) {
+TriDiagonal d2dx2::uniform::c2b2(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
+	const double dx = grid[1] - grid[0];
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, coef_x2::uniform::c2(dx), 1, 4);
 	boundary<TriDiagonal>(0, coef_x2::uniform::f2(dx), matrix);
@@ -103,7 +126,10 @@ TriDiagonal d2dx2::uniform::c2b2(const int order, const double dx) {
 
 // Second order derivative operator.
 // Central difference; 4th order accuracy. Boundary; 2nd row c2, 1st row d2dx2 = 0.
-PentaDiagonal d2dx2::uniform::c4b0(const int order, const double dx) {
+PentaDiagonal d2dx2::uniform::c4b0(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
+	const double dx = grid[1] - grid[0];
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef_x2::uniform::c4(dx), 2, 3);
 
@@ -129,7 +155,10 @@ PentaDiagonal d2dx2::uniform::c4b0(const int order, const double dx) {
 
 // Second order derivative operator.
 // Central difference; 4th order accuracy. Boundary; TODO 1st order accuracy.
-PentaDiagonal d2dx2::uniform::c4b4(const int order, const double dx) {
+PentaDiagonal d2dx2::uniform::c4b4(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
+	const double dx = grid[1] - grid[0];
 
 #if false
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, coef_x2::uniform::c4(dx), 2, 3);
@@ -152,7 +181,10 @@ PentaDiagonal d2dx2::uniform::c4b4(const int order, const double dx) {
 
 // First order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
-TriDiagonal d1dx1::nonuniform::c2b1(const int order, const std::vector<double> grid) {
+//TriDiagonal d1dx1::nonuniform::c2b1(const int order, const std::vector<double> grid) {
+TriDiagonal d1dx1::nonuniform::c2b1(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef_x1::nonuniform::c2, 1, 2);
 
@@ -169,7 +201,10 @@ TriDiagonal d1dx1::nonuniform::c2b1(const int order, const std::vector<double> g
 
 // First order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
-TriDiagonal d1dx1::nonuniform::c2b2(const int order, const std::vector<double> grid) {
+//TriDiagonal d1dx1::nonuniform::c2b2(const int order, const std::vector<double> grid) {
+TriDiagonal d1dx1::nonuniform::c2b2(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef_x1::nonuniform::c2, 1, 3);
 
@@ -187,9 +222,11 @@ TriDiagonal d1dx1::nonuniform::c2b2(const int order, const std::vector<double> g
 
 // First order derivative operator.
 // Central difference; 4th order accuracy. Boundary; 2nd order accuracy.
-PentaDiagonal d1dx1::nonuniform::c4b2(const int order, const std::vector<double> grid) {
+PentaDiagonal d1dx1::nonuniform::c4b2(const std::vector<double>& grid) {
 
 	// TODO: Be able to choose c2 as second boundary row, and f1 as first boundary row.
+
+	const int order = (int)grid.size();
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, grid, coef_x1::nonuniform::c4, 2, 3);
 
@@ -212,7 +249,9 @@ PentaDiagonal d1dx1::nonuniform::c4b2(const int order, const std::vector<double>
 
 // Second order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; d2dx2 = 0.
-TriDiagonal d2dx2::nonuniform::c2b0(const int order, const std::vector<double> grid) {
+TriDiagonal d2dx2::nonuniform::c2b0(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef_x2::nonuniform::c2, 1, 2);
 
@@ -226,7 +265,9 @@ TriDiagonal d2dx2::nonuniform::c2b0(const int order, const std::vector<double> g
 
 // Second order derivative operator.
 // Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
-TriDiagonal d2dx2::nonuniform::c2b1(const int order, const std::vector<double> grid) {
+TriDiagonal d2dx2::nonuniform::c2b1(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
 
 	TriDiagonal matrix = setup<TriDiagonal>(order, grid, coef_x2::nonuniform::c2, 1, 3);
 
@@ -243,7 +284,9 @@ TriDiagonal d2dx2::nonuniform::c2b1(const int order, const std::vector<double> g
 
 // Second order derivative operator.
 // Central difference; 4th order accuracy. Boundary; 2nd row c2, 1st row d2dx2 = 0.
-PentaDiagonal d2dx2::nonuniform::c4b0(const int order, const std::vector<double> grid) {
+PentaDiagonal d2dx2::nonuniform::c4b0(const std::vector<double>& grid) {
+
+	const int order = (int)grid.size();
 
 	PentaDiagonal matrix = setup<PentaDiagonal>(order, grid, coef_x2::nonuniform::c4, 2, 3);
 

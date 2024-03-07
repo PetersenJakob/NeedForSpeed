@@ -11,18 +11,28 @@ namespace grid {
 		const double x_max, 
 		const int n_points);
 
-	std::vector<double> exponential(
+	std::vector<double> exponential_full(
 		const double x_min,
 		const double x_max,
 		const int n_points,
 		const double scaling = 2.0);
 
-	std::vector<double> hyperbolic(
+	std::vector<double> exponential(
+		const double x_min,
+		const double x_max,
+		const int n_points);
+
+	std::vector<double> hyperbolic_full(
 		const double x_min,
 		const double x_max,
 		const int n_points,
 		const double x_center = 0.0,
 		const double scaling = 0.1);
+
+	std::vector<double> hyperbolic(
+		const double x_min,
+		const double x_max,
+		const int n_points);
 
 	namespace eigen {
 
