@@ -166,7 +166,7 @@ namespace coef_x1 {
 			std::vector<double> row(5, 0.0);
 
 			const double denominator =
-				pow(dx_m1 + dx_m2, 2) * (dx_p1 + dx_p2)
+				  pow(dx_m1 + dx_m2, 2) * (dx_p1 + dx_p2)
 				- 32.0 * dx_p1 * pow(dx_m1, 2)
 				- 32.0 * pow(dx_p1, 2) * dx_m1
 				+ (dx_m1 + dx_m2) * pow(dx_p1 + dx_p2, 2);
@@ -178,7 +178,9 @@ namespace coef_x1 {
 			row[1] = 32.0 * pow(dx_p1, 2) / denominator;
 
 			// Coefficient of main diagonal.
-			row[2] = -(pow(dx_m1 + dx_m2, 2) - 32.0 * pow(dx_m1, 2) + 32.0 * pow(dx_p1, 2) - pow(dx_p1 + dx_p2, 2)) / denominator;
+			row[2] = 
+				-(pow(dx_m1 + dx_m2, 2) - 32.0 * pow(dx_m1, 2) 
+				  + 32.0 * pow(dx_p1, 2) - pow(dx_p1 + dx_p2, 2)) / denominator;
 
 			// Coefficient of 1st super-diagonal.
 			row[3] = -32.0 * pow(dx_m1, 2) / denominator;
@@ -217,7 +219,8 @@ namespace coef_x1 {
 
 			std::vector<double> row(3, 0.0);
 
-			const double denominator = pow(dx_p1, 2) * (dx_p1 + dx_p2) - dx_p1 * pow(dx_p1 + dx_p2, 2);;
+			const double denominator = 
+				pow(dx_p1, 2) * (dx_p1 + dx_p2) - dx_p1 * pow(dx_p1 + dx_p2, 2);
 
 			// Coefficient of main diagonal.
 			row[0] = (pow(dx_p2, 2) + 2 * dx_p1 * dx_p2) / denominator;
@@ -232,7 +235,6 @@ namespace coef_x1 {
 
 		}
 
-		// TODO: For backward difference, reverse order of dx_vector?
 		// Backward difference; 1st order accuracy.
 		std::vector<double> b1(const std::vector<double>& dx_vector) {
 
@@ -240,7 +242,6 @@ namespace coef_x1 {
 
 		}
 
-		// TODO: For backward difference, reverse order of dx_vector?
 		// Backward difference; 2nd order accuracy.
 		std::vector<double> b2(const std::vector<double>& dx_vector) {
 
@@ -420,7 +421,7 @@ namespace coef_x2 {
 			std::vector<double> row(5, 0.0);
 
 			const double denominator =
-				-(dx_m1 + dx_m2) * pow(dx_p1 + dx_p2, 2) / 2.0
+				- (dx_m1 + dx_m2) * pow(dx_p1 + dx_p2, 2) / 2.0
 				+ 16.0 * pow(dx_p1, 2) * dx_m1
 				+ 16.0 * dx_p1 * pow(dx_m1, 2)
 				- pow(dx_m1 + dx_m2, 2) * (dx_p1 + dx_p2) / 2.0;
@@ -432,7 +433,8 @@ namespace coef_x2 {
 			row[1] = 32.0 * dx_p1 / denominator;
 
 			// Coefficient of main diagonal.
-			row[2] = -(-(dx_m1 + dx_m2) + 32.0 * dx_m1 + 32.0 * dx_p1 - (dx_p1 + dx_p2)) / denominator;
+			row[2] = -(-(dx_m1 + dx_m2) + 32.0 * dx_m1 
+					   + 32.0 * dx_p1 - (dx_p1 + dx_p2)) / denominator;
 
 			// Coefficient of 1st super-diagonal.
 			row[3] = 32.0 * dx_m1 / denominator;
@@ -467,7 +469,6 @@ namespace coef_x2 {
 
 		}
 
-		// TODO: For backward difference, reverse order of dx_vector?
 		// Backward difference; 1st order accuracy.
 		std::vector<double> b1(const std::vector<double>& dx_vector) {
 
@@ -481,21 +482,25 @@ namespace coef_x2 {
 
 
 // Reverse order of coefficients and multiply by scalar.
-std::vector<double> reverse_order(std::vector<double> coef, const double scalar) {
+std::vector<double> reverse_order(
+	std::vector<double> coefficients, 
+	const double scalar) {
 
-	std::reverse(coef.begin(), coef.end());
+	std::reverse(coefficients.begin(), coefficients.end());
 
-	for (auto& elem : coef) {
-		elem *= scalar;
+	for (auto& element : coefficients) {
+		element *= scalar;
 	}
 
-	return coef;
+	return coefficients;
 
 }
 
 
-// ...
-std::vector<double> adjust_coefficients(std::vector<double> coefficients, const double denominator) {
+// Divide coefficients by denominator. TODO: Change function name.
+std::vector<double> adjust_coefficients(
+	std::vector<double> coefficients, 
+	const double denominator) {
 
 	for (auto& element : coefficients) {
 		element /= denominator;

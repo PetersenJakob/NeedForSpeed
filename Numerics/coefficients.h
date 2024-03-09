@@ -126,8 +126,12 @@ namespace coef_x2 {
 
 
 // Reverse order of coefficients and multiply by scalar.
-std::vector<double> reverse_order(std::vector<double> coef, const double scalar = 1.0);
+std::vector<double> reverse_order(
+	std::vector<double> coef, 
+	const double scalar = 1.0);
 
 
-// ...
-std::vector<double> adjust_coefficients(std::vector<double> coefficients, const double denominator);
+// Divide coefficients by denominator.
+std::vector<double> adjust_coefficients(
+	std::vector<double> coefficients, 
+	const double denominator);
