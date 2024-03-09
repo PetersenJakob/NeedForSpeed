@@ -134,7 +134,7 @@
     <ClCompile Include="band_diagonal_matrix.cpp" />
     <ClCompile Include="coefficients.cpp" />
     <ClCompile Include="convergence.cpp" />
-    <ClCompile Include="derivative.cpp" />
+    <ClCompile Include="derivatives.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="heat_equation.cpp" />
     <ClCompile Include="norm.cpp" />
@@ -147,7 +147,7 @@
     <ClInclude Include="band_diagonal_matrix.h" />
     <ClInclude Include="coefficients.h" />
     <ClInclude Include="convergence.h" />
-    <ClInclude Include="derivative.h" />
+    <ClInclude Include="derivatives.h" />
     <ClInclude Include="grid.h" />
     <ClInclude Include="heat_equation.h" />
     <ClInclude Include="norm.h" />
