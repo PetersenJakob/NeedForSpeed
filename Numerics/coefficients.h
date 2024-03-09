@@ -117,8 +117,12 @@ namespace coef_x2 {
 		// Forward difference; 1st order accuracy.
 		std::vector<double> f1(const std::vector<double>& dx_vector);
 
+		// TODO: Forward difference; ~2nd order accuracy.
+
 		// Backward difference; 1st order accuracy.
 		std::vector<double> b1(const std::vector<double>& dx_vector);
+
+		// TODO: Backward difference; ~2nd order accuracy.
 
 	}
 
