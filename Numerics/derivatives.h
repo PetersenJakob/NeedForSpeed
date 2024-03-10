@@ -9,25 +9,25 @@
 // Finite difference representation of first order derivative operator.
 namespace d1dx1 {
 
-	// TODO: Which ones to keep?
-
 	// Finite difference representation on uniform grid.
 	namespace uniform {
 
-		// Interior: Central difference, 2nd order accuracy. 
-		// Boundary: 1st order accuracy.
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 1st order accurary.
 		TriDiagonal c2b1(const std::vector<double>& grid);
 
-		// Interior: Central difference, 2nd order accuracy. 
-		// Boundary: 2nd order accuracy.
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
 		TriDiagonal c2b2(const std::vector<double>& grid);
 
 		// Interior: Central difference, 4th order accuracy.
-		// Boundary: 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
+		// Boundary 2nd row: Central difference, 2nd order accurary.
 		PentaDiagonal c4b2(const std::vector<double>& grid);
 
-		// Interior: Central difference, 4th order accuracy. 
-		// Boundary: 4th order accuracy.
+		// Interior: Central difference, 4th order accuracy.
+		// Boundary 1st row: Forward difference, 4th order accurary.
+		// Boundary 2nd row: Forward difference, 4th order accurary.
 		PentaDiagonal c4b4(const std::vector<double>& grid);
 
 	}
@@ -35,16 +35,17 @@ namespace d1dx1 {
 	// Finite difference representation on non-uniform grid.
 	namespace nonuniform {
 
-		// Interior: Central difference, 2nd order accuracy. 
-		// Boundary: 1st order accuracy.
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 1st order accurary.
 		TriDiagonal c2b1(const std::vector<double>& grid);
 
-		// Interior: Central difference, 2nd order accuracy. 
-		// Boundary: 2nd order accuracy.
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
 		TriDiagonal c2b2(const std::vector<double>& grid);
 
-		// Interior: Central difference, 4th order accuracy. 
-		// Boundary. 2nd order accuracy.
+		// Interior: Central difference, 4th order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
+		// Boundary 2nd row: Central difference, 2nd order accurary.
 		PentaDiagonal c4b2(const std::vector<double>& grid);
 
 	}
@@ -55,29 +56,34 @@ namespace d1dx1 {
 // Finite difference representation of second order derivative operator.
 namespace d2dx2 {
 
-	// TODO: Which ones to keep?
-
 	// Finite difference representation on uniform grid.
 	namespace uniform {
 
-		// Interior: Central difference, 2nd order accuracy. 
-		// Boundary; d2dx2 = 0.
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Neumann boundary condition, d2dx2 = 0.
 		TriDiagonal c2b0(const std::vector<double>& grid);
 
-		// Interior: Central difference, 2nd order accuracy. 
-		// Boundary; 1st order accuracy.
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 1st order accurary.
 		TriDiagonal c2b1(const std::vector<double>& grid);
 
-		// Interior: Central difference, 2nd order accuracy. 
-		// Boundary; 2nd order accuracy.
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
 		TriDiagonal c2b2(const std::vector<double>& grid);
 
-		// Interior: Central difference, 4th order accuracy. 
-		// Boundary; 2nd row c2, 1st row d2dx2 = 0.
+		// Interior: Central difference, 4th order accuracy.
+		// Boundary 1st row: Neumann boundary condition, d2dx2 = 0.
+		// Boundary 2nd row: Central difference, 2nd order accurary.
 		PentaDiagonal c4b0(const std::vector<double>& grid);
 
-		// Interior: Central difference, 4th order accuracy. 
-		// Boundary; 4th order accuracy.
+		// Interior: Central difference, 4th order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
+		// Boundary 2nd row: Central difference, 2nd order accurary.
+		PentaDiagonal c4b2(const std::vector<double>& grid);
+
+		// Interior: Central difference, 4th order accuracy.
+		// Boundary 1st row: Forward difference, 4th order accurary.
+		// Boundary 2nd row: Forward difference, 4th order accurary.
 		PentaDiagonal c4b4(const std::vector<double>& grid);
 
 	}
@@ -85,16 +91,17 @@ namespace d2dx2 {
 	// Finite difference representation on non-uniform grid.
 	namespace nonuniform {
 
-		// Interior: Central difference, 2nd order accuracy. 
-		// Boundary; d2dx2 = 0.
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Neumann boundary condition, d2dx2 = 0.
 		TriDiagonal c2b0(const std::vector<double>& grid);
 
-		// Interior: Central difference, 2nd order accuracy. 
-		// Boundary; 1st order accuracy.
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 1st order accurary.
 		TriDiagonal c2b1(const std::vector<double>& grid);
 
-		// Interior: Central difference, 4th order accuracy. 
-		// Boundary; 2nd row c2, 1st row d2dx2 = 0.
+		// Interior: Central difference, 4th order accuracy.
+		// Boundary 1st row: Neumann boundary condition, d2dx2 = 0.
+		// Boundary 2nd row: Central difference, 2nd order accurary.
 		PentaDiagonal c4b0(const std::vector<double>& grid);
 
 	}
@@ -102,7 +109,7 @@ namespace d2dx2 {
 }
 
 
-// Finite difference representation of second order mixed derivative operator.
+// TODO: Class method for evaluating second order mixed derivative operator.
 template <class T1, class T2>
 class MixedDerivative {
 
@@ -115,8 +122,8 @@ private:
 public:
 
 	MixedDerivative(
-		T1& d1dx1_, 
-		T2& d1dy1_) {
+		const T1& d1dx1_, 
+		const T2& d1dy1_) {
 
 		d1dx1 = d1dx1_;
 		d1dy1 = d1dy1_;
