@@ -100,37 +100,43 @@ void boundary(const int row_index, const std::vector<double>& coef, T& matrix) {
 }
 
 
-// Evaulation of "derivative" operator wrt. first coordinate, 2-dimensional.
-// solve_equation = true: Solve derivative * x = func
-// solve_equation = false: Evaluate derivative * func
+// Evaulation of differential operator expression, 2-dimensional.
+// Differential operator is wrt. first coordinate ("n_points_1").
+// solve_equation
+//	- true: differential * x = func
+//  - false: x = differential * func
+// Assume order of func to be (x, y).
 template <class T>
 std::vector<double> action_2d(
 	const int n_points_1,
 	const int n_points_2,
-	const int increment,
+	const int filter,
 	const bool solve_equation,
 	T& derivative,
 	const std::vector<double>& func) {
 
 	int factor_i = 1;
 	int factor_j = 1;
-	if (increment == 1) {
-		// Function strip along x-dimension. TODO: (x, y)!
+
+	if (filter == 1) {
+		// Function strip along x-dimension. Order (x, y).
 		factor_i = 1;
 		factor_j = n_points_2;
 	}
-	else if (increment == 2) {
-		// Function strip along y-dimension. TODO: (y, x)!
+	else if (filter == 2) {
+		// Function strip along y-dimension. Order (y, x).
 		factor_i = n_points_1;
 		factor_j = 1;
 	}
 	else {
-		throw std::invalid_argument("Unknown increment.");
+		throw std::invalid_argument("Unknown filter.");
 	}
 
-	std::vector<double> func_return(n_points_1 * n_points_2, 0.0);
-
 	std::vector<double> func_strip(n_points_1, 0.0);
+
+	const int n_points = n_points_1 * n_points_2;
+
+	std::vector<double> func_return(n_points, 0.0);
 
 	int index = 0;
 
@@ -142,7 +148,7 @@ std::vector<double> action_2d(
 			func_strip[j] = func[index];
 		}
 
-		// Evaluate expression.
+		// Evaluate differential operator expression.
 		if (solve_equation) {
 			solver::band(derivative, func_strip);
 		}
@@ -155,6 +161,7 @@ std::vector<double> action_2d(
 			index = factor_i * i + factor_j * j;
 			func_return[index] = func_strip[j];
 		}
+
 	}
 
 	return func_return;
@@ -162,15 +169,18 @@ std::vector<double> action_2d(
 }
 
 
-// Evaulation of "derivative" operator wrt. first coordinate, 3-dimensional.
-// solve_equation = true: Solve derivative * x = func
-// solve_equation = false: Evaluate derivative * func
+// Evaulation of differential operator expression, 3-dimensional.
+// Differential operator is wrt. first coordinate ("n_points_1").
+// solve_equation
+//	- true: differential * x = func
+//  - false: x = differential * func
+// Assume order of func to be (x, y, z).
 template <class T>
 std::vector<double> action_3d(
-	const int n_1,
-	const int n_2,
-	const int n_3,
-	const int increment,
+	const int n_points_1,
+	const int n_points_2,
+	const int n_points_3,
+	const int filter,
 	const bool solve_equation,
 	T& derivative,
 	const std::vector<double>& func) {
@@ -178,44 +188,48 @@ std::vector<double> action_3d(
 	int factor_i = 1;
 	int factor_j = 1;
 	int factor_k = 1;
-	if (increment == 1) {
-		// Function strip along x-dimension. TODO: (x, y, z)!
-		factor_i = n_3;
+
+	if (filter == 1) {
+		// Function strip along x-dimension. Order (x, y, z).
+		factor_i = n_points_3;
 		factor_j = 1;
-		factor_k = n_2 * n_3;
+		factor_k = n_points_2 * n_points_3;
 	}
-	else if (increment == 2) {
-		// Function strip along y-dimension. TODO: (y, x, z)!
-		factor_i = n_1 * n_3;
+	else if (filter == 2) {
+		// Function strip along y-dimension. Order (y, x, z).
+		factor_i = n_points_1 * n_points_3;
 		factor_j = 1;
-		factor_k = n_3;
+		factor_k = n_points_3;
 	}
-	else if (increment == 3) {
-		// Function strip along z-dimension. TODO: (z, x, y)!
-		factor_i = n_1 * n_3;
-		factor_j = n_1;
+	else if (filter == 3) {
+		// Function strip along z-dimension. Order (z, x, y).
+		factor_i = n_points_1 * n_points_3;
+		factor_j = n_points_1;
 		factor_k = 1;
 	}
 	else {
-		throw std::invalid_argument("Unknown increment.");
+		throw std::invalid_argument("Unknown filter.");
 	}
 
-	std::vector<double> func_result(n_1 * n_2 * n_3, 0.0);
+	std::vector<double> func_strip(n_points_1, 0.0);
 
-	std::vector<double> func_strip(n_1, 0.0);
+	const int n_points = n_points_1 * n_points_2 * n_points_3;
+
+	std::vector<double> func_result(n_points, 0.0);
 
 	int index = 0;
 
-	for (int i = 0; i != n_2; ++i) {
-		for (int j = 0; j != n_3; ++j) {
+	for (int i = 0; i != n_points_2; ++i) {
+
+		for (int j = 0; j != n_points_3; ++j) {
 
 			// Function strip along 1st dimension.
-			for (int k = 0; k != n_1; ++k) {
+			for (int k = 0; k != n_points_1; ++k) {
 				index = factor_i * i + factor_j * j + factor_k * k;
 				func_strip[k] = func[index];
 			}
 
-			// Evaluate expression.
+			// Evaluate differential operator expression.
 			if (solve_equation) {
 				solver::band(derivative, func_strip);
 			}
@@ -223,11 +237,14 @@ std::vector<double> action_3d(
 				func_strip = derivative * func_strip;
 			}
 
-			for (int k = 0; k != n_1; ++k) {
+			// Save result.
+			for (int k = 0; k != n_points_1; ++k) {
 				index = factor_i * i + factor_j * j + factor_k * k;
 				func_result[index] = func_strip[k];
 			}
+
 		}
+
 	}
 
 	return func_result;
