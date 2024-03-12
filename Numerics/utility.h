@@ -250,3 +250,105 @@ std::vector<double> action_3d(
 	return func_result;
 
 }
+
+
+// Evaulation of differential operator expression, 4-dimensional.
+// Differential operator is wrt. first coordinate ("n_points_1").
+// solve_equation
+//	- true: differential * x = func
+//  - false: x = differential * func
+// Assume order of func to be (x1, x2, x3, x4).
+template <class T>
+std::vector<double> action_4d(
+	const int n_points_1,
+	const int n_points_2,
+	const int n_points_3,
+	const int n_points_4,
+	const int filter,
+	const bool solve_equation,
+	T& derivative,
+	const std::vector<double>& func) {
+
+	int factor_i = 1;
+	int factor_j = 1;
+	int factor_k = 1;
+	int factor_l = 1;
+
+
+	if (filter == 1) {
+		// Function strip along x1-dimension. Order (x1, x2, x3, x4).
+		factor_i = n_points_3 * n_points_4;
+		factor_j = n_points_4;
+		factor_k = 1;
+		factor_l = n_points_2 * n_points_3 * n_points_4;
+	}
+	else if (filter == 2) {
+		// Function strip along x2-dimension. Order (x2, x1, x3, x4).
+		factor_i = n_points_1 * n_points_3 * n_points_4;
+		factor_j = n_points_4;
+		factor_k = 1;
+		factor_l = n_points_3 * n_points_4;
+	}
+	else if (filter == 3) {
+		// Function strip along x3-dimension. Order (x3, x1, x2, x4).
+		factor_i = n_points_1 * n_points_3 * n_points_4;
+		factor_j = n_points_1 * n_points_4;
+		factor_k = 1;
+		factor_l = n_points_4;
+	}
+	else if (filter == 4) {
+		// Function strip along x4-dimension. Order (x4, x1, x2, x3).
+		factor_i = n_points_1 * n_points_3 * n_points_4;
+		factor_j = n_points_1 * n_points_4;
+		factor_k = n_points_1;
+		factor_l = 1;
+	}
+	else {
+		throw std::invalid_argument("Unknown filter.");
+	}
+
+	std::vector<double> func_strip(n_points_1, 0.0);
+
+	const int n_points = n_points_1 * n_points_2 * n_points_3 * n_points_4;
+
+	std::vector<double> func_result(n_points, 0.0);
+
+	int index = 0;
+
+	for (int i = 0; i != n_points_2; ++i) {
+
+		for (int j = 0; j != n_points_3; ++j) {
+
+			for (int k = 0; k != n_points_4; ++k) {
+
+				// Function strip along 1st dimension.
+				for (int l = 0; l != n_points_1; ++l) {
+					index = 
+						factor_i * i + factor_j * j + factor_k * k + factor_l * l;
+					func_strip[l] = func[index];
+				}
+
+				// Evaluate differential operator expression.
+				if (solve_equation) {
+					solver::band(derivative, func_strip);
+				}
+				else {
+					func_strip = derivative * func_strip;
+				}
+
+				// Save result.
+				for (int l = 0; l != n_points_1; ++l) {
+					index = 
+						factor_i * i + factor_j * j + factor_k * k + factor_l * l;
+					func_result[index] = func_strip[l];
+				}
+
+			}
+
+		}
+
+	}
+
+	return func_result;
+
+}
