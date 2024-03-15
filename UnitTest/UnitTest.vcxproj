@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{e5dd726c-8afa-4a51-ab8c-cdad61a581b1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -58,7 +58,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Numerics;C:\Users\peter\Dev\eigen-3.3.9</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Models;$(SolutionDir)\Numerics;C:\Users\peter\Dev\eigen-3.3.9</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -89,7 +89,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Numerics;C:\Users\peter\Dev\eigen-3.3.9</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Models;$(SolutionDir)\Numerics;C:\Users\peter\Dev\eigen-3.3.9</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="band_diagonal_matrix_test.cpp" />
+    <ClCompile Include="heston.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -116,6 +117,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Models\Models.vcxproj">
+      <Project>{15445b30-e02d-4407-8e59-a225fecf4767}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Numerics\Numerics.vcxproj">
       <Project>{2aea28e1-9f18-4754-9b63-01415341a907}</Project>
     </ProjectReference>

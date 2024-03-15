@@ -18,9 +18,15 @@
     <ClInclude Include="heston.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="black_scholes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="heston.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="black_scholes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

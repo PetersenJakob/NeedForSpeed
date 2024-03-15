@@ -4,6 +4,33 @@
 #include <string>
 
 
+namespace heston {
+
+	double call(
+		const double spot_price,
+		const double spot_variance,
+		const double rate,
+		const double lambda,
+		const double theta,
+		const double eta,
+		const double rho,
+		const double strike,
+		const double tau);
+
+	double put(
+		const double spot_price,
+		const double spot_variance,
+		const double rate,
+		const double lambda,
+		const double theta,
+		const double eta,
+		const double rho,
+		const double strike,
+		const double tau);
+
+}
+
+
 std::complex<double> alpha(
 	const double j,
 	const double k);
@@ -28,7 +55,7 @@ std::complex<double> discriminant(
 	const double rho);
 
 
-std::complex<double> r_pm(
+std::complex<double> r_func(
 	const std::string sign,
 	const double j,
 	const double k,
@@ -66,9 +93,9 @@ std::complex<double> c_func(
 double probability(
 	const double j,
 	const double x,
+	const double spot_variance,
 	const double lambda,
 	const double theta,
-	const double v_0,
 	const double eta,
 	const double rho,
 	const double tau);

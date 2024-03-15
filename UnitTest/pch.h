@@ -17,11 +17,13 @@
 #include "gtest/gtest.h"
 
 #include "band_diagonal_matrix.h"
+#include "black_scholes.h"
 #include "coefficients.h"
 #include "convergence.h"
 #include "derivatives.h"
 #include "grid.h"
 #include "heat_equation.h"
+#include "heston.h"
 #include "matrix_equation_solver.h"
 #include "norm.h"
 #include "propagation.h"
