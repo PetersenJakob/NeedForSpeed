@@ -66,6 +66,9 @@
     <ClCompile Include="convergence.cpp">
       <Filter>Source Files\FiniteDifference</Filter>
     </ClCompile>
+    <ClCompile Include="distributions.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test_util.h">
@@ -106,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="convergence.h">
       <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
+    <ClInclude Include="distributions.h">
+      <Filter>Header Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

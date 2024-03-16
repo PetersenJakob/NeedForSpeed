@@ -135,6 +135,7 @@
     <ClCompile Include="coefficients.cpp" />
     <ClCompile Include="convergence.cpp" />
     <ClCompile Include="derivatives.cpp" />
+    <ClCompile Include="distributions.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="heat_equation.cpp" />
     <ClCompile Include="norm.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="coefficients.h" />
     <ClInclude Include="convergence.h" />
     <ClInclude Include="derivatives.h" />
+    <ClInclude Include="distributions.h" />
     <ClInclude Include="grid.h" />
     <ClInclude Include="heat_equation.h" />
     <ClInclude Include="norm.h" />

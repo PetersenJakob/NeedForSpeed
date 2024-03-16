@@ -13,21 +13,33 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Heston">
+      <UniqueIdentifier>{d15a3548-7bbf-4424-a1b1-5e4e33f6bf65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BlackScholes">
+      <UniqueIdentifier>{287c6e26-05f0-45f2-bbe5-4e32c9147be7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Heston">
+      <UniqueIdentifier>{5fb16f47-9e65-4ef4-aba5-da91d8bb7c26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BlackScholes">
+      <UniqueIdentifier>{3f4047e3-2fe1-4bef-8c36-916be5626e92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="heston.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="black_scholes.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\BlackScholes</Filter>
+    </ClInclude>
+    <ClInclude Include="heston.h">
+      <Filter>Header Files\Heston</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="heston.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="black_scholes.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\BlackScholes</Filter>
+    </ClCompile>
+    <ClCompile Include="heston.cpp">
+      <Filter>Source Files\Heston</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
