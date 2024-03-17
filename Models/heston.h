@@ -7,8 +7,8 @@
 namespace heston {
 
 	double call(
-		const double spot_price,
-		const double spot_variance,
+		const double price,
+		const double variance,
 		const double rate,
 		const double lambda,
 		const double theta,
@@ -18,8 +18,8 @@ namespace heston {
 		const double tau);
 
 	double put(
-		const double spot_price,
-		const double spot_variance,
+		const double price,
+		const double variance,
 		const double rate,
 		const double lambda,
 		const double theta,
@@ -93,7 +93,7 @@ std::complex<double> c_func(
 double probability(
 	const double j,
 	const double x,
-	const double spot_variance,
+	const double variance,
 	const double lambda,
 	const double theta,
 	const double eta,

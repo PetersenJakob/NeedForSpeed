@@ -38,7 +38,9 @@ namespace normal {
 		const double mu,
 		const double sigma) {
 
-		return std::erfc(-x / std::sqrt(2.0)) / 2.0;
+		const double x_tmp = (x - mu) / sigma;
+
+		return std::erfc(-x_tmp / std::sqrt(2.0)) / 2.0;
 
 	}
 

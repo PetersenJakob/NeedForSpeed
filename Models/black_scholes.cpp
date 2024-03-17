@@ -135,17 +135,17 @@ double bs::call::implied_vol(
 	const double tau) {
 
 	double sigma_1 = 0.0;
-	double sigma_2 = 0.5;
+	double sigma_2 = 0.2;
 
 	// Newton-Raphson root-search method.
-	while (abs(sigma_2 - sigma_1) > 1.0e-5) {
+	while (abs(sigma_2 - sigma_1) > 1.0e-8) {
 
 		sigma_1 = sigma_2;
 
 		double price = bs::call::price(spot_price, rate, sigma_1, strike, tau);
-		double delta = bs::call::delta(spot_price, rate, sigma_1, strike, tau);
+		double vega = bs::call::vega(spot_price, rate, sigma_1, strike, tau);
 
-		sigma_2 = sigma_1 - (price - option_price) / delta;
+		sigma_2 = sigma_1 - (price - option_price) / vega;
 
 	}
 

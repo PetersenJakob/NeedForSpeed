@@ -21,6 +21,7 @@
 #include "coefficients.h"
 #include "convergence.h"
 #include "derivatives.h"
+#include "distributions.h"
 #include "grid.h"
 #include "heat_equation.h"
 #include "heston.h"
