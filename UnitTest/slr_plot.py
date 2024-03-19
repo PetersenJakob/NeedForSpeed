@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-data = pd.read_csv("slr.csv", sep=",", header=None)
+data = pd.read_csv("slr.csv", sep=", ", header=None)
 
 # Maximum norm.
 plt.plot(data[1], data[3], ".b")
