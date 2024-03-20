@@ -181,6 +181,7 @@ std::vector<double> action_2d(
 	const int n_points_2,
 	const int filter,
 	const bool solve_equation,
+	const double adi_factor,
 	const std::vector<std::vector<double>>& prefactors,
 	std::vector<T>& derivatives,
 	const std::vector<double>& func) {
@@ -255,15 +256,15 @@ std::vector<double> action_2d(
 
 
 
-		// Update derivative operator; identity + C1 *d1dx1 + C2 * d2dx2.
+		// Update derivative operator; identity + C1 * d1dx1 + C2 * d2dx2.
 		for (int j = 0; j != n_points_1; ++j) {
 			index = n_index + i;
 			vec1_tmp[j] = vec1[j] * prefactors[0][index];
 			vec2_tmp[j] = vec2[j] * prefactors[1][index];
 		}
 		T derivative = derivatives[0] 
-			+ derivatives[1].pre_vector(vec1_tmp) 
-			+ derivatives[2].pre_vector(vec2_tmp);
+			+ adi_factor * (derivatives[1].pre_vector(vec1_tmp) 
+				+ derivatives[2].pre_vector(vec2_tmp));
 
 
 

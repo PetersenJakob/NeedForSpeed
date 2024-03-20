@@ -143,6 +143,84 @@ namespace propagator {
 
 		}
 
+
+		// Douglas-Rachford scheme, 2-dimensional.
+		// References
+		// - AP: Andersen and Piterbarg (2010).
+		template <class T1, class T2>
+		void dr_2d(
+			const double dt,
+
+			const std::vector<std::vector<double>>& prefactors_1,
+			const std::vector<std::vector<double>>& prefactors_2,
+			std::vector<T1>& derivatives_1,
+			std::vector<T2>& derivatives_2,
+
+			std::vector<double>& func,
+			const double theta = 0.5) {
+
+			const int n_p_1 = derivatives_1[0].order();
+			const int n_p_2 = derivatives_2[0].order();
+			const int n_points = n_p_1 * n_p_2;
+
+			std::vector<double> func_tmp_1(n_points, 0.0);
+			std::vector<double> func_tmp_2(n_points, 0.0);
+
+			// ##########
+			// Operators.
+			// ##########
+#if false
+			// AP Eq. (2.68) and (2.69), right-hand-side.
+			T1 rhs_1 = derivative_1;
+			rhs_1 *= (1.0 - theta) * dt;
+			rhs_1 += identity_1;
+
+			T2 rhs_2 = derivative_2;
+			rhs_2 *= dt;
+
+			// AP Eq. (2.68) and (2.69), left-hand-side.
+			T1 lhs_1 = derivative_1;
+			lhs_1 *= -theta * dt;
+			lhs_1 += identity_1;
+
+			T2 lhs_2 = derivative_2;
+			lhs_2 *= -theta * dt;
+			lhs_2 += identity_2;
+#endif
+			// ############
+			// Propagation.
+			// ############
+
+			double adi_factor = 1.0;
+
+			// AP Eq. (2.68), right-hand-side.
+
+			adi_factor = (1.0 - theta) * dt;
+			func_tmp_1 = action_2d(n_p_1, n_p_2, 1, false, adi_factor, prefactors_1, derivatives_1, func);
+
+			adi_factor = dt;
+			func_tmp_2 = action_2d(n_p_2, n_p_1, 2, false, adi_factor, prefactors_2, derivatives_2, func);
+
+			for (int i = 0; i != n_points; ++i) {
+				func[i] = func_tmp_1[i] + func_tmp_2[i];
+			}
+
+			// AP Eq. (2.68), left-hand-side.
+			adi_factor = -theta * dt;
+			func = action_2d(n_p_1, n_p_2, 1, true, adi_factor, prefactors_1, derivatives_1, func);
+
+			// AP Eq. (2.69), right-hand-side.
+			for (int i = 0; i != n_points; ++i) {
+				func[i] -= theta * func_tmp_2[i];
+			}
+
+			// AP Eq. (2.69), left-hand-side.
+			adi_factor = -theta * dt;
+			func = action_2d(n_p_2, n_p_1, 2, true, adi_factor, prefactors_2, derivatives_2, func);
+
+		}
+
+
 		// Craig-Sneyd scheme, 2-dimensional.
 		// References
 		// - AP: Andersen and Piterbarg (2010).
