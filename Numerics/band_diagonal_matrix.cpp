@@ -254,6 +254,15 @@ PentaDiagonal PentaDiagonal::identity() {
 }
 
 
+PentaDiagonal PentaDiagonal::pre_vector(const std::vector<double>& vector) {
+
+	row_multiply_matrix<PentaDiagonal>(*this, vector);
+
+	return *this;
+
+}
+
+
 // Remove boundary row element by Gauss elimination.
 void BandDiagonal::gauss_elimination(
 	const int boundary_row_idx,

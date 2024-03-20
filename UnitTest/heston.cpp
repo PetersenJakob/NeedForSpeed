@@ -108,6 +108,11 @@ TEST(CallOption, FD1) {
 		d1_s *= rate;
 
 		TriDiagonal d2_s = d2dx2::uniform::c2b0(grid_s);
+		d2_s.pre_vector(grid_s);
+		d2_s.pre_vector(grid_s);
+		d2_s *= rate;
+
+
 
 	}
 

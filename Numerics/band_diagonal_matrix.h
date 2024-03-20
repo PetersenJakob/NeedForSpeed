@@ -148,6 +148,8 @@ public:
 
 	PentaDiagonal identity();
 
+	PentaDiagonal pre_vector(const std::vector<double>& vector);
+
 	void adjust_boundary(std::vector<double>& column);
 
 };
