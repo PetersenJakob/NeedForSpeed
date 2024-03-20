@@ -48,6 +48,12 @@ namespace norm {
 			const std::vector<double>& grid_y,
 			const std::vector<std::vector<double>>& func);
 
+		// L1 function norm (2-dimension).
+		double l1(
+			const std::vector<double>& grid_x,
+			const std::vector<double>& grid_y,
+			const std::vector<double>& func);
+
 		// L2 function norm (1-dimension).
 		double l2(
 			const double dx, 
@@ -69,6 +75,12 @@ namespace norm {
 			const std::vector<double>& grid_x,
 			const std::vector<double>& grid_y,
 			const std::vector<std::vector<double>>& func);
+
+		// L2 function norm (2-dimension).
+		double l2(
+			const std::vector<double>& grid_x,
+			const std::vector<double>& grid_y,
+			const std::vector<double>& func);
 
 	}
 

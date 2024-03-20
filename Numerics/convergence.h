@@ -184,9 +184,9 @@ namespace convergence {
 
 				norm[3][i] = norm::vector::l2(diff);
 
-				norm[4][i] = norm::function::l1(spatial_grid[0], diff);
+				norm[4][i] = norm::function::l1(spatial_grid[0], spatial_grid[1], diff);
 
-				norm[5][i] = norm::function::l2(spatial_grid[0], diff);
+				norm[5][i] = norm::function::l2(spatial_grid[0], spatial_grid[1], diff);
 
 				if (dimension == "time") {
 					grid_increment(n_increments, time_grid, grid_generator);

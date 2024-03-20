@@ -492,3 +492,161 @@ TEST(PentaDiagonalSolver, HeatEquation1D) {
 	}
 
 }
+
+
+TEST(TriDiagonalSolver, HeatEquation2D) {
+
+	// Crank-Nicolson.
+	{
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 0.03, 201);
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(0.0, 1.0, 11);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 201);
+		std::vector<std::vector<double>> spatial_grid {spatial_grid_x, spatial_grid_y};
+
+		// Order of solution.
+		const std::vector<int> inner_order(2, 1);
+		const std::vector<std::vector<int>> order(1, inner_order);
+
+		// Prefactors.
+		const std::vector<double> inner_prefactor(2, 1.0);
+		const std::vector<std::vector<double>> prefactor(1, inner_prefactor);
+
+		// Diffusivity.
+		const double diffusivity = 1.0;
+
+		std::function<std::vector<double>
+			(const double, const std::vector<std::vector<double>>&)>
+			solution_generator = heat_eq::solution_func(
+				order,
+				prefactor,
+				diffusivity
+			);
+
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				d2dx2::uniform::c2b0,
+				d2dx2::uniform::c2b0,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+
+		std::vector<double> result = linear_regression(norm, true);
+
+		// Maximum norm.
+		EXPECT_NEAR(result[0], 2.0, 0.047);
+
+		// L1 function norm.
+		EXPECT_NEAR(result[3], 2.0, 0.050);
+
+	}
+
+	// Crank-Nicolson.
+	{
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 0.03, 201);
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(0.0, 1.0, 201);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 11);
+		std::vector<std::vector<double>> spatial_grid{ spatial_grid_x, spatial_grid_y };
+
+		// Order of solution.
+		const std::vector<int> inner_order(2, 1);
+		const std::vector<std::vector<int>> order(1, inner_order);
+
+		// Prefactors.
+		const std::vector<double> inner_prefactor(2, 1.0);
+		const std::vector<std::vector<double>> prefactor(1, inner_prefactor);
+
+		// Diffusivity.
+		const double diffusivity = 1.0;
+
+		std::function<std::vector<double>
+			(const double, const std::vector<std::vector<double>>&)>
+			solution_generator = heat_eq::solution_func(
+				order,
+				prefactor,
+				diffusivity
+			);
+
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				d2dx2::uniform::c2b0,
+				d2dx2::uniform::c2b0,
+				solution_generator,
+				"space_2",
+				11,
+				5);
+
+		std::vector<double> result = linear_regression(norm, true);
+
+		// Maximum norm.
+		EXPECT_NEAR(result[0], 2.0, 0.047);
+
+		// L1 function norm.
+		EXPECT_NEAR(result[3], 2.0, 0.060);
+
+	}
+
+	// Crank-Nicolson.
+	{
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 0.03, 21);
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(0.0, 1.0, 1501);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 1501);
+		std::vector<std::vector<double>> spatial_grid{ spatial_grid_x, spatial_grid_y };
+
+		// Order of solution.
+		const std::vector<int> inner_order(2, 1);
+		const std::vector<std::vector<int>> order(1, inner_order);
+
+		// Prefactors.
+		const std::vector<double> inner_prefactor(2, 1.0);
+		const std::vector<std::vector<double>> prefactor(1, inner_prefactor);
+
+		// Diffusivity.
+		const double diffusivity = 1.0;
+
+		std::function<std::vector<double>
+			(const double, const std::vector<std::vector<double>>&)>
+			solution_generator = heat_eq::solution_func(
+				order,
+				prefactor,
+				diffusivity
+			);
+
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				d2dx2::uniform::c2b0,
+				d2dx2::uniform::c2b0,
+				solution_generator,
+				"time",
+				3,
+				5);
+
+		std::vector<double> result = linear_regression(norm, true);
+
+		// Maximum norm.
+		EXPECT_NEAR(result[0], 2.0, 0.064);
+
+		// L1 function norm.
+		EXPECT_NEAR(result[3], 2.0, 0.064);
+
+	}
+
+}

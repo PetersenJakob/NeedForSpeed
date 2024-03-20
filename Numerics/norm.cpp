@@ -196,6 +196,32 @@ double norm::function::l1(
 }
 
 
+// L1 function norm (2-dimension).
+double norm::function::l1(
+	const std::vector<double>& grid_x,
+	const std::vector<double>& grid_y,
+	const std::vector<double>& func) {
+
+	double norm = 0.0;
+	double dx = 0.0;
+	double dy = 0.0;
+
+	// ...
+	int index = 0;
+	for (int i = 0; i != grid_x.size() - 1; ++i) {
+		for (int j = 0; j != grid_y.size() - 1; ++j) {
+			dx = grid_x[i + 1] - grid_x[i];
+			dy = grid_y[j + 1] - grid_y[j];
+			norm += dx * dy * abs(func[index]);
+			++index;
+		}
+	}
+
+	return norm;
+
+}
+
+
 // L2 function norm (1-dimension).
 double norm::function::l2(
 	const double dx, 
@@ -274,6 +300,32 @@ double norm::function::l2(
 			dx = grid_x[i + 1] - grid_x[i];
 			dy = grid_y[j + 1] - grid_y[j];
 			norm += dx * dy * average[i][j] * average[i][j];
+		}
+	}
+
+	return sqrt(norm);
+
+}
+
+
+// L2 function norm (2-dimension).
+double norm::function::l2(
+	const std::vector<double>& grid_x,
+	const std::vector<double>& grid_y,
+	const std::vector<double>& func) {
+
+	double norm = 0.0;
+	double dx = 0.0;
+	double dy = 0.0;
+
+	// ...
+	int index = 0;
+	for (int i = 0; i != grid_x.size() - 1; ++i) {
+		for (int j = 0; j != grid_y.size() - 1; ++j) {
+			dx = grid_x[i + 1] - grid_x[i];
+			dy = grid_y[j + 1] - grid_y[j];
+			norm += dx * dy * func[index] * func[index];
+			++index;
 		}
 	}
 
