@@ -652,6 +652,52 @@ TEST(TriDiagonalSolver, HeatEquation2D) {
 }
 
 
+std::vector<std::vector<double>> prefactor_generator(
+	const std::vector<double>& grid_1,
+	const std::vector<double>& grid_2);
+
+// Prefactors C * f(grid_1) * g(grid_2) for 1st and 2nd order derivatives...
+std::vector<std::vector<double>> prefactor_generator(
+	const std::vector<double>& grid_1,
+	const std::vector<double>& grid_2) {
+
+	std::vector<std::vector<double>> result(2, { 1.0 });
+
+	// #######################
+	// First order derivative.
+	// #######################
+	
+	// Prefactor C.
+	result[0][0] = 1.0;
+	// Prefactor f.
+	for (int i = 0; i != grid_1.size(); ++i) {
+		result[0].push_back(grid_1[i]);
+	}
+	// Prefactor g.
+	for (int i = 0; i != grid_2.size(); ++i) {
+		result[0].push_back(grid_2[i]);
+	}
+
+	// #######################
+	// First order derivative.
+	// #######################
+
+	// Prefactor C.
+	result[1][0] = 1.0;
+	// Prefactor f.
+	for (int i = 0; i != grid_1.size(); ++i) {
+		result[1].push_back(grid_1[i]);
+	}
+	// Prefactor g.
+	for (int i = 0; i != grid_2.size(); ++i) {
+		result[1].push_back(grid_2[i]);
+	}
+
+	return result;
+
+}
+
+
 TEST(TriDiagonalSolver, HeatEquation2D_new) {
 
 	// Crank-Nicolson.
@@ -683,7 +729,8 @@ TEST(TriDiagonalSolver, HeatEquation2D_new) {
 				diffusivity
 			);
 
-		// SHOULD CALL OVERLOADED dr_2d with prefactors and vectors of derivative_generators!!!
+
+		// SHOULD CALL OVERLOADED dr_2d with prefactor generators and vectors of derivative_generators!!!
 
 		std::vector<std::vector<double>>
 			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
