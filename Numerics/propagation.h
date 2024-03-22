@@ -63,6 +63,31 @@ namespace propagation {
 		template <class T1, class T2>
 		void dr_2d(
 			const std::vector<double>& time_grid,
+			const std::vector<double>& prefactors_1,
+			const std::vector<double>& prefactors_2,
+			std::vector<T1>& derivatives_1,
+			std::vector<T2>& derivatives_2,
+			std::vector<double>& func,
+			const double theta = 0.5) {
+
+			for (int i = 0; i != time_grid.size() - 1; ++i) {
+
+				double dt = time_grid[i + 1] - time_grid[i];
+
+				propagator::adi::dr_2d(
+					dt,
+					prefactors_1, prefactors_2,
+					derivatives_1, derivatives_2,
+					func,
+					theta);
+
+			}
+
+		}
+
+		template <class T1, class T2>
+		void dr_2d(
+			const std::vector<double>& time_grid,
 
 			const std::vector<std::vector<double>>& prefactors_1,
 			const std::vector<std::vector<double>>& prefactors_2,

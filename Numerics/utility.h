@@ -181,7 +181,82 @@ std::vector<double> action_2d(
 	const int n_points_2,
 	const int filter,
 	const bool solve_equation,
-	const double adi_factor,
+	const std::vector<double>& adi_factors,
+	const std::vector<std::vector<double>>& prefactors,
+	std::vector<T>& derivatives,
+	const std::vector<double>& func) {
+
+	int factor_i = 1;
+	int factor_j = 1;
+
+	if (filter == 1) {
+		// Function strip along x-dimension. Order (x, y).
+		factor_i = 1;
+		factor_j = n_points_2;
+	}
+	else if (filter == 2) {
+		// Function strip along y-dimension. Order (y, x).
+		factor_i = n_points_1;
+		factor_j = 1;
+	}
+	else {
+		throw std::invalid_argument("Unknown filter.");
+	}
+
+	std::vector<double> func_strip(n_points_1, 0.0);
+
+	const int n_points = n_points_1 * n_points_2;
+
+	std::vector<double> func_return(n_points, 0.0);
+
+	int index = 0;
+
+	T derivative = adi_factors[0] * derivatives[0]
+		+ adi_factors[1] * (prefactors[0] * derivatives[1]
+			+ prefactors[1] * derivatives[2]);
+
+	for (int i = 0; i != n_points_2; ++i) {
+
+		// Function strip along 1st dimension.
+		for (int j = 0; j != n_points_1; ++j) {
+			index = factor_i * i + factor_j * j;
+			func_strip[j] = func[index];
+		}
+
+		// Evaluate differential operator expression.
+		if (solve_equation) {
+			solver::band(derivative, func_strip);
+		}
+		else {
+			func_strip = derivative * func_strip;
+		}
+
+		// Save result.
+		for (int j = 0; j != n_points_1; ++j) {
+			index = factor_i * i + factor_j * j;
+			func_return[index] = func_strip[j];
+		}
+
+	}
+
+	return func_return;
+
+}
+
+
+// Evaulation of differential operator expression, 2-dimensional.
+// Differential operator is wrt. first coordinate ("n_points_1").
+// solve_equation
+//	- true: differential * x = func
+//  - false: x = differential * func
+// Assume order of func to be (x, y).
+template <class T>
+std::vector<double> action_2d(
+	const int n_points_1,
+	const int n_points_2,
+	const int filter,
+	const bool solve_equation,
+	const std::vector<double> adi_factors,
 	const std::vector<std::vector<double>>& prefactors,
 	std::vector<T>& derivatives,
 	const std::vector<double>& func) {
@@ -231,9 +306,9 @@ std::vector<double> action_2d(
 		n_index = 1;
 	}
 
-	std::vector<double> vec1 = 
+	std::vector<double> vec1 =
 		std::vector<double>(prefactors[0].begin() + n_start, prefactors[0].begin() + n_final);
-	std::vector<double> vec2 = 
+	std::vector<double> vec2 =
 		std::vector<double>(prefactors[1].begin() + n_start, prefactors[1].begin() + n_final);
 
 	for (int j = 0; j != n_points_1; ++j) {
@@ -245,6 +320,11 @@ std::vector<double> action_2d(
 	std::vector<double> vec2_tmp = vec2;
 
 
+	T derivative = derivatives[0];
+	T deriv_0 = adi_factors[0] * derivatives[0];
+	T deriv_1 = adi_factors[1] * derivatives[1];
+	T deriv_2 = adi_factors[2] * derivatives[2];
+
 
 	for (int i = 0; i != n_points_2; ++i) {
 
@@ -254,19 +334,17 @@ std::vector<double> action_2d(
 			func_strip[j] = func[index];
 		}
 
-
-
-		// Update derivative operator; identity + C1 * d1dx1 + C2 * d2dx2.
+		// Update derivative operator.
+		// identity + c1 * f1(x) * g1(x) * d1dx1 + c2 * f2(y) * g2(y) * d2dx2.
 		for (int j = 0; j != n_points_1; ++j) {
 			index = n_index + i;
 			vec1_tmp[j] = vec1[j] * prefactors[0][index];
 			vec2_tmp[j] = vec2[j] * prefactors[1][index];
 		}
-		T derivative = derivatives[0] 
-			+ adi_factor * (derivatives[1].pre_vector(vec1_tmp) 
-				+ derivatives[2].pre_vector(vec2_tmp));
 
-
+		derivative = deriv_0;
+		derivative += deriv_1.pre_vector(vec1_tmp);
+		derivative += deriv_2.pre_vector(vec2_tmp);
 
 		// Evaluate differential operator expression.
 		if (solve_equation) {
