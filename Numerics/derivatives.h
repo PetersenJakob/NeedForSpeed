@@ -122,14 +122,33 @@ private:
 public:
 
 	MixedDerivative(
-		const T1& d1dx1_, 
-		const T2& d1dy1_) {
+		T1& d1dx1_, 
+		T2& d1dy1_) {
 
 		d1dx1 = d1dx1_;
 		d1dy1 = d1dy1_;
 
 		std::vector<double> tmp(d1dx1.order() * d1dy1.order(), 1.0);
 		prefactors = tmp;
+
+	}
+
+	void set_prefactors(const double scalar) {
+		for (int i = 0; i != prefactors.size(); ++i) {
+			prefactors[i] = scalar;
+		}
+	}
+
+	void set_prefactors(
+		const std::vector<double> coef_x,
+		const std::vector<double> coef_y) {
+		int index = 0;
+		for (int i = 0; i != coef_x.size(); ++i) {
+			for (int j = 0; j != coef_y.size(); ++j) {
+				prefactors[i] = coef_x[i] * coef_y[j];
+				++index;
+			}
+		}
 
 	}
 
