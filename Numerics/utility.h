@@ -182,7 +182,7 @@ std::vector<double> action_2d(
 	const int filter,
 	const bool solve_equation,
 	const std::vector<double>& adi_factors,
-	const std::vector<std::vector<double>>& prefactors,
+	const std::vector<double>& prefactors,
 	std::vector<T>& derivatives,
 	const std::vector<double>& func) {
 
@@ -323,7 +323,7 @@ std::vector<double> action_2d(
 	T derivative = derivatives[0];
 	T deriv_0 = adi_factors[0] * derivatives[0];
 	T deriv_1 = adi_factors[1] * derivatives[1];
-	T deriv_2 = adi_factors[2] * derivatives[2];
+	T deriv_2 = adi_factors[1] * derivatives[2];
 
 
 	for (int i = 0; i != n_points_2; ++i) {

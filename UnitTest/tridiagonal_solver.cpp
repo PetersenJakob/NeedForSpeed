@@ -653,13 +653,12 @@ TEST(TriDiagonalSolver, HeatEquation2D) {
 
 
 std::vector<std::vector<double>> prefactor_generator(
-	const std::vector<double>& grid_1,
-	const std::vector<double>& grid_2);
+	const std::vector<std::vector<double>>& grid);
 
-// Prefactors C * f(grid_1) * g(grid_2) for 1st and 2nd order derivatives...
+
+// Prefactors C * f(grid_1) * g(grid_2) * ... for 1st and 2nd order derivatives.
 std::vector<std::vector<double>> prefactor_generator(
-	const std::vector<double>& grid_1,
-	const std::vector<double>& grid_2) {
+	const std::vector<std::vector<double>>& grid) {
 
 	std::vector<std::vector<double>> result(2, { 1.0 });
 
@@ -667,30 +666,30 @@ std::vector<std::vector<double>> prefactor_generator(
 	// First order derivative.
 	// #######################
 	
-	// Prefactor C.
-	result[0][0] = 1.0;
-	// Prefactor f.
-	for (int i = 0; i != grid_1.size(); ++i) {
-		result[0].push_back(grid_1[i]);
-	}
-	// Prefactor g.
-	for (int i = 0; i != grid_2.size(); ++i) {
-		result[0].push_back(grid_2[i]);
-	}
+	result[0][0] = 0.0;
 
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+
+			result[0].push_back(0.0);
+//			result[0].push_back(grid[i][j]);
+
+		}
+	}
+			
 	// #######################
 	// First order derivative.
 	// #######################
 
-	// Prefactor C.
 	result[1][0] = 1.0;
-	// Prefactor f.
-	for (int i = 0; i != grid_1.size(); ++i) {
-		result[1].push_back(grid_1[i]);
-	}
-	// Prefactor g.
-	for (int i = 0; i != grid_2.size(); ++i) {
-		result[1].push_back(grid_2[i]);
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+
+			result[1].push_back(1.0);
+//			result[1].push_back(grid[i][j]);
+
+		}
 	}
 
 	return result;
@@ -730,8 +729,12 @@ TEST(TriDiagonalSolver, HeatEquation2D_new) {
 			);
 
 
-		// SHOULD CALL OVERLOADED dr_2d with prefactor generators and vectors of derivative_generators!!!
+		std::vector<std::function<TriDiagonal(std::vector<double>)>> 
+			deriv_1{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv_2{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
 
+#if false
 		std::vector<std::vector<double>>
 			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
 				time_grid,
@@ -743,6 +746,37 @@ TEST(TriDiagonalSolver, HeatEquation2D_new) {
 				"space_1",
 				11,
 				5);
+#endif
+#if false
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				{ 0.0, diffusivity },
+				{ 0.0, diffusivity },
+				deriv_1,
+				deriv_2,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+#endif
+
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				prefactor_generator,
+				prefactor_generator,
+				deriv_1,
+				deriv_2,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+
 
 		std::vector<double> result = linear_regression(norm, true);
 
