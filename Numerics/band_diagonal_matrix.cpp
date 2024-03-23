@@ -163,9 +163,11 @@ TriDiagonal TriDiagonal::identity() {
 
 TriDiagonal TriDiagonal::pre_vector(const std::vector<double>& vector) {
 
-	row_multiply_matrix<TriDiagonal>(*this, vector);
+	TriDiagonal result(*this);
 
-	return *this;
+	row_multiply_matrix<TriDiagonal>(result, vector);
+
+	return result;
 
 }
 

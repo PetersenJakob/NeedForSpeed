@@ -431,6 +431,8 @@ namespace convergence {
 				T1 derivative_1 = derivative_generator_1(spatial_grid[0]);
 				T2 derivative_2 = derivative_generator_2(spatial_grid[1]);
 
+
+				// TODO: Need to set prefactors from outside.
 				MixedDerivative<T1, T2> mixed(
 					derivative_generator_1(spatial_grid[0]),
 					derivative_generator_2(spatial_grid[1]));
@@ -648,9 +650,7 @@ namespace convergence {
 					derivative_generator_1[0](spatial_grid[0]),
 					derivative_generator_2[0](spatial_grid[1]));
 				
-				// !!!!
-				mixed.set_prefactors(0.0);
-//				mixed.set_prefactors(prefactors_12);
+				mixed.set_prefactors(prefactors_12);
 
 
 				func = solution_generator(time_grid.front(), spatial_grid);

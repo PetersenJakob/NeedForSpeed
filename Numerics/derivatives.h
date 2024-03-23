@@ -149,7 +149,15 @@ public:
 				++index;
 			}
 		}
+	}
 
+	void set_prefactors(
+		const std::vector<double>& factors) {
+		int index = 0;
+		for (int i = 0; i != factors.size(); ++i) {
+			prefactors[i] = factors[i];
+				++index;
+		}
 	}
 
 	std::vector<double> d2dxdy(
