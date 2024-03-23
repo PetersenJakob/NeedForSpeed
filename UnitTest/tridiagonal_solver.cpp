@@ -697,6 +697,35 @@ std::vector<std::vector<double>> prefactor_generator(
 }
 
 
+std::vector<double> mixed_prefactor_generator(
+	const std::vector<std::vector<double>>& grid);
+
+
+// Prefactors C * f(grid_1) * g(grid_2) for mixed derivative.
+std::vector<double> mixed_prefactor_generator(
+	const std::vector<std::vector<double>>& grid) {
+
+	int n_points = 1;
+	for (int i = 0; i != grid.size(); ++i) {
+		n_points *= grid[i].size();
+	}
+
+	std::vector<double> result(n_points, 0.0);
+
+	int index = 0;
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+
+			result[index] = 0.0;
+
+		}
+	}
+
+	return result;
+
+}
+
+
 TEST(TriDiagonalSolver, HeatEquation2D_new) {
 
 	// Crank-Nicolson.
@@ -762,7 +791,7 @@ TEST(TriDiagonalSolver, HeatEquation2D_new) {
 				11,
 				5);
 #endif
-
+#if false
 		std::vector<std::vector<double>>
 			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
 				time_grid,
@@ -776,7 +805,115 @@ TEST(TriDiagonalSolver, HeatEquation2D_new) {
 				"space_1",
 				11,
 				5);
+#endif
+#if false
+		std::vector<std::vector<double>>
+			norm = convergence::adi::cs_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				d2dx2::uniform::c2b0,
+				d2dx2::uniform::c2b0,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+#endif
+#if false
+		std::vector<std::vector<double>>
+			norm = convergence::adi::cs_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				{ 0.0, diffusivity },
+				{ 0.0, diffusivity },
+				deriv_1,
+				deriv_2,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+#endif
+		
+		std::vector<std::vector<double>>
+			norm = convergence::adi::cs_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				prefactor_generator,
+				prefactor_generator,
+				mixed_prefactor_generator,
+				deriv_1,
+				deriv_2,
+				solution_generator,
+				"space_1",
+				11,
+				5);
 
+		std::vector<double> result = linear_regression(norm, true);
+
+		// Maximum norm.
+		EXPECT_NEAR(result[0], 2.0, 0.047);
+
+		// L1 function norm.
+		EXPECT_NEAR(result[3], 2.0, 0.050);
+
+	}
+
+}
+
+
+TEST(TriDiagonalSolver, HestonCall) {
+
+	// Crank-Nicolson.
+	{
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 0.03, 201);
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(0.0, 1.0, 11);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 201);
+		std::vector<std::vector<double>> spatial_grid{ spatial_grid_x, spatial_grid_y };
+
+		// Order of solution.
+		const std::vector<int> inner_order(2, 1);
+		const std::vector<std::vector<int>> order(1, inner_order);
+
+		// Prefactors.
+		const std::vector<double> inner_prefactor(2, 1.0);
+		const std::vector<std::vector<double>> prefactor(1, inner_prefactor);
+
+		// Diffusivity.
+		const double diffusivity = 1.0;
+
+		std::function<std::vector<double>
+			(const double, const std::vector<std::vector<double>>&)>
+			solution_generator = heat_eq::solution_func(
+				order,
+				prefactor,
+				diffusivity
+			);
+
+
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv_1{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv_2{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+
+		std::vector<std::vector<double>>
+			norm = convergence::adi::cs_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				prefactor_generator,
+				prefactor_generator,
+				mixed_prefactor_generator,
+				deriv_1,
+				deriv_2,
+				solution_generator,
+				"space_1",
+				11,
+				5);
 
 		std::vector<double> result = linear_regression(norm, true);
 

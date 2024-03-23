@@ -88,12 +88,10 @@ namespace propagation {
 		template <class T1, class T2>
 		void dr_2d(
 			const std::vector<double>& time_grid,
-
 			const std::vector<std::vector<double>>& prefactors_1,
 			const std::vector<std::vector<double>>& prefactors_2,
 			std::vector<T1>& derivatives_1,
 			std::vector<T2>& derivatives_2,
-
 			std::vector<double>& func,
 			const double theta = 0.5) {
 
@@ -134,6 +132,64 @@ namespace propagation {
 					dt,
 					identity_1, identity_2,
 					derivative_1, derivative_2,
+					mixed,
+					func,
+					theta, lambda, n_iterations);
+
+			}
+
+		}
+
+		template <class T1, class T2>
+		void cs_2d(
+			const std::vector<double>& time_grid,
+			const std::vector<double>& prefactors_1,
+			const std::vector<double>& prefactors_2,
+			std::vector<T1>& derivatives_1,
+			std::vector<T2>& derivatives_2,
+			MixedDerivative<T1, T2>& mixed,
+			std::vector<double>& func,
+			const double theta = 0.5,
+			const double lambda = 0.5,
+			const int n_iterations = 1) {
+
+			for (int i = 0; i != time_grid.size() - 1; ++i) {
+
+				double dt = time_grid[i + 1] - time_grid[i];
+
+				propagator::adi::cs_2d(
+					dt,
+					prefactors_1, prefactors_2,
+					derivatives_1, derivatives_2,
+					mixed,
+					func,
+					theta, lambda, n_iterations);
+
+			}
+
+		}
+
+		template <class T1, class T2>
+		void cs_2d(
+			const std::vector<double>& time_grid,
+			const std::vector<std::vector<double>>& prefactors_1,
+			const std::vector<std::vector<double>>& prefactors_2,
+			std::vector<T1>& derivatives_1,
+			std::vector<T2>& derivatives_2,
+			MixedDerivative<T1, T2>& mixed,
+			std::vector<double>& func,
+			const double theta = 0.5,
+			const double lambda = 0.5,
+			const int n_iterations = 1) {
+
+			for (int i = 0; i != time_grid.size() - 1; ++i) {
+
+				double dt = time_grid[i + 1] - time_grid[i];
+
+				propagator::adi::cs_2d(
+					dt,
+					prefactors_1, prefactors_2,
+					derivatives_1, derivatives_2,
 					mixed,
 					func,
 					theta, lambda, n_iterations);

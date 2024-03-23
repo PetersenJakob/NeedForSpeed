@@ -359,6 +359,205 @@ namespace propagator {
 
 		}
 
+
+		// Craig-Sneyd scheme, 2-dimensional.
+		// References
+		// - AP: Andersen and Piterbarg (2010).
+		template <class T1, class T2>
+		void cs_2d(
+			const double dt,
+			const std::vector<double>& prefactors_1,
+			const std::vector<double>& prefactors_2,
+			std::vector<T1>& derivatives_1,
+			std::vector<T2>& derivatives_2,
+			MixedDerivative<T1, T2>& mixed,
+			std::vector<double>& func,
+			const double theta = 0.5,
+			const double lambda = 0.5,
+			const int n_iterations = 1) {
+
+			const int n_p_1 = derivatives_1[0].order();
+			const int n_p_2 = derivatives_2[0].order();
+			const int n_points = n_p_1 * n_p_2;
+
+			std::vector<double> func_tmp_1(n_points, 0.0);
+			std::vector<double> func_tmp_2(n_points, 0.0);
+			std::vector<double> func_tmp_3(n_points, 0.0);
+
+			// ############
+			// Propagation.
+			// ############
+
+			for (int n = 0; n != n_iterations; ++n) {
+
+				// ###############
+				// Predictor step.
+				// ###############
+
+				std::vector<double> adi_factor(2, 0.0);
+
+				// AP Eq. (2.88), right-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = (1.0 - theta) * dt;
+				func_tmp_1 = action_2d(n_p_1, n_p_2, 1, false, adi_factor, prefactors_1, derivatives_1, func);
+
+				adi_factor[0] = 0.0;
+				adi_factor[1] = dt;
+				func_tmp_2 = action_2d(n_p_2, n_p_1, 2, false, adi_factor, prefactors_2, derivatives_2, func);
+
+				func_tmp_3 = mixed.d2dxdy(func);
+
+				for (int i = 0; i != n_points; ++i) {
+					func[i] = func_tmp_1[i] + func_tmp_2[i] + dt * func_tmp_3[i];
+				}
+
+				// AP Eq. (2.88), left-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = -theta * dt;
+				func = action_2d(n_p_1, n_p_2, 1, true, adi_factor, prefactors_1, derivatives_1, func);
+
+				// AP Eq. (2.89), right-hand-side.
+				for (int i = 0; i != n_points; ++i) {
+					func[i] -= theta * func_tmp_2[i];
+				}
+
+				// AP Eq. (2.89), left-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = -theta * dt;
+				func = action_2d(n_p_2, n_p_1, 2, true, adi_factor, prefactors_2, derivatives_2, func);
+
+				// ###############
+				// Corrector step.
+				// ###############
+
+				// AP Eq. (2.90), right-hand-side.
+				func = mixed.d2dxdy(func);
+
+				for (int i = 0; i != n_points; ++i) {
+					func[i] *= lambda * dt;
+					func[i] += func_tmp_1[i] + func_tmp_2[i]
+						+ (1.0 - lambda) * dt * func_tmp_3[i];
+				}
+
+				// AP Eq. (2.90), left-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = -theta * dt;
+				func = action_2d(n_p_1, n_p_2, 1, true, adi_factor, prefactors_1, derivatives_1, func);
+
+				// AP Eq. (2.91), right-hand-side.
+				for (int i = 0; i != n_points; ++i) {
+					func[i] -= theta * func_tmp_2[i];
+				}
+
+				// AP Eq. (2.91), left-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = -theta * dt;
+				func = action_2d(n_p_2, n_p_1, 2, true, adi_factor, prefactors_2, derivatives_2, func);
+
+			}
+
+		}
+
+
+		// Craig-Sneyd scheme, 2-dimensional.
+		// References
+		// - AP: Andersen and Piterbarg (2010).
+		template <class T1, class T2>
+		void cs_2d(
+			const double dt,
+			const std::vector<std::vector<double>>& prefactors_1,
+			const std::vector<std::vector<double>>& prefactors_2,
+			std::vector<T1>& derivatives_1,
+			std::vector<T2>& derivatives_2,
+			MixedDerivative<T1, T2>& mixed,
+			std::vector<double>& func,
+			const double theta = 0.5,
+			const double lambda = 0.5,
+			const int n_iterations = 1) {
+
+			const int n_p_1 = derivatives_1[0].order();
+			const int n_p_2 = derivatives_2[0].order();
+			const int n_points = n_p_1 * n_p_2;
+
+			std::vector<double> func_tmp_1(n_points, 0.0);
+			std::vector<double> func_tmp_2(n_points, 0.0);
+			std::vector<double> func_tmp_3(n_points, 0.0);
+
+			// ############
+			// Propagation.
+			// ############
+
+			for (int n = 0; n != n_iterations; ++n) {
+
+				// ###############
+				// Predictor step.
+				// ###############
+
+				std::vector<double> adi_factor(2, 0.0);
+
+				// AP Eq. (2.88), right-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = (1.0 - theta) * dt;
+				func_tmp_1 = action_2d(n_p_1, n_p_2, 1, false, adi_factor, prefactors_1, derivatives_1, func);
+
+				adi_factor[0] = 0.0;
+				adi_factor[1] = dt;
+				func_tmp_2 = action_2d(n_p_2, n_p_1, 2, false, adi_factor, prefactors_2, derivatives_2, func);
+
+				func_tmp_3 = mixed.d2dxdy(func);
+
+				for (int i = 0; i != n_points; ++i) {
+					func[i] = func_tmp_1[i] + func_tmp_2[i] + dt * func_tmp_3[i];
+				}
+
+				// AP Eq. (2.88), left-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = -theta * dt;
+				func = action_2d(n_p_1, n_p_2, 1, true, adi_factor, prefactors_1, derivatives_1, func);
+
+				// AP Eq. (2.89), right-hand-side.
+				for (int i = 0; i != n_points; ++i) {
+					func[i] -= theta * func_tmp_2[i];
+				}
+
+				// AP Eq. (2.89), left-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = -theta * dt;
+				func = action_2d(n_p_2, n_p_1, 2, true, adi_factor, prefactors_2, derivatives_2, func);
+
+				// ###############
+				// Corrector step.
+				// ###############
+
+				// AP Eq. (2.90), right-hand-side.
+				func = mixed.d2dxdy(func);
+
+				for (int i = 0; i != n_points; ++i) {
+					func[i] *= lambda * dt;
+					func[i] += func_tmp_1[i] + func_tmp_2[i]
+						+ (1.0 - lambda) * dt * func_tmp_3[i];
+				}
+
+				// AP Eq. (2.90), left-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = -theta * dt;
+				func = action_2d(n_p_1, n_p_2, 1, true, adi_factor, prefactors_1, derivatives_1, func);
+
+				// AP Eq. (2.91), right-hand-side.
+				for (int i = 0; i != n_points; ++i) {
+					func[i] -= theta * func_tmp_2[i];
+				}
+
+				// AP Eq. (2.91), left-hand-side.
+				adi_factor[0] = 1.0;
+				adi_factor[1] = -theta * dt;
+				func = action_2d(n_p_2, n_p_1, 2, true, adi_factor, prefactors_2, derivatives_2, func);
+
+			}
+
+		}
+
+
 		// Douglas-Rachford scheme, 3-dimensional.
 		template <class T1, class T2, class T3>
 		void dr_3d(
