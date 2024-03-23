@@ -161,6 +161,17 @@ TriDiagonal TriDiagonal::identity() {
 }
 
 
+TriDiagonal TriDiagonal::pre_vector(const std::vector<double>& vector) {
+
+	TriDiagonal result(*this);
+
+	row_multiply_matrix<TriDiagonal>(result, vector);
+
+	return result;
+
+}
+
+
 PentaDiagonal PentaDiagonal::operator*(const double scalar) {
 
 	PentaDiagonal result(*this);
@@ -241,6 +252,15 @@ PentaDiagonal PentaDiagonal::identity() {
 	boundary<PentaDiagonal>(3, reverse_order(coefficients), matrix);
 
 	return matrix;
+
+}
+
+
+PentaDiagonal PentaDiagonal::pre_vector(const std::vector<double>& vector) {
+
+	row_multiply_matrix<PentaDiagonal>(*this, vector);
+
+	return *this;
 
 }
 
@@ -606,6 +626,36 @@ void matrix_add_matrix(
 	for (int i = i_initial_2; i != i_final_2; ++i) {
 		for (int j = j_initial_2; j != j_final_2; ++j) {
 			result.boundary_rows[i][j] = matrix1.boundary_rows[i][j] + matrix2.boundary_rows[i][j];
+		}
+	}
+
+}
+
+
+template<class T>
+void row_multiply_matrix(
+	T& matrix,
+	const std::vector<double>& vector) {
+
+	const int i_initial_1 = matrix.n_boundary_rows();
+	const int i_final_1 = matrix.order() - matrix.n_boundary_rows();
+	const int j_initial_1 = 0;
+	const int j_final_1 = matrix.n_diagonals();
+
+	for (int i = i_initial_1; i != i_final_1; ++i) {
+		for (int j = j_initial_1; j != j_final_1; ++j) {
+			matrix.matrix[j][i] *= vector[i];
+		}
+	}
+
+	const int i_initial_2 = 0;
+	const int i_final_2 = 2 * matrix.n_boundary_rows();
+	const int j_initial_2 = 0;
+	const int j_final_2 = matrix.n_boundary_elements();
+
+	for (int i = i_initial_2; i != i_final_2; ++i) {
+		for (int j = j_initial_2; j != j_final_2; ++j) {
+			matrix.boundary_rows[i][j] *= vector[i];
 		}
 	}
 

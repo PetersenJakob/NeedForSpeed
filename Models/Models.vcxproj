@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2aea28e1-9f18-4754-9b63-01415341a907}</ProjectGuid>
-    <RootNamespace>numerics</RootNamespace>
+    <ProjectGuid>{15445b30-e02d-4407-8e59-a225fecf4767}</ProjectGuid>
+    <RootNamespace>Models</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Numerics</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -103,10 +102,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\Users\peter\Dev\eigen-3.3.9</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Numerics;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\peter\Dev\eigen-3.3.9</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Numerics;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,34 +129,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="band_diagonal_matrix.cpp" />
-    <ClCompile Include="coefficients.cpp" />
-    <ClCompile Include="convergence.cpp" />
-    <ClCompile Include="derivatives.cpp" />
-    <ClCompile Include="distributions.cpp" />
-    <ClCompile Include="grid.cpp" />
-    <ClCompile Include="heat_equation.cpp" />
-    <ClCompile Include="norm.cpp" />
-    <ClCompile Include="regression.cpp" />
-    <ClCompile Include="test_util.cpp" />
-    <ClCompile Include="matrix_equation_solver.cpp" />
-    <ClCompile Include="utility.cpp" />
+    <ClInclude Include="black_scholes.h" />
+    <ClInclude Include="heston.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="band_diagonal_matrix.h" />
-    <ClInclude Include="coefficients.h" />
-    <ClInclude Include="convergence.h" />
-    <ClInclude Include="derivatives.h" />
-    <ClInclude Include="distributions.h" />
-    <ClInclude Include="grid.h" />
-    <ClInclude Include="heat_equation.h" />
-    <ClInclude Include="norm.h" />
-    <ClInclude Include="propagation.h" />
-    <ClInclude Include="regression.h" />
-    <ClInclude Include="test_util.h" />
-    <ClInclude Include="matrix_equation_solver.h" />
-    <ClInclude Include="propagator.h" />
-    <ClInclude Include="utility.h" />
+    <ClCompile Include="black_scholes.cpp" />
+    <ClCompile Include="heston.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Numerics\Numerics.vcxproj">
+      <Project>{2aea28e1-9f18-4754-9b63-01415341a907}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

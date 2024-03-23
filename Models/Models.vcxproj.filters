@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Heston">
+      <UniqueIdentifier>{d15a3548-7bbf-4424-a1b1-5e4e33f6bf65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BlackScholes">
+      <UniqueIdentifier>{287c6e26-05f0-45f2-bbe5-4e32c9147be7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Heston">
+      <UniqueIdentifier>{5fb16f47-9e65-4ef4-aba5-da91d8bb7c26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BlackScholes">
+      <UniqueIdentifier>{3f4047e3-2fe1-4bef-8c36-916be5626e92}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="black_scholes.h">
+      <Filter>Header Files\BlackScholes</Filter>
+    </ClInclude>
+    <ClInclude Include="heston.h">
+      <Filter>Header Files\Heston</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="black_scholes.cpp">
+      <Filter>Source Files\BlackScholes</Filter>
+    </ClCompile>
+    <ClCompile Include="heston.cpp">
+      <Filter>Source Files\Heston</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -45,7 +45,7 @@
     <ClCompile Include="matrix_equation_solver.cpp">
       <Filter>Source Files\LinearAlgebra</Filter>
     </ClCompile>
-    <ClCompile Include="derivative.cpp">
+    <ClCompile Include="derivatives.cpp">
       <Filter>Source Files\FiniteDifference</Filter>
     </ClCompile>
     <ClCompile Include="coefficients.cpp">
@@ -66,6 +66,9 @@
     <ClCompile Include="convergence.cpp">
       <Filter>Source Files\FiniteDifference</Filter>
     </ClCompile>
+    <ClCompile Include="distributions.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test_util.h">
@@ -77,7 +80,7 @@
     <ClInclude Include="band_diagonal_matrix.h">
       <Filter>Header Files\LinearAlgebra</Filter>
     </ClInclude>
-    <ClInclude Include="derivative.h">
+    <ClInclude Include="derivatives.h">
       <Filter>Header Files\FiniteDifference</Filter>
     </ClInclude>
     <ClInclude Include="coefficients.h">
@@ -106,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="convergence.h">
       <Filter>Header Files\FiniteDifference</Filter>
+    </ClInclude>
+    <ClInclude Include="distributions.h">
+      <Filter>Header Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

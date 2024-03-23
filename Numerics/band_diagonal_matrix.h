@@ -110,6 +110,8 @@ public:
 
 	TriDiagonal identity();
 
+	TriDiagonal pre_vector(const std::vector<double>& vector);
+
 	void adjust_boundary(std::vector<double>& column);
 
 };
@@ -146,6 +148,8 @@ public:
 
 	PentaDiagonal identity();
 
+	PentaDiagonal pre_vector(const std::vector<double>& vector);
+
 	void adjust_boundary(std::vector<double>& column);
 
 };
@@ -167,7 +171,7 @@ void scalar_multiply_matrix(
 	T& matrix);
 
 
-template <class T>
+template<class T>
 void matrix_multiply_vector(
 	const T& matrix, 
 	const std::vector<double>& vector, 
@@ -182,3 +186,9 @@ void matrix_add_matrix(
 
 
 void print_matrix(BandDiagonal matrix);
+
+
+template<class T>
+void row_multiply_matrix(
+	T& matrix,
+	const std::vector<double>& vector);

@@ -492,3 +492,644 @@ TEST(PentaDiagonalSolver, HeatEquation1D) {
 	}
 
 }
+
+
+TEST(TriDiagonalSolver, HeatEquation2D) {
+
+	// Crank-Nicolson.
+	{
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 0.03, 201);
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(0.0, 1.0, 11);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 201);
+		std::vector<std::vector<double>> spatial_grid {spatial_grid_x, spatial_grid_y};
+
+		// Order of solution.
+		const std::vector<int> inner_order(2, 1);
+		const std::vector<std::vector<int>> order(1, inner_order);
+
+		// Prefactors.
+		const std::vector<double> inner_prefactor(2, 1.0);
+		const std::vector<std::vector<double>> prefactor(1, inner_prefactor);
+
+		// Diffusivity.
+		const double diffusivity = 1.0;
+
+		std::function<std::vector<double>
+			(const double, const std::vector<std::vector<double>>&)>
+			solution_generator = heat_eq::solution_func(
+				order,
+				prefactor,
+				diffusivity
+			);
+
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				d2dx2::uniform::c2b0,
+				d2dx2::uniform::c2b0,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+
+		std::vector<double> result = linear_regression(norm, true);
+
+		// Maximum norm.
+		EXPECT_NEAR(result[0], 2.0, 0.047);
+
+		// L1 function norm.
+		EXPECT_NEAR(result[3], 2.0, 0.050);
+
+	}
+
+	// Crank-Nicolson.
+	{
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 0.03, 201);
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(0.0, 1.0, 201);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 11);
+		std::vector<std::vector<double>> spatial_grid{ spatial_grid_x, spatial_grid_y };
+
+		// Order of solution.
+		const std::vector<int> inner_order(2, 1);
+		const std::vector<std::vector<int>> order(1, inner_order);
+
+		// Prefactors.
+		const std::vector<double> inner_prefactor(2, 1.0);
+		const std::vector<std::vector<double>> prefactor(1, inner_prefactor);
+
+		// Diffusivity.
+		const double diffusivity = 1.0;
+
+		std::function<std::vector<double>
+			(const double, const std::vector<std::vector<double>>&)>
+			solution_generator = heat_eq::solution_func(
+				order,
+				prefactor,
+				diffusivity
+			);
+
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				d2dx2::uniform::c2b0,
+				d2dx2::uniform::c2b0,
+				solution_generator,
+				"space_2",
+				11,
+				5);
+
+		std::vector<double> result = linear_regression(norm, true);
+
+		// Maximum norm.
+		EXPECT_NEAR(result[0], 2.0, 0.047);
+
+		// L1 function norm.
+		EXPECT_NEAR(result[3], 2.0, 0.060);
+
+	}
+
+	// Crank-Nicolson.
+	{
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 0.03, 21);
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(0.0, 1.0, 1501);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 1501);
+		std::vector<std::vector<double>> spatial_grid{ spatial_grid_x, spatial_grid_y };
+
+		// Order of solution.
+		const std::vector<int> inner_order(2, 1);
+		const std::vector<std::vector<int>> order(1, inner_order);
+
+		// Prefactors.
+		const std::vector<double> inner_prefactor(2, 1.0);
+		const std::vector<std::vector<double>> prefactor(1, inner_prefactor);
+
+		// Diffusivity.
+		const double diffusivity = 1.0;
+
+		std::function<std::vector<double>
+			(const double, const std::vector<std::vector<double>>&)>
+			solution_generator = heat_eq::solution_func(
+				order,
+				prefactor,
+				diffusivity
+			);
+
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				d2dx2::uniform::c2b0,
+				d2dx2::uniform::c2b0,
+				solution_generator,
+				"time",
+				3,
+				5);
+
+		std::vector<double> result = linear_regression(norm, true);
+
+		// Maximum norm.
+		EXPECT_NEAR(result[0], 2.0, 0.064);
+
+		// L1 function norm.
+		EXPECT_NEAR(result[3], 2.0, 0.064);
+
+	}
+
+}
+
+
+std::vector<std::vector<double>> prefactor_generator(
+	const std::vector<std::vector<double>>& grid);
+
+
+// Prefactors C * f(grid_1) * g(grid_2) * ... for 1st and 2nd order derivatives.
+std::vector<std::vector<double>> prefactor_generator(
+	const std::vector<std::vector<double>>& grid) {
+
+	std::vector<std::vector<double>> result(3, { 1.0 });
+
+	// #######################
+	// First order derivative.
+	// #######################
+	
+	result[0][0] = 0.0;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+
+			result[0].push_back(0.0);
+//			result[0].push_back(grid[i][j]);
+
+		}
+	}
+			
+	// ########################
+	// Second order derivative.
+	// ########################
+
+	result[1][0] = 1.0;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+
+			result[1].push_back(1.0);
+//			result[1].push_back(grid[i][j]);
+
+		}
+	}
+
+	// ###################
+	// Inhomogenious term.
+	// ###################
+
+	result[2][0] = 0.0;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			result[2].push_back(0.0);
+		}
+	}
+
+	return result;
+
+}
+
+
+std::vector<double> mixed_prefactor_generator(
+	const std::vector<std::vector<double>>& grid);
+
+
+// Prefactors C * f(grid_1) * g(grid_2) for mixed derivative.
+std::vector<double> mixed_prefactor_generator(
+	const std::vector<std::vector<double>>& grid) {
+
+	int n_points = grid[0].size() * grid[1].size();
+
+	std::vector<double> result(n_points, 0.0);
+
+	int index = 0;
+	for (int i = 0; i != grid[0].size(); ++i) {
+		for (int j = 0; j != grid[1].size(); ++j) {
+			result[index] = 0.0;
+			++index;
+		}
+	}
+
+	return result;
+
+}
+
+
+TEST(TriDiagonalSolver, HeatEquation2D_new) {
+
+	// Crank-Nicolson.
+	{
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 0.03, 201);
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(0.0, 1.0, 11);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 201);
+		std::vector<std::vector<double>> spatial_grid{ spatial_grid_x, spatial_grid_y };
+
+		// Order of solution.
+		const std::vector<int> inner_order(2, 1);
+		const std::vector<std::vector<int>> order(1, inner_order);
+
+		// Prefactors.
+		const std::vector<double> inner_prefactor(2, 1.0);
+		const std::vector<std::vector<double>> prefactor(1, inner_prefactor);
+
+		// Diffusivity.
+		const double diffusivity = 1.0;
+
+		std::function<std::vector<double>
+			(const double, const std::vector<std::vector<double>>&)>
+			solution_generator = heat_eq::solution_func(
+				order,
+				prefactor,
+				diffusivity
+			);
+
+
+		std::vector<std::function<TriDiagonal(std::vector<double>)>> 
+			deriv_1{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv_2{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+
+#if false
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				d2dx2::uniform::c2b0,
+				d2dx2::uniform::c2b0,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+#endif
+#if false
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				{ 0.0, diffusivity },
+				{ 0.0, diffusivity },
+				deriv_1,
+				deriv_2,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+#endif
+#if false
+		std::vector<std::vector<double>>
+			norm = convergence::adi::dr_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				prefactor_generator,
+				prefactor_generator,
+				deriv_1,
+				deriv_2,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+#endif
+#if false
+		std::vector<std::vector<double>>
+			norm = convergence::adi::cs_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				d2dx2::uniform::c2b0,
+				d2dx2::uniform::c2b0,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+#endif
+#if false
+		std::vector<std::vector<double>>
+			norm = convergence::adi::cs_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				{ 0.0, diffusivity },
+				{ 0.0, diffusivity },
+				deriv_1,
+				deriv_2,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+#endif
+		
+		std::vector<std::vector<double>>
+			norm = convergence::adi::cs_2d<TriDiagonal, TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				prefactor_generator,
+				prefactor_generator,
+				mixed_prefactor_generator,
+				deriv_1,
+				deriv_2,
+				solution_generator,
+				"space_1",
+				11,
+				5);
+
+		std::vector<double> result = linear_regression(norm, true);
+
+		// Maximum norm.
+		EXPECT_NEAR(result[0], 2.0, 0.047);
+
+		// L1 function norm.
+		EXPECT_NEAR(result[3], 2.0, 0.050);
+
+	}
+
+}
+
+
+
+// Prefactors C * f(grid_1) * g(grid_2) * ... for 1st and 2nd order derivatives.
+std::vector<std::vector<double>> prefactor_generator_heston_s(
+	const std::vector<std::vector<double>>& grid,
+	const double rate) {
+
+	std::vector<std::vector<double>> result(3, { 1.0 });
+
+	// #######################
+	// First order derivative.
+	// #######################
+
+	result[0][0] = rate;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			if (i == 0) {
+				result[0].push_back(grid[i][j]);
+			}
+			else {
+				result[0].push_back(1.0);
+			}
+		}
+	}
+
+	// ########################
+	// Second order derivative.
+	// ########################
+
+	result[1][0] = 0.5;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			if (i == 0) {
+				result[1].push_back(grid[i][j] * grid[i][j]);
+			}
+			else {
+				result[1].push_back(grid[i][j]);
+			}
+		}
+	}
+
+	// ###################
+	// Inhomogenious term.
+	// ###################
+
+	result[2][0] = -0.5 * rate;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			result[2].push_back(1.0);
+		}
+	}
+
+	return result;
+
+}
+
+// Prefactors C * f(grid_1) * g(grid_2) * ... for 1st and 2nd order derivatives.
+std::vector<std::vector<double>> prefactor_generator_heston_v(
+	const std::vector<std::vector<double>>& grid,
+	const double rate,
+	const double lambda,
+	const double theta,
+	const double eta) {
+
+	std::vector<std::vector<double>> result(3, { 1.0 });
+
+	// #######################
+	// First order derivative.
+	// #######################
+
+	result[0][0] = lambda;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			if (i == 1) {
+				result[0].push_back(theta - grid[i][j]);
+			}
+			else {
+				result[0].push_back(1.0);
+			}
+		}
+	}
+
+	// ########################
+	// Second order derivative.
+	// ########################
+
+	result[1][0] = 0.5 * eta * eta;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			if (i == 1) {
+				result[1].push_back(grid[i][j]);
+			}
+			else {
+				result[1].push_back(1.0);
+			}
+		}
+	}
+
+	// ###################
+	// Inhomogenious term.
+	// ###################
+
+	result[2][0] = -0.5 * rate;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			result[2].push_back(1.0);
+		}
+	}
+
+	return result;
+
+}
+
+// Prefactors C * f(grid_1) * g(grid_2) for mixed derivative.
+std::vector<double> mixed_prefactor_generator_heston(
+	const std::vector<std::vector<double>>& grid,
+	const double eta,
+	const double rho) {
+
+	int n_points = 1;
+	for (int i = 0; i != grid.size(); ++i) {
+		n_points *= grid[i].size();
+	}
+
+	std::vector<double> result(n_points, 0.0);
+
+	int index = 0;
+	for (int i = 0; i != grid[0].size(); ++i) {
+		for (int j = 0; j != grid[1].size(); ++j) {
+			result[index] = eta * rho * grid[0][i] * grid[1][j];
+			++index;
+		}
+	}
+
+	return result;
+
+}
+
+TEST(TriDiagonalSolver, HestonCall) {
+
+	const double rate = 0.03;
+
+	const double lambda = 3.0;
+	const double theta = 0.12;
+	const double eta = 0.041;
+
+	const double rho = 0.6;
+
+	const double strike = 100.0;
+
+	// Crank-Nicolson.
+	{
+
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 0.5, 21); // (0.0, 1.0, 31)
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(2.0, 400.0, 51);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 21);
+		std::vector<std::vector<double>> spatial_grid{ spatial_grid_x, spatial_grid_y };
+
+
+		std::vector<std::vector<double>> prefactors_1 = prefactor_generator_heston_s(spatial_grid, rate);
+		std::vector<std::vector<double>> prefactors_2 = prefactor_generator_heston_v(spatial_grid, rate, lambda, theta, eta);
+
+
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv_1{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv_2{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+
+		std::vector<TriDiagonal> derivatives_1;
+		derivatives_1.push_back(deriv_1[0](spatial_grid[0]).identity());
+		derivatives_1.push_back(deriv_1[0](spatial_grid[0]));
+		derivatives_1.push_back(deriv_1[1](spatial_grid[0]));
+
+		std::vector<TriDiagonal> derivatives_2;
+		derivatives_2.push_back(deriv_2[0](spatial_grid[1]).identity());
+		derivatives_2.push_back(deriv_2[0](spatial_grid[1]));
+		derivatives_2.push_back(deriv_2[1](spatial_grid[1]));
+
+
+		std::vector<double> prefactors_12 = mixed_prefactor_generator_heston(spatial_grid, eta, rho);
+
+
+		MixedDerivative<TriDiagonal, TriDiagonal> mixed(
+			deriv_1[0](spatial_grid[0]),
+			deriv_2[0](spatial_grid[1]));
+
+
+		mixed.set_prefactors(prefactors_12);
+
+
+		std::vector<double> func(spatial_grid_x.size() * spatial_grid_y.size(), 0.0);
+		int index = 0;
+		for (int i = 0; i != spatial_grid_x.size(); ++i) {
+			for (int j = 0; j != spatial_grid_y.size(); ++j) {
+				func[index] = std::max(spatial_grid_x[i] - strike, 0.0);
+				++index;
+			}
+		}
+
+
+		propagation::adi::cs_2d(
+			time_grid,
+			prefactors_1, 
+			prefactors_2,
+			derivatives_1, 
+			derivatives_2,
+			mixed,
+			func,
+			0.5);
+
+
+		std::ofstream file("heston_surface.csv");
+		file << std::scientific << std::setprecision(12);
+		index = 0;
+		for (int i = 0; i != spatial_grid_x.size(); ++i) {
+			for (int j = 0; j != spatial_grid_y.size(); ++j) {
+				file << std::setw(22) << func[index];
+				if (j < spatial_grid_y.size() - 1) {
+					file << ", ";
+				}
+				++index;
+			}
+			file << std::endl;
+		}
+		file << std::endl;
+		file.close();
+
+		std::ofstream file_s("heston_surface_s.csv");
+		file_s << std::scientific << std::setprecision(12);
+		index = 0;
+		for (int i = 0; i != spatial_grid_x.size(); ++i) {
+			file_s << std::setw(22) << spatial_grid_x[i];
+			if (i < spatial_grid_x.size() - 1) {
+				file_s << ", ";
+			}
+		}
+		file_s << std::endl;
+		file_s.close();
+
+		std::ofstream file_v("heston_surface_v.csv");
+		file_v << std::scientific << std::setprecision(12);
+		index = 0;
+		for (int i = 0; i != spatial_grid_y.size(); ++i) {
+			file_v << std::setw(22) << spatial_grid_y[i];
+			if (i < spatial_grid_y.size() - 1) {
+				file_v << ", ";
+			}
+		}
+		file_v << std::endl;
+		file_v.close();
+
+	}
+
+}
