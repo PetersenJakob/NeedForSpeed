@@ -655,8 +655,14 @@ void row_multiply_matrix(
 
 	for (int i = i_initial_2; i != i_final_2; ++i) {
 		for (int j = j_initial_2; j != j_final_2; ++j) {
-			matrix.boundary_rows[i][j] *= vector[i];
+			if (i < matrix.n_boundary_rows()) {
+				matrix.boundary_rows[i][j] *= vector[i];
+			}
+			else {
+				matrix.boundary_rows[i][j] *= vector[(vector.size() - 1) - (i_final_2 - 1 - i)];
+			}
 		}
 	}
+
 
 }

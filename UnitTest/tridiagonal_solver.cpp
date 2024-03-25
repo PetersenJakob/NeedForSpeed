@@ -1014,6 +1014,7 @@ std::vector<double> mixed_prefactor_generator_heston(
 
 }
 
+
 TEST(TriDiagonalSolver, HestonCall) {
 
 	const double rate = 0.03;
@@ -1030,10 +1031,10 @@ TEST(TriDiagonalSolver, HestonCall) {
 	{
 
 		// Initial time grid.
-		std::vector<double> time_grid = grid::uniform(0.0, 0.5, 21); // (0.0, 1.0, 31)
+		std::vector<double> time_grid = grid::uniform(0.0, 1.0, 31);
 
 		// Initial spatial grid.
-		std::vector<double> spatial_grid_x = grid::uniform(2.0, 400.0, 51);
+		std::vector<double> spatial_grid_x = grid::uniform(2.0, 200.0, 51);
 		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 21);
 		std::vector<std::vector<double>> spatial_grid{ spatial_grid_x, spatial_grid_y };
 
@@ -1129,6 +1130,74 @@ TEST(TriDiagonalSolver, HestonCall) {
 		}
 		file_v << std::endl;
 		file_v.close();
+
+	}
+
+}
+
+
+TEST(TriDiagonalSolver, BlackScholesCall) {
+
+	const double rate = 0.03;
+
+	const double sigma = 0.2;
+
+	const double tau = 1.0;
+
+	const double strike = 100.0;
+
+	// Crank-Nicolson.
+	{
+
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, tau, 31);
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid = grid::uniform(0.0, 200.0, 51);
+
+		std::vector<double> prefactor_1(spatial_grid.size(), 0.0);
+		std::vector<double> prefactor_2(spatial_grid.size(), 0.0);
+
+		for (int i = 0; i != spatial_grid.size(); ++i) {
+			prefactor_1[i] = rate * spatial_grid[i];
+			prefactor_2[i] = 0.5 * sigma * sigma * spatial_grid[i] * spatial_grid[i];
+		}
+
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+
+		TriDiagonal test_1 = deriv[0](spatial_grid);
+		TriDiagonal test_2 = deriv[0](spatial_grid).pre_vector(prefactor_1);
+		TriDiagonal test_3 = deriv[1](spatial_grid);
+		TriDiagonal test_4 = deriv[1](spatial_grid).pre_vector(prefactor_2);
+
+		TriDiagonal derivative = deriv[0](spatial_grid).pre_vector(prefactor_1);
+		derivative += deriv[1](spatial_grid).pre_vector(prefactor_2);
+		derivative -= rate * deriv[0](spatial_grid).identity();
+
+		std::vector<double> func(spatial_grid.size(), 0.0);
+		for (int i = 0; i != spatial_grid.size(); ++i) {
+			func[i] = std::max(spatial_grid[i] - strike, 0.0);
+		}
+		std::vector<double> ic_func = func;
+
+		propagation::theta_1d::full(
+			time_grid,
+			derivative,
+			func,
+			0.5);
+
+		std::ofstream file("black_scholes_call.csv");
+		file << std::scientific << std::setprecision(12);
+		for (int i = 0; i != spatial_grid.size(); ++i) {
+			file 
+				<< std::setw(22) << spatial_grid[i] << ","
+				<< std::setw(22) << func[i] << ","
+				<< std::setw(22) << bs::call::price(spatial_grid[i], rate, sigma, strike, tau) << ","
+				<< std::setw(22) << ic_func[i]
+				<< std::endl;
+		}
+		file.close();
 
 	}
 
