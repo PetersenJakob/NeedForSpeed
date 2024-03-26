@@ -290,7 +290,6 @@ std::vector<double> action_2d(
 
 	double factor1 = prefactors[0][0];
 	double factor2 = prefactors[1][0];
-
 	double factor3 = prefactors[2][0];
 
 	int n_start = 0;
@@ -308,25 +307,21 @@ std::vector<double> action_2d(
 		n_index = 1;
 	}
 
-	std::vector<double> vec1 =
-		std::vector<double>(prefactors[0].begin() + n_start, prefactors[0].begin() + n_final);
-	std::vector<double> vec2 =
-		std::vector<double>(prefactors[1].begin() + n_start, prefactors[1].begin() + n_final);
-
-	std::vector<double> vec3 =
-		std::vector<double>(prefactors[2].begin() + n_start, prefactors[2].begin() + n_final);
+	std::vector<double> vec1 = std::vector<double>(
+		prefactors[0].begin() + n_start, prefactors[0].begin() + n_final);
+	std::vector<double> vec2 = std::vector<double>(
+		prefactors[1].begin() + n_start, prefactors[1].begin() + n_final);
+	std::vector<double> vec3 = std::vector<double>(
+		prefactors[2].begin() + n_start, prefactors[2].begin() + n_final);
 
 	for (int j = 0; j != n_points_1; ++j) {
 		vec1[j] *= factor1;
 		vec2[j] *= factor2;
-
 		vec3[j] *= factor3;
-
 	}
 
 	std::vector<double> vec1_tmp = vec1;
 	std::vector<double> vec2_tmp = vec2;
-
 	std::vector<double> vec3_tmp = vec3;
 
 
@@ -347,14 +342,13 @@ std::vector<double> action_2d(
 		}
 
 		// Update derivative operator.
-		// identity + c1 * f1(x) * g1(x) * d1dx1 + c2 * f2(y) * g2(y) * d2dx2 + c3 * f3(x) * g3(y) * identity.
+		// identity + c1 * f1(x) * g1(x) * d1dx1 + c2 * f2(y) * g2(y) * d2dx2 
+		// + c3 * f3(x) * g3(y) * identity.
 		for (int j = 0; j != n_points_1; ++j) {
 			index = n_index + i;
 			vec1_tmp[j] = vec1[j] * prefactors[0][index];
 			vec2_tmp[j] = vec2[j] * prefactors[1][index];
-
 			vec3_tmp[j] = vec3[j] * prefactors[2][index];
-
 		}
 
 		derivative = deriv_0;
