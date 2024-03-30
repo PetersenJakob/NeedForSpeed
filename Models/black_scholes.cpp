@@ -30,6 +30,74 @@ double bs::d_minus(
 }
 
 
+std::vector<std::vector<double>> bs::pde::generator::prefactor(
+	const double rate,
+	const double sigma,
+	const std::vector<double>& spatial_grid) {
+
+	// Move definition to .cpp file!
+
+	std::vector<double> inner(spatial_grid.size(), 0.0);
+	std::vector<std::vector<double>> prefactor(3, inner);
+
+	for (int i = 0; i != spatial_grid.size(); ++i) {
+		// Prefactor of identity operator.
+		prefactor[0][i] = -rate;
+		// Prefactor of 1st order derivative operator.
+		prefactor[1][i] = rate * spatial_grid[i];
+		// Prefactor of 2nd order derivative operator.
+		prefactor[2][i] = 0.5 * pow(sigma * spatial_grid[i], 2);
+	}
+
+	return prefactor;
+
+}
+
+
+std::function<std::vector<double>
+	(const double, const std::vector<std::vector<double>>&)>
+	bs::call::solution_func(
+		const double rate,
+		const double sigma,
+		const double strike) {
+
+	return [rate, sigma, strike](
+		const double tau,
+		const std::vector<std::vector<double>>& spatial_grid) {
+			return solution_full(spatial_grid[0], rate, sigma, strike, tau);
+		};
+
+}
+
+
+std::vector<double> bs::call::solution_full(
+	const std::vector<double>& spatial_grid,
+	const double rate,
+	const double sigma,
+	const double strike,
+	const double tau) {
+
+	std::vector<double> result(spatial_grid.size(), 0.0);
+
+	for (int i = 0; i != spatial_grid.size(); ++i) {
+		result[i] = bs::call::price(spatial_grid[i], rate, sigma, strike, tau);
+	}
+
+	return result;
+
+}
+
+
+// European call option payoff.
+double bs::call::payoff(
+	const double spot_price,
+	const double strike) {
+
+	return std::max(spot_price - strike, 0.0);
+
+}
+
+
 // European call option price.
 double bs::call::price(
 	const double spot_price,
@@ -42,8 +110,13 @@ double bs::call::price(
 
 	const double d_m = d_minus(spot_price, rate, sigma, strike, tau);
 
-	return normal::cdf(d_p) * spot_price 
-		- normal::cdf(d_m) * strike * std::exp(-rate * tau);
+	if (tau > 1.0e-10) {
+		return normal::cdf(d_p) * spot_price
+			- normal::cdf(d_m) * strike * std::exp(-rate * tau);
+	}
+	else {
+		return bs::call::payoff(spot_price, strike);
+	}
 
 }
 

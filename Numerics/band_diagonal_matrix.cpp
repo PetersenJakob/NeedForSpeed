@@ -607,6 +607,8 @@ void matrix_add_matrix(
 	const T& matrix2, 
 	T& result) {
 
+	// Internal elements.
+
 	const int i_initial_1 = result.n_boundary_rows();
 	const int i_final_1 = result.order() - result.n_boundary_rows();
 	const int j_initial_1 = 0;
@@ -617,6 +619,8 @@ void matrix_add_matrix(
 			result.matrix[j][i] = matrix1.matrix[j][i] + matrix2.matrix[j][i];
 		}
 	}
+
+	// Boundary elements.
 
 	const int i_initial_2 = 0;
 	const int i_final_2 = 2 * result.n_boundary_rows();
@@ -637,6 +641,8 @@ void row_multiply_matrix(
 	T& matrix,
 	const std::vector<double>& vector) {
 
+	// Internal elements.
+
 	const int i_initial_1 = matrix.n_boundary_rows();
 	const int i_final_1 = matrix.order() - matrix.n_boundary_rows();
 	const int j_initial_1 = 0;
@@ -648,6 +654,8 @@ void row_multiply_matrix(
 		}
 	}
 
+	// Boundary elements.
+
 	const int i_initial_2 = 0;
 	const int i_final_2 = 2 * matrix.n_boundary_rows();
 	const int j_initial_2 = 0;
@@ -655,7 +663,12 @@ void row_multiply_matrix(
 
 	for (int i = i_initial_2; i != i_final_2; ++i) {
 		for (int j = j_initial_2; j != j_final_2; ++j) {
-			matrix.boundary_rows[i][j] *= vector[i];
+			if (i < matrix.n_boundary_rows()) {
+				matrix.boundary_rows[i][j] *= vector[i];
+			}
+			else {
+				matrix.boundary_rows[i][j] *= vector[(vector.size() - 1) - (i_final_2 - 1 - i)];
+			}
 		}
 	}
 
