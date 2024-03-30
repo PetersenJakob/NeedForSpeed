@@ -1202,3 +1202,56 @@ TEST(TriDiagonalSolver, BlackScholesCall) {
 	}
 
 }
+
+
+TEST(TriDiagonalSolver, BlackScholesCall_new) {
+
+	const double rate = 0.03;
+	const double sigma = 0.2;
+	const double tau = 1.0;
+	const double strike = 100.0;
+
+	// ####################################
+	// Convergence rate in space dimension.
+	// ####################################
+
+	// Crank-Nicolson.
+	{
+
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, tau, 201);
+
+		// Initial spatial grid.
+		std::vector<double> inner_spatial_grid = grid::uniform(0.0, 200.0, 21);
+		std::vector<std::vector<double>> spatial_grid(1, inner_spatial_grid);
+
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+
+		std::function<TriDiagonal(std::vector<double>)> derivative =
+			bs::pde::generator::derivative(rate, sigma, deriv);
+
+		// TODO: Smoothing of payoff. If increment is 5, oscillations occur.
+		std::vector<std::vector<double>>
+			norm = convergence::theta_1d<TriDiagonal>(
+				time_grid,
+				spatial_grid,
+				grid::uniform,
+				derivative,
+				bs::call::solution_func(rate, sigma, strike),
+				"space",
+				20,
+				10);
+
+		std::vector<double> result = linear_regression(norm, true);
+
+		// Maximum norm.
+		EXPECT_NEAR(result[0], 2.0, 0.010);
+
+		// L1 function norm.
+		EXPECT_NEAR(result[3], 2.0, 0.013);
+
+	}
+
+
+}

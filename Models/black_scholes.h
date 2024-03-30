@@ -29,38 +29,39 @@ namespace bs {
 			std::vector<std::vector<double>> prefactor(
 				const double rate,
 				const double sigma,
-				std::vector<double> spatial_grid);
+				const std::vector<double>& spatial_grid);
 
 			template <class T>
 			T derivative_full(
 				const double rate,
 				const double sigma,
-				std::vector<double> spatial_grid,
-				std::vector<std::function<T(std::vector<double>)>> deriv) {
+				const std::vector<double>& spatial_grid,
+				const std::vector<std::function<T(std::vector<double>)>>& deriv) {
 
 				std::vector<std::vector<double>> prefactor_ 
 					= prefactor(rate, sigma, spatial_grid);
 
 				// Identity operator.
-				T derivative = deriv[0](spatial_grid).pre_vector(prefactor_[0]);
+				T identity = deriv[0](spatial_grid).identity();
+				T derivative = identity.pre_vector(prefactor_[0]);
 				// First order derivative operator.
-				derivative += deriv[1](spatial_grid).pre_vector(prefactor_[1]);
+				derivative += deriv[0](spatial_grid).pre_vector(prefactor_[1]);
 				// Second order derivative operator.
-				derivative += deriv[2](spatial_grid).pre_vector(prefactor_[2]);
+				derivative += deriv[1](spatial_grid).pre_vector(prefactor_[2]);
 
 				return derivative;
 
 			}
 
 			template <class T>
-			std::function<T(std::vector<double>)> derivative(
+			std::function<T(const std::vector<double>&)> derivative(
 				const double rate,
 				const double sigma,
-				std::vector<std::function<T(std::vector<double>)>> deriv) {
+				const std::vector<std::function<T(std::vector<double>)>>& deriv) {
 
 				return [rate, sigma, deriv](
-					std::vector<double> spatial_grid) {
-						return derivative_full(rate, sigma, spatial_grid, deriv);
+					const std::vector<double>& spatial_grid) {
+						return derivative_full<T>(rate, sigma, spatial_grid, deriv);
 					};
 
 			}
@@ -71,6 +72,10 @@ namespace bs {
 
 	// European call option.
 	namespace call {
+
+		double payoff(
+			const double spot_price,
+			const double strike);
 
 		double price(
 			const double spot_price,
@@ -118,6 +123,20 @@ namespace bs {
 			const double option_price,
 			const double spot_price,
 			const double rate,
+			const double strike,
+			const double tau);
+
+		std::function<std::vector<double>
+			(const double, const std::vector<std::vector<double>>&)>
+			solution_func(
+				const double rate,
+				const double sigma,
+				const double strike);
+
+		std::vector<double> solution_full(
+			const std::vector<double>& spatial_grid,
+			const double rate,
+			const double sigma,
 			const double strike,
 			const double tau);
 
