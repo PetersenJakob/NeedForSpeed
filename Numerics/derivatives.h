@@ -60,7 +60,7 @@ namespace d2dx2 {
 	namespace uniform {
 
 		// Interior: Central difference, 2nd order accuracy.
-		// Boundary 1st row: Neumann boundary condition, d2dx2 = 0.
+		// Boundary 1st row: Neumann boundary condition, d2dx2 = 0. TODO: Is this Neumann, or only the case for B with fist order derivatives.
 		TriDiagonal c2b0(const std::vector<double>& grid);
 
 		// Interior: Central difference, 2nd order accuracy.
@@ -140,8 +140,8 @@ public:
 	}
 
 	void set_prefactors(
-		const std::vector<double> coef_x,
-		const std::vector<double> coef_y) {
+		const std::vector<double>& coef_x,
+		const std::vector<double>& coef_y) {
 		int index = 0;
 		for (int i = 0; i != coef_x.size(); ++i) {
 			for (int j = 0; j != coef_y.size(); ++j) {
