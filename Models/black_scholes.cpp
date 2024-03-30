@@ -30,6 +30,30 @@ double bs::d_minus(
 }
 
 
+std::vector<std::vector<double>> bs::pde::generator::prefactor(
+	const double rate,
+	const double sigma,
+	std::vector<double> spatial_grid) {
+
+	// Move definition to .cpp file!
+
+	std::vector<double> inner(spatial_grid.size(), 0.0);
+	std::vector<std::vector<double>> prefactor(3, inner);
+
+	for (int i = 0; i != spatial_grid.size(); ++i) {
+		// Prefactor of identity operator.
+		prefactor[0][i] = -rate;
+		// Prefactor of 1st order derivative operator.
+		prefactor[1][i] = rate * spatial_grid[i];
+		// Prefactor of 2nd order derivative operator.
+		prefactor[2][i] = 0.5 * pow(sigma * spatial_grid[i], 2);
+	}
+
+	return prefactor;
+
+}
+
+
 // European call option price.
 double bs::call::price(
 	const double spot_price,
