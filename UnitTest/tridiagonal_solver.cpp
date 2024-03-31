@@ -1219,10 +1219,10 @@ TEST(TriDiagonalSolver, BlackScholesCall_new) {
 	{
 
 		// Initial time grid.
-		std::vector<double> time_grid = grid::uniform(0.0, tau, 201);
+		std::vector<double> time_grid = grid::uniform(0.0, tau, 1001);
 
 		// Initial spatial grid.
-		std::vector<double> inner_spatial_grid = grid::uniform(0.0, 200.0, 21);
+		std::vector<double> inner_spatial_grid = grid::uniform(0.0, 200.0, 31);
 		std::vector<std::vector<double>> spatial_grid(1, inner_spatial_grid);
 
 		std::vector<std::function<TriDiagonal(std::vector<double>)>>
@@ -1240,18 +1240,300 @@ TEST(TriDiagonalSolver, BlackScholesCall_new) {
 				derivative,
 				bs::call::solution_func(rate, sigma, strike),
 				"space",
-				20,
+				10,
 				10);
 
 		std::vector<double> result = linear_regression(norm, true);
 
 		// Maximum norm.
-		EXPECT_NEAR(result[0], 2.0, 0.010);
+		EXPECT_NEAR(result[0], 2.0, 0.007);
 
 		// L1 function norm.
-		EXPECT_NEAR(result[3], 2.0, 0.013);
+		EXPECT_NEAR(result[3], 2.0, 0.028);
 
 	}
 
+
+}
+
+
+
+// TODO: Should be time-dependent!!!
+// Prefactors C * f(grid_1) * g(grid_2) * ... for 1st and 2nd order derivatives.
+std::vector<std::vector<double>> prefactor_generator_sabr_s(
+	const std::vector<std::vector<double>>& grid,
+	const double beta,
+	const double rate,
+	const double tau) {
+
+	std::vector<std::vector<double>> result(3, { 1.0 });
+
+	// #######################
+	// First order derivative.
+	// #######################
+
+	result[0][0] = rate;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			if (i == 0) {
+				result[0].push_back(grid[i][j]);
+			}
+			else {
+				result[0].push_back(1.0);
+			}
+		}
+	}
+
+	// ########################
+	// Second order derivative.
+	// ########################
+
+	const double d = std::exp(-rate * tau);
+	result[1][0] = 0.5 * pow(d, 2 * (1 - beta));
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			if (i == 0) {
+				result[1].push_back(pow(grid[i][j], 2 * beta));
+			}
+			else {
+				result[1].push_back(pow(grid[i][j], 2));
+			}
+		}
+	}
+
+	// ###################
+	// Inhomogenious term.
+	// ###################
+
+	result[2][0] = -0.5 * rate;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			result[2].push_back(1.0);
+		}
+	}
+
+	return result;
+
+}
+
+// Prefactors C * f(grid_1) * g(grid_2) * ... for 1st and 2nd order derivatives.
+std::vector<std::vector<double>> prefactor_generator_sabr_v(
+	const std::vector<std::vector<double>>& grid,
+	const double alpha,
+	const double rate) {
+
+	std::vector<std::vector<double>> result(3, { 1.0 });
+
+	// #######################
+	// First order derivative.
+	// #######################
+
+	result[0][0] = 0.0;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			if (i == 1) {
+				result[0].push_back(1.0);
+			}
+			else {
+				result[0].push_back(1.0);
+			}
+		}
+	}
+
+	// ########################
+	// Second order derivative.
+	// ########################
+
+	result[1][0] = 0.5 * alpha * alpha;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			if (i == 1) {
+				result[1].push_back(pow(grid[i][j], 2));
+			}
+			else {
+				result[1].push_back(1.0);
+			}
+		}
+	}
+
+	// ###################
+	// Inhomogenious term.
+	// ###################
+
+	result[2][0] = -0.5 * rate;
+
+	for (int i = 0; i != grid.size(); ++i) {
+		for (int j = 0; j != grid[i].size(); ++j) {
+			result[2].push_back(1.0);
+		}
+	}
+
+	return result;
+
+}
+
+// TODO: Should be time-dependent!!!
+// Prefactors C * f(grid_1) * g(grid_2) for mixed derivative.
+std::vector<double> mixed_prefactor_generator_sabr(
+	const std::vector<std::vector<double>>& grid,
+	const double alpha,
+	const double beta,
+	const double rho,
+	const double rate,
+	const double tau) {
+
+	int n_points = 1;
+	for (int i = 0; i != grid.size(); ++i) {
+		n_points *= grid[i].size();
+	}
+
+	const double d = std::exp(-rate * tau);
+
+	std::vector<double> result(n_points, 0.0);
+
+	int index = 0;
+	for (int i = 0; i != grid[0].size(); ++i) {
+		for (int j = 0; j != grid[1].size(); ++j) {
+			result[index] = rho * alpha * pow(d, 1 - beta) 
+				* pow(grid[0][i], beta) * pow(grid[1][j], 2);
+			++index;
+		}
+	}
+
+	return result;
+
+}
+
+
+TEST(TriDiagonalSolver, SABRCall) {
+
+	const double rate = 0.0;
+
+	const double alpha = 0.041;
+	const double beta = 0.7;
+	const double rho = 0.6;
+
+	const double strike = 100.0;
+
+	// Crank-Nicolson.
+	{
+
+		// Initial time grid.
+		std::vector<double> time_grid = grid::uniform(0.0, 1.0, 31);
+
+		const double tau = time_grid.back();
+
+		// Initial spatial grid.
+		std::vector<double> spatial_grid_x = grid::uniform(2.0, 200.0, 51);
+		std::vector<double> spatial_grid_y = grid::uniform(0.0, 1.0, 21);
+		std::vector<std::vector<double>> spatial_grid{ spatial_grid_x, spatial_grid_y };
+
+
+		std::vector<std::vector<double>> prefactors_1 = 
+			prefactor_generator_sabr_s(spatial_grid, beta, rate, tau);
+		std::vector<std::vector<double>> prefactors_2 = 
+			prefactor_generator_sabr_v(spatial_grid, alpha, rate);
+
+
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv_1{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+		std::vector<std::function<TriDiagonal(std::vector<double>)>>
+			deriv_2{ d1dx1::uniform::c2b1, d2dx2::uniform::c2b0 };
+
+		std::vector<TriDiagonal> derivatives_1;
+		derivatives_1.push_back(deriv_1[0](spatial_grid[0]).identity());
+		derivatives_1.push_back(deriv_1[0](spatial_grid[0]));
+		derivatives_1.push_back(deriv_1[1](spatial_grid[0]));
+
+		std::vector<TriDiagonal> derivatives_2;
+		derivatives_2.push_back(deriv_2[0](spatial_grid[1]).identity());
+		derivatives_2.push_back(deriv_2[0](spatial_grid[1]));
+		derivatives_2.push_back(deriv_2[1](spatial_grid[1]));
+
+
+		std::vector<double> prefactors_12 = 
+			mixed_prefactor_generator_sabr(spatial_grid, alpha, beta, rho, rate, tau);
+
+
+		MixedDerivative<TriDiagonal, TriDiagonal> mixed(
+			deriv_1[0](spatial_grid[0]),
+			deriv_2[0](spatial_grid[1]));
+
+
+		mixed.set_prefactors(prefactors_12);
+
+
+		std::vector<double> func(spatial_grid_x.size() * spatial_grid_y.size(), 0.0);
+		int index = 0;
+		for (int i = 0; i != spatial_grid_x.size(); ++i) {
+			for (int j = 0; j != spatial_grid_y.size(); ++j) {
+				func[index] = std::max(spatial_grid_x[i] - strike, 0.0);
+				++index;
+			}
+		}
+
+
+		propagation::adi::cs_2d(
+			time_grid,
+			prefactors_1,
+			prefactors_2,
+			derivatives_1,
+			derivatives_2,
+			mixed,
+			func,
+			0.5);
+
+
+		std::ofstream file("sabr_surface.csv");
+		file << std::scientific << std::setprecision(12);
+		index = 0;
+		for (int i = 0; i != spatial_grid_x.size(); ++i) {
+			for (int j = 0; j != spatial_grid_y.size(); ++j) {
+				
+//				file << std::setw(22) << func[index];
+				double forward = spatial_grid_x[i] * std::exp(-rate * tau);
+				file << std::setw(22) << 
+					func[index] - sabr::call::price(spatial_grid_x[i], spatial_grid_y[j], alpha, beta, rho, rate, strike, tau);
+
+				if (j < spatial_grid_y.size() - 1) {
+					file << ", ";
+				}
+				++index;
+			}
+			file << std::endl;
+		}
+		file << std::endl;
+		file.close();
+
+		std::ofstream file_s("sabr_surface_s.csv");
+		file_s << std::scientific << std::setprecision(12);
+		index = 0;
+		for (int i = 0; i != spatial_grid_x.size(); ++i) {
+			file_s << std::setw(22) << spatial_grid_x[i];
+			if (i < spatial_grid_x.size() - 1) {
+				file_s << ", ";
+			}
+		}
+		file_s << std::endl;
+		file_s.close();
+
+		std::ofstream file_v("sabr_surface_v.csv");
+		file_v << std::scientific << std::setprecision(12);
+		index = 0;
+		for (int i = 0; i != spatial_grid_y.size(); ++i) {
+			file_v << std::setw(22) << spatial_grid_y[i];
+			if (i < spatial_grid_y.size() - 1) {
+				file_v << ", ";
+			}
+		}
+		file_v << std::endl;
+		file_v.close();
+
+	}
 
 }

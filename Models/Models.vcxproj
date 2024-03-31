@@ -131,10 +131,12 @@
   <ItemGroup>
     <ClInclude Include="black_scholes.h" />
     <ClInclude Include="heston.h" />
+    <ClInclude Include="sabr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="black_scholes.cpp" />
     <ClCompile Include="heston.cpp" />
+    <ClCompile Include="sabr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Numerics\Numerics.vcxproj">

@@ -30,5 +30,6 @@
 #include "propagation.h"
 #include "propagator.h"
 #include "regression.h"
+#include "sabr.h"
 #include "test_util.h"
 #include "utility.h"
