@@ -25,6 +25,12 @@
     <Filter Include="Source Files\BlackScholes">
       <UniqueIdentifier>{3f4047e3-2fe1-4bef-8c36-916be5626e92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\SABR">
+      <UniqueIdentifier>{848487bd-f8bf-4055-92a3-50dc7ef0bc42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SABR">
+      <UniqueIdentifier>{a59ede5c-1482-475d-bc78-e4f4c02db579}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="black_scholes.h">
@@ -33,6 +39,9 @@
     <ClInclude Include="heston.h">
       <Filter>Header Files\Heston</Filter>
     </ClInclude>
+    <ClInclude Include="sabr.h">
+      <Filter>Header Files\SABR</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="black_scholes.cpp">
@@ -40,6 +49,9 @@
     </ClCompile>
     <ClCompile Include="heston.cpp">
       <Filter>Source Files\Heston</Filter>
+    </ClCompile>
+    <ClCompile Include="sabr.cpp">
+      <Filter>Source Files\SABR</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
