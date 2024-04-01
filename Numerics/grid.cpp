@@ -1,5 +1,7 @@
-#include <Eigen/Dense>
+#include <cmath>
 #include <vector>
+
+#include <Eigen/Dense>
 
 #include "grid.h"
 
@@ -22,7 +24,8 @@ std::vector<double> grid::uniform(
 }
 
 
-// TODO: Ref. Richard White, 2013 ("Numerical methods for PDEs...", OpenGamma)
+// Reference:
+// - White (2013)
 std::vector<double> grid::exponential_full(
 	const double x_min,
 	const double x_max,
@@ -32,7 +35,7 @@ std::vector<double> grid::exponential_full(
 	// Scaling >> 0 -> grid is shifted towards x_min
 	// Scaling << 0 -> grid is shifted towards x_max
 
-	const double eta = (x_max - x_min) / (exp(scaling) - 1.0);
+	const double eta = (x_max - x_min) / (std::exp(scaling) - 1.0);
 
 	std::vector<double> grid = grid::uniform(x_min, x_max, n_points);
 
@@ -61,7 +64,8 @@ std::vector<double> grid::exponential(
 }
 
 
-// TODO: Ref. Richard White, 2013 ("Numerical methods for PDEs...", OpenGamma)
+// Reference:
+// - White (2013)
 std::vector<double> grid::hyperbolic_full(
 	const double x_min,
 	const double x_max,
