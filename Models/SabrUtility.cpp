@@ -1,7 +1,7 @@
 #include <cmath>
 
-#include "black_scholes.h"
-#include "sabr.h"
+#include "BlackScholesUtility.h"
+#include "SabrUtility.h"
 
 
 double sabr::implied_vol::forward_mid(
@@ -20,8 +20,8 @@ double sabr::implied_vol::eta_func(
 	const double alpha,
 	const double beta) {
 
-	const double f_beta = pow(spot_forward, 1 - beta);
-	const double k_beta = pow(strike, 1 - beta);
+	const double f_beta = std::pow(spot_forward, 1 - beta);
+	const double k_beta = std::pow(strike, 1 - beta);
 
 	return alpha * (f_beta - k_beta) / (spot_vol * (1 - beta));
 
@@ -41,7 +41,7 @@ double sabr::implied_vol::gamma_2(
 	const double beta,
 	const double f_mid) {
 
-	return -beta * (1 - beta) / pow(f_mid, 2);
+	return -beta * (1 - beta) / std::pow(f_mid, 2);
 
 }
 
@@ -66,20 +66,20 @@ double sabr::implied_vol::black_scholes(
 	const double strike,
 	const double tau) {
 
-	const double f_mid = forward_mid(spot_forward, strike);
+	const double f_mid = sabr::implied_vol::forward_mid(spot_forward, strike);
 
-	const double eta =
-		eta_func(spot_forward, spot_vol, strike, alpha, beta);
+	const double eta = 
+		sabr::implied_vol::eta_func(spot_forward, spot_vol, strike, alpha, beta);
 
-	const double g_1 = gamma_1(beta, f_mid);
+	const double g_1 = sabr::implied_vol::gamma_1(beta, f_mid);
 
-	const double g_2 = gamma_2(beta, f_mid);
+	const double g_2 = sabr::implied_vol::gamma_2(beta, f_mid);
 
-	const double d = d_func(eta, rho);
+	const double d = sabr::implied_vol::d_func(eta, rho);
 
 	double implied_vol = (2 * g_2 - g_1 * g_1 + 1 / (f_mid * f_mid)) / 24;
-	implied_vol *= pow(spot_vol * pow(f_mid, beta) / alpha, 2);
-	implied_vol += rho * g_1 * spot_vol * pow(f_mid, beta) / (4 * alpha);
+	implied_vol *= std::pow(spot_vol * std::pow(f_mid, beta) / alpha, 2);
+	implied_vol += rho * g_1 * spot_vol * std::pow(f_mid, beta) / (4 * alpha);
 	implied_vol += (2 - 3 * rho * rho) / 24;
 	implied_vol *= tau * alpha * alpha;
 	implied_vol += 1;
@@ -99,20 +99,20 @@ double sabr::implied_vol::bachelier(
 	const double strike,
 	const double tau) {
 
-	const double f_mid = forward_mid(spot_forward, strike);
+	const double f_mid = sabr::implied_vol::forward_mid(spot_forward, strike);
 
-	const double eta =
-		eta_func(spot_forward, spot_vol, strike, alpha, beta);
+	const double eta = 
+		sabr::implied_vol::eta_func(spot_forward, spot_vol, strike, alpha, beta);
 
-	const double g_1 = gamma_1(beta, f_mid);
+	const double g_1 = sabr::implied_vol::gamma_1(beta, f_mid);
 
-	const double g_2 = gamma_2(beta, f_mid);
+	const double g_2 = sabr::implied_vol::gamma_2(beta, f_mid);
 
-	const double d = d_func(eta, rho);
+	const double d = sabr::implied_vol::d_func(eta, rho);
 
 	double implied_vol = (2 * g_2 - g_1 * g_1) / 24;
-	implied_vol *= pow(spot_vol * pow(f_mid, beta) / alpha, 2);
-	implied_vol += rho * g_1 * spot_vol * pow(f_mid, beta) / (4 * alpha);
+	implied_vol *= std::pow(spot_vol * std::pow(f_mid, beta) / alpha, 2);
+	implied_vol += rho * g_1 * spot_vol * std::pow(f_mid, beta) / (4 * alpha);
 	implied_vol += (2 - 3 * rho * rho) / 24;
 	implied_vol *= tau * alpha * alpha;
 	implied_vol += 1;

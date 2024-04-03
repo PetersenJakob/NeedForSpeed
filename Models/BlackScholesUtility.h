@@ -4,8 +4,6 @@
 #include <vector>
 
 
-
-
 namespace bs {
 
 	double d_plus(

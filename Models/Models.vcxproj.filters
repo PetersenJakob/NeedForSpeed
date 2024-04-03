@@ -45,13 +45,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="black_scholes.h">
+    <ClInclude Include="BlackScholesUtility.h">
       <Filter>Header Files\BlackScholes</Filter>
     </ClInclude>
-    <ClInclude Include="heston.h">
+    <ClInclude Include="HestonUtility.h">
       <Filter>Header Files\Heston</Filter>
     </ClInclude>
-    <ClInclude Include="sabr.h">
+    <ClInclude Include="SabrUtility.h">
       <Filter>Header Files\SABR</Filter>
     </ClInclude>
     <ClInclude Include="vasicek.h">
@@ -60,15 +60,18 @@
     <ClInclude Include="instrument.h">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="VasicekUtility.h">
+      <Filter>Header Files\Vasicek</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="black_scholes.cpp">
+    <ClCompile Include="BlackScholesUtility.cpp">
       <Filter>Source Files\BlackScholes</Filter>
     </ClCompile>
-    <ClCompile Include="heston.cpp">
+    <ClCompile Include="HestonUtility.cpp">
       <Filter>Source Files\Heston</Filter>
     </ClCompile>
-    <ClCompile Include="sabr.cpp">
+    <ClCompile Include="SabrUtility.cpp">
       <Filter>Source Files\SABR</Filter>
     </ClCompile>
     <ClCompile Include="vasicek.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="instrument.cpp">
       <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="VasicekUtility.cpp">
+      <Filter>Source Files\Vasicek</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

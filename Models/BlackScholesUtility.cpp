@@ -1,6 +1,7 @@
+#include <algorithm>
 #include <cmath>
 
-#include "black_scholes.h"
+#include "BlackScholesUtility.h"
 #include "distributions.h"
 
 
@@ -25,7 +26,7 @@ double bs::d_minus(
 	const double strike,
 	const double tau) {
 
-	return d_plus(spot_price, rate, sigma, strike, tau) - sigma * std::sqrt(tau);
+	return bs::d_plus(spot_price, rate, sigma, strike, tau) - sigma * std::sqrt(tau);
 
 }
 
@@ -46,7 +47,7 @@ std::vector<std::vector<double>> bs::pde::generator::prefactor(
 		// Prefactor of 1st order derivative operator.
 		prefactor[1][i] = rate * spatial_grid[i];
 		// Prefactor of 2nd order derivative operator.
-		prefactor[2][i] = 0.5 * pow(sigma * spatial_grid[i], 2);
+		prefactor[2][i] = 0.5 * std::pow(sigma * spatial_grid[i], 2);
 	}
 
 	return prefactor;
@@ -64,7 +65,7 @@ std::function<std::vector<double>
 	return [rate, sigma, strike](
 		const double tau,
 		const std::vector<std::vector<double>>& spatial_grid) {
-			return solution_full(spatial_grid[0], rate, sigma, strike, tau);
+			return bs::call::solution_full(spatial_grid[0], rate, sigma, strike, tau);
 		};
 
 }
@@ -332,7 +333,7 @@ double bs::put::implied_vol(
 
 		sigma_1 = sigma_2;
 
-		double price = bs::put::price(spot_price, rate, sigma_1, strike, tau);
+		double price = bs::call::price(spot_price, rate, sigma_1, strike, tau);
 		double delta = bs::put::delta(spot_price, rate, sigma_1, strike, tau);
 
 		sigma_2 = sigma_1 - (price - option_price) / delta;

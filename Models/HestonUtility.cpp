@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "heston.h"
+#include "HestonUtility.h"
 
 
 // Heston model, see Gatheral (2006).
@@ -17,55 +17,52 @@
 //
 
 
-namespace heston {
+double heston::call(
+	const double price,
+	const double variance,
+	const double rate,
+	const double lambda,
+	const double theta,
+	const double eta,
+	const double rho,
+	const double strike,
+	const double tau) {
 
-	double call(
-		const double price,
-		const double variance,
-		const double rate,
-		const double lambda,
-		const double theta,
-		const double eta,
-		const double rho,
-		const double strike,
-		const double tau) {
+	const double forward_price = price * std::exp(rate * tau);
 
-		const double forward_price = price * std::exp(rate * tau);
+	const double x = std::log(forward_price / strike);
 
-		const double x = std::log(forward_price / strike);
+	const double prop_0 =
+		heston::probability(0, x, variance, lambda, theta, eta, rho, tau);
 
-		const double prop_0 = 
-			probability(0, x, variance, lambda, theta, eta, rho, tau);
+	const double prop_1 =
+		heston::probability(1, x, variance, lambda, theta, eta, rho, tau);
 
-		const double prop_1 =
-			probability(1, x, variance, lambda, theta, eta, rho, tau);
+	return strike * (std::exp(x) * prop_1 - prop_0) * std::exp(-rate * tau);
+}
 
-		return strike * (std::exp(x) * prop_1 - prop_0) * std::exp(-rate * tau);
-	}
 
-	double put(
-		const double price,
-		const double variance,
-		const double rate,
-		const double lambda,
-		const double theta,
-		const double eta,
-		const double rho,
-		const double strike,
-		const double tau) {
+double heston::put(
+	const double price,
+	const double variance,
+	const double rate,
+	const double lambda,
+	const double theta,
+	const double eta,
+	const double rho,
+	const double strike,
+	const double tau) {
 
-		const double call_price = 
-			call(price, variance, rate, lambda, theta, eta, rho, strike, tau);
+	const double call_price =
+		heston::call(price, variance, rate, lambda, theta, eta, rho, strike, tau);
 
-		// Put-call parity.
-		return call_price - price + strike * std::exp(-rate * tau);
-
-	}
+	// Put-call parity.
+	return call_price - price + strike * std::exp(-rate * tau);
 
 }
 
 
-std::complex<double> alpha(
+std::complex<double> heston::alpha(
 	const double j,
 	const double k) {
 
@@ -76,7 +73,7 @@ std::complex<double> alpha(
 }
 
 
-std::complex<double> beta(
+std::complex<double> heston::beta(
 	const double j,
 	const double k,
 	const double lambda,
@@ -90,32 +87,32 @@ std::complex<double> beta(
 }
 
 
-double gamma(const double eta) {
+double heston::gamma(const double eta) {
 
 	return eta * eta / 2.0;
 
 }
 
 
-std::complex<double> discriminant(
+std::complex<double> heston::discriminant(
 	const double j,
 	const double k,
 	const double lambda,
 	const double eta,
 	const double rho) {
 
-	const std::complex<double> alpha_ = alpha(j, k);
+	const std::complex<double> alpha_ = heston::alpha(j, k);
 
-	const std::complex<double> beta_ = beta(j, k, lambda, eta, rho);
+	const std::complex<double> beta_ = heston::beta(j, k, lambda, eta, rho);
 
-	const double gamma_ = gamma(eta);
+	const double gamma_ = heston::gamma(eta);
 
 	return std::sqrt(beta_ * beta_ - 4.0 * alpha_ * gamma_);
 
 }
 
 
-std::complex<double> r_func(
+std::complex<double> heston::r_func(
 	const std::string sign,
 	const double j,
 	const double k,
@@ -123,11 +120,11 @@ std::complex<double> r_func(
 	const double eta,
 	const double rho) {
 
-	const std::complex<double> beta_ = beta(j, k, lambda, eta, rho);
+	const std::complex<double> beta_ = heston::beta(j, k, lambda, eta, rho);
 
-	const double gamma_ = gamma(eta);
+	const double gamma_ = heston::gamma(eta);
 
-	const std::complex<double> d = discriminant(j, k, lambda, eta, rho);
+	const std::complex<double> d = heston::discriminant(j, k, lambda, eta, rho);
 
 	if (sign == "plus") {
 		return (beta_ + d) / (2.0 * gamma_);
@@ -142,23 +139,23 @@ std::complex<double> r_func(
 }
 
 
-std::complex<double> g_func(
+std::complex<double> heston::g_func(
 	const double j,
 	const double k,
 	const double lambda,
 	const double eta,
 	const double rho) {
 
-	const std::complex<double> r_minus = r_func("minus", j, k, lambda, eta, rho);
+	const std::complex<double> r_minus = heston::r_func("minus", j, k, lambda, eta, rho);
 
-	const std::complex<double> r_plus = r_func("plus", j, k, lambda, eta, rho);
+	const std::complex<double> r_plus = heston::r_func("plus", j, k, lambda, eta, rho);
 
 	return r_minus / r_plus;
 
 }
 
 
-std::complex<double> d_func(
+std::complex<double> heston::d_func(
 	const double j,
 	const double k,
 	const double lambda,
@@ -166,18 +163,18 @@ std::complex<double> d_func(
 	const double rho,
 	const double tau) {
 
-	const std::complex<double> d = discriminant(j, k, lambda, eta, rho);
+	const std::complex<double> d = heston::discriminant(j, k, lambda, eta, rho);
 
-	const std::complex<double> g = g_func(j, k, lambda, eta, rho);
+	const std::complex<double> g = heston::g_func(j, k, lambda, eta, rho);
 
-	const std::complex<double> r_minus = r_func("minus", j, k, lambda, eta, rho);
+	const std::complex<double> r_minus = heston::r_func("minus", j, k, lambda, eta, rho);
 
 	return r_minus * (1.0 - std::exp(-d * tau)) / (1.0 - g * std::exp(-d * tau));
 
 }
 
 
-std::complex<double> c_func(
+std::complex<double> heston::c_func(
 	const double j,
 	const double k,
 	const double lambda,
@@ -185,13 +182,13 @@ std::complex<double> c_func(
 	const double rho,
 	const double tau) {
 
-	const std::complex<double> d = discriminant(j, k, lambda, eta, rho);
+	const std::complex<double> d = heston::discriminant(j, k, lambda, eta, rho);
 
-	const std::complex<double> g = g_func(j, k, lambda, eta, rho);
+	const std::complex<double> g = heston::g_func(j, k, lambda, eta, rho);
 
-	const std::complex<double> r_minus = r_func("minus", j, k, lambda, eta, rho);
+	const std::complex<double> r_minus = heston::r_func("minus", j, k, lambda, eta, rho);
 
-	const double gamma_ = gamma(eta);
+	const double gamma_ = heston::gamma(eta);
 
 	std::complex<double> result = 1.0 - g * std::exp(-d * tau);
 
@@ -202,7 +199,7 @@ std::complex<double> c_func(
 }
 
 
-double probability(
+double heston::probability(
 	const double j,
 	const double x,
 	const double variance,
@@ -233,8 +230,8 @@ double probability(
 
 		double k = step_size * (i + 0.5);
 
-		c = c_func(j, k, lambda, eta, rho, tau);
-		d = d_func(j, k, lambda, eta, rho, tau);
+		c = heston::c_func(j, k, lambda, eta, rho, tau);
+		d = heston::d_func(j, k, lambda, eta, rho, tau);
 
 		integrand = 
 			std::exp(c * theta + d * variance + i_unit * k * x) / (i_unit * k);
