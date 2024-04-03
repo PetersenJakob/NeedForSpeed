@@ -31,27 +31,57 @@
     <Filter Include="Source Files\SABR">
       <UniqueIdentifier>{a59ede5c-1482-475d-bc78-e4f4c02db579}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Vasicek">
+      <UniqueIdentifier>{843a8a5b-c116-4427-89d0-a89fd75dc6a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Vasicek">
+      <UniqueIdentifier>{4dad98eb-4b58-4315-97ec-bba29026004f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility">
+      <UniqueIdentifier>{de061791-bf44-4872-a52a-839239e77156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility">
+      <UniqueIdentifier>{8a770259-e38a-42ac-a0b6-24d285678025}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="black_scholes.h">
+    <ClInclude Include="BlackScholesUtility.h">
       <Filter>Header Files\BlackScholes</Filter>
     </ClInclude>
-    <ClInclude Include="heston.h">
+    <ClInclude Include="HestonUtility.h">
       <Filter>Header Files\Heston</Filter>
     </ClInclude>
-    <ClInclude Include="sabr.h">
+    <ClInclude Include="SabrUtility.h">
       <Filter>Header Files\SABR</Filter>
+    </ClInclude>
+    <ClInclude Include="vasicek.h">
+      <Filter>Header Files\Vasicek</Filter>
+    </ClInclude>
+    <ClInclude Include="instrument.h">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="VasicekUtility.h">
+      <Filter>Header Files\Vasicek</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="black_scholes.cpp">
+    <ClCompile Include="BlackScholesUtility.cpp">
       <Filter>Source Files\BlackScholes</Filter>
     </ClCompile>
-    <ClCompile Include="heston.cpp">
+    <ClCompile Include="HestonUtility.cpp">
       <Filter>Source Files\Heston</Filter>
     </ClCompile>
-    <ClCompile Include="sabr.cpp">
+    <ClCompile Include="SabrUtility.cpp">
       <Filter>Source Files\SABR</Filter>
+    </ClCompile>
+    <ClCompile Include="vasicek.cpp">
+      <Filter>Source Files\Vasicek</Filter>
+    </ClCompile>
+    <ClCompile Include="instrument.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="VasicekUtility.cpp">
+      <Filter>Source Files\Vasicek</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

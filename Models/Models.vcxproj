@@ -24,6 +24,7 @@
     <ProjectGuid>{15445b30-e02d-4407-8e59-a225fecf4767}</ProjectGuid>
     <RootNamespace>Models</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Models</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -129,14 +130,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="black_scholes.h" />
-    <ClInclude Include="heston.h" />
-    <ClInclude Include="sabr.h" />
+    <ClInclude Include="BlackScholesUtility.h" />
+    <ClInclude Include="HestonUtility.h" />
+    <ClInclude Include="instrument.h" />
+    <ClInclude Include="SabrUtility.h" />
+    <ClInclude Include="VasicekUtility.h" />
+    <ClInclude Include="vasicek.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="black_scholes.cpp" />
-    <ClCompile Include="heston.cpp" />
-    <ClCompile Include="sabr.cpp" />
+    <ClCompile Include="BlackScholesUtility.cpp" />
+    <ClCompile Include="HestonUtility.cpp" />
+    <ClCompile Include="instrument.cpp" />
+    <ClCompile Include="SabrUtility.cpp" />
+    <ClCompile Include="VasicekUtility.cpp" />
+    <ClCompile Include="vasicek.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Numerics\Numerics.vcxproj">

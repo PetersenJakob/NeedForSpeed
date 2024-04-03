@@ -4,6 +4,16 @@
 #include <vector>
 
 
+// References:
+// - Veldman and Rinzeman (1992)
+// - Bodeau, Riboulet and Roncalli (2000)
+// - White (2013)
+
+// Standard form of 1-dimensional grid function:
+// std::vector<double> grid::func(
+//     const double x_min, 
+//     const double x_max, 
+//     const int n_points)
 namespace grid {
 
 	std::vector<double> uniform(
