@@ -1,6 +1,7 @@
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 #include "band_diagonal_matrix.h"
 #include "coefficients.h"
