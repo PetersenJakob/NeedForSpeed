@@ -3,6 +3,17 @@
 #include <vector>
 
 
+template<typename T>
+class BandDiagonalTemp {
+
+public:
+
+	// Band-diagonal matrix in compact form.
+	std::vector<std::vector<T>> matrix;
+
+};
+
+
 // Band-diagonal matrix stored in compact form.
 // Note: The lower and upper bandwidths are assumed to be identical.
 class BandDiagonal {
@@ -30,7 +41,7 @@ public:
 
 	std::vector<std::vector<double>> boundary_rows_tmp;
 
-	BandDiagonal() {}
+	BandDiagonal();
 
 	BandDiagonal(
 		const int _order,

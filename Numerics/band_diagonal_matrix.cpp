@@ -7,6 +7,28 @@
 #include "utility.h"
 
 
+// TODO: Correct default initialization?
+BandDiagonal::BandDiagonal() {
+
+	order_ = 1;
+	bandwidth_ = 1;
+	n_diagonals_ = 1 + 2 * bandwidth_;
+	n_boundary_rows_ = 1;
+	n_boundary_elements_ = 1;
+
+	// Band-diagonal matrix in compact form.
+	std::vector<double> diagonal(order_, 0.0);
+	std::vector<std::vector<double>> m(n_diagonals_, diagonal);
+	matrix = m;
+
+	// Boundary rows of band-diagonal matrix.
+	std::vector<double> row(n_boundary_elements_);
+	std::vector<std::vector<double>> b(2 * n_boundary_rows_, row);
+	boundary_rows = b;
+
+}
+
+
 BandDiagonal::BandDiagonal(
 	const int _order,
 	const int _bandwidth,
