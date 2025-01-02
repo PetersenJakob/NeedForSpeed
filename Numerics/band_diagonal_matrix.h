@@ -30,7 +30,7 @@ public:
 
 	std::vector<std::vector<double>> boundary_rows_tmp;
 
-	BandDiagonal() {}
+	BandDiagonal();
 
 	BandDiagonal(
 		const int _order,
