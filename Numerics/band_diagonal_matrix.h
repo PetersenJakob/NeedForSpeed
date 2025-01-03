@@ -3,13 +3,42 @@
 #include <vector>
 
 
+// Band-diagonal matrix stored in compact form.
+// Note: The lower and upper bandwidths are assumed to be identical.
 template<typename T>
-class BandDiagonalTemp {
+class BandDiagonalTemplate {
+
+protected:
+
+	// Matrix order: Number of elements along main diagonal.
+	int order_;
+	// Bandwidth: Number of sub-diagonals or super-diagonals.
+	int bandwidth_;
+	// Number of diagonals.
+	int n_diagonals_;
+	// Number of boundary rows (at each boundary).
+	int n_boundary_rows_;
+	// Number of non-zero elements along each boundary row.
+	int n_boundary_elements_;
 
 public:
 
 	// Band-diagonal matrix in compact form.
+	// TODO: Store as row-major or column-major? See Scott Meyers youtube video.
+	// TODO: Should this be private/protected? Can the member be accessed from derived classes?
 	std::vector<std::vector<T>> matrix;
+
+	BandDiagonalTemplate() {};
+
+#if false
+	BandDiagonalTemplate(
+		const int _order,
+		const int _bandwidth,
+		const int _n_boundary_rows,
+		const int _n_boundary_elements);
+
+	BandDiagonalTemplate(const BandDiagonal& mat);
+#endif
 
 };
 
