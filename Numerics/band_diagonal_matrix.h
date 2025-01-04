@@ -3,17 +3,25 @@
 #include <vector>
 
 
+// TODO: Original matrix is assumed to be square.
 // Band-diagonal matrix stored in compact form.
-// Note: The lower and upper bandwidths are assumed to be identical.
 template<typename T>
 class BandDiagonalTemplate {
 
 protected:
 
+	// Can these data members be const?
+
 	// Matrix order: Number of elements along main diagonal.
 	int order_;
-	// Bandwidth: Number of sub-diagonals or super-diagonals.
+
+	// Lower bandwidth: Number of sub-diagonals.
+	int lower_bandwidth_;
+	// Upper bandwidth: Number of super-diagonals.
+	int upper_bandwidth_;
+	// Bandwidth: Maximum of lower_bandwidth_ and upper_bandwidth_.
 	int bandwidth_;
+
 	// Number of diagonals.
 	int n_diagonals_;
 	// Number of boundary rows (at each boundary).
