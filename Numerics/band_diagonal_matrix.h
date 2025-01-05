@@ -12,19 +12,19 @@ protected:
 	// TODO: Can these data members be const?
 
 	// Matrix order: Number of elements along main diagonal.
-	int order;
+	const int order;
 	// Lower bandwidth: Number of sub-diagonals.
-	int lower_bandwidth;
+	const int lower_bandwidth;
 	// Upper bandwidth: Number of super-diagonals.
-	int upper_bandwidth;
+	const int upper_bandwidth;
 	// Bandwidth: Maximum of lower_bandwidth_ and upper_bandwidth_.
-	int bandwidth;
+	const int bandwidth;
 	// Number of diagonals.
-	int n_diagonals;
+	const int n_diagonals;
 	// Number of boundary rows (at each boundary).
-	int n_boundary_rows;
+	const int n_boundary_rows;
 	// Number of non-zero elements along each boundary row.
-	int n_boundary_elements;
+	const int n_boundary_elements;
 
 public:
 
