@@ -9,22 +9,20 @@ class BandDiagonalTemplate {
 
 protected:
 
-	// TODO: Can these data members be const?
-
 	// Matrix order: Number of elements along main diagonal.
-	const int order;
+	const int order_;
 	// Lower bandwidth: Number of sub-diagonals.
-	const int lower_bandwidth;
+	const int lower_bandwidth_;
 	// Upper bandwidth: Number of super-diagonals.
-	const int upper_bandwidth;
+	const int upper_bandwidth_;
 	// Bandwidth: Maximum of lower_bandwidth_ and upper_bandwidth_.
-	const int bandwidth;
+	const int bandwidth_;
 	// Number of diagonals.
-	const int n_diagonals;
+	const int n_diagonals_;
 	// Number of boundary rows (at each boundary).
-	const int n_boundary_rows;
+	const int n_boundary_rows_;
 	// Number of non-zero elements along each boundary row.
-	const int n_boundary_elements;
+	const int n_boundary_elements_;
 
 public:
 
@@ -47,6 +45,50 @@ public:
 
 	BandDiagonalTemplate(const BandDiagonalTemplate& mat);
 
+	// Why is this inherited by derived classes?
+//	bool operator==(const BandDiagonal& m);
+
+	int order() const {
+		return order_;
+	}
+
+	int lower_bandwidth() const {
+		return lower_bandwidth_;
+	}
+
+	int upper_bandwidth() const {
+		return upper_bandwidth_;
+	}
+
+	int bandwidth() const {
+		return bandwidth_;
+	}
+
+	int n_diagonals() const {
+		return n_diagonals_;
+	}
+
+	int n_boundary_rows() const {
+		return n_boundary_rows_;
+	}
+
+	int n_boundary_elements() const {
+		return n_boundary_elements_;
+	}
+#if false
+	// ...
+	void gauss_elimination(
+		const int boundary_row_idx,
+		const int boundary_element_idx,
+		const int matrix_row_idx,
+		std::vector<double>& column);
+
+	// ...
+	void overwrite_bounary_row(const int boundary_row_idx);
+
+	// ...
+	virtual void adjust_boundary(std::vector<double>& column) {}
+#endif
 };
 
 

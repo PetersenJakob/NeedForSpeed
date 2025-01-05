@@ -15,22 +15,22 @@ BandDiagonalTemplate<T>::BandDiagonalTemplate(
 	const int _n_boundary_rows,
 	const int _n_boundary_elements) {
 
-	order = _order;
-	lower_bandwidth = _lower_bandwidth;
-	upper_bandwidth = _upper_bandwidth;
-	bandwidth = std::max(lower_bandwidth, upper_bandwidth);
-	n_diagonals = 1 + lower_bandwidth + upper_bandwidth;
-	n_boundary_rows = _n_boundary_rows;
-	n_boundary_elements = _n_boundary_elements;
+	order_ = _order;
+	lower_bandwidth_ = _lower_bandwidth;
+	upper_bandwidth_ = _upper_bandwidth;
+	bandwidth_ = std::max(lower_bandwidth_, upper_bandwidth_);
+	n_diagonals_ = 1 + lower_bandwidth_ + upper_bandwidth_;
+	n_boundary_rows_ = _n_boundary_rows;
+	n_boundary_elements_ = _n_boundary_elements;
 
 	// Band-diagonal matrix in compact form.
-	std::vector<T> diagonal(order, 0.0);
-	std::vector<std::vector<T>> m(n_diagonals, diagonal);
+	std::vector<T> diagonal(order_, 0.0);
+	std::vector<std::vector<T>> m(n_diagonals_, diagonal);
 	matrix = std::move(m);
 
 	// Boundary rows of band-diagonal matrix.
-	std::vector<T> row(n_boundary_elements);
-	std::vector<std::vector<T>> b(2 * n_boundary_rows, row);
+	std::vector<T> row(n_boundary_elements_);
+	std::vector<std::vector<T>> b(2 * n_boundary_rows_, row);
 	boundary_rows = std::move(b);
 
 }
@@ -39,13 +39,13 @@ BandDiagonalTemplate<T>::BandDiagonalTemplate(
 template<typename T>
 BandDiagonalTemplate<T>::BandDiagonalTemplate(const BandDiagonalTemplate& mat) {
 
-	order = mat.order;
-	lower_bandwidth = mat.lower_bandwidth;
-	upper_bandwidth = mat.upper_bandwidth;
-	bandwidth = mat.bandwidth;
-	n_diagonals = mat.n_diagonals;
-	n_boundary_rows = mat.n_boundary_rows;
-	n_boundary_elements = mat.n_boundary_elements;
+	order_ = mat.order;
+	lower_bandwidth_ = mat.lower_bandwidth;
+	upper_bandwidth_ = mat.upper_bandwidth;
+	bandwidth_ = mat.bandwidth;
+	n_diagonals_ = mat.n_diagonals;
+	n_boundary_rows_ = mat.n_boundary_rows;
+	n_boundary_elements_ = mat.n_boundary_elements;
 	matrix = mat.matrix;
 	boundary_rows = mat.boundary_rows;
 
