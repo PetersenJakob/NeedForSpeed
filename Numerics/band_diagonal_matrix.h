@@ -3,50 +3,49 @@
 #include <vector>
 
 
-// TODO: Original matrix is assumed to be square.
 // Band-diagonal matrix stored in compact form.
 template<typename T>
 class BandDiagonalTemplate {
 
 protected:
 
-	// Can these data members be const?
+	// TODO: Can these data members be const?
 
 	// Matrix order: Number of elements along main diagonal.
-	int order_;
-
+	int order;
 	// Lower bandwidth: Number of sub-diagonals.
-	int lower_bandwidth_;
+	int lower_bandwidth;
 	// Upper bandwidth: Number of super-diagonals.
-	int upper_bandwidth_;
+	int upper_bandwidth;
 	// Bandwidth: Maximum of lower_bandwidth_ and upper_bandwidth_.
-	int bandwidth_;
-
+	int bandwidth;
 	// Number of diagonals.
-	int n_diagonals_;
+	int n_diagonals;
 	// Number of boundary rows (at each boundary).
-	int n_boundary_rows_;
+	int n_boundary_rows;
 	// Number of non-zero elements along each boundary row.
-	int n_boundary_elements_;
+	int n_boundary_elements;
 
 public:
 
 	// Band-diagonal matrix in compact form.
 	// TODO: Store as row-major or column-major? See Scott Meyers youtube video.
-	// TODO: Should this be private/protected? Can the member be accessed from derived classes?
+	// TODO: Should this be private/protected?
 	std::vector<std::vector<T>> matrix;
+
+	// Boundary rows of band-diagonal matrix.
+	std::vector<std::vector<T>> boundary_rows;
 
 	BandDiagonalTemplate() {};
 
-#if false
 	BandDiagonalTemplate(
 		const int _order,
-		const int _bandwidth,
+		const int _lower_bandwidth,
+		const int _upper_bandwidth,
 		const int _n_boundary_rows,
 		const int _n_boundary_elements);
 
-	BandDiagonalTemplate(const BandDiagonal& mat);
-#endif
+	BandDiagonalTemplate(const BandDiagonalTemplate& mat);
 
 };
 

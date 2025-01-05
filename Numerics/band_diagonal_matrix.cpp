@@ -7,6 +7,51 @@
 #include "utility.h"
 
 
+template<typename T>
+BandDiagonalTemplate<T>::BandDiagonalTemplate(
+	const int _order,
+	const int _lower_bandwidth,
+	const int _upper_bandwidth,
+	const int _n_boundary_rows,
+	const int _n_boundary_elements) {
+
+	order = _order;
+	lower_bandwidth = _lower_bandwidth;
+	upper_bandwidth = _upper_bandwidth;
+	bandwidth = std::max(lower_bandwidth, upper_bandwidth);
+	n_diagonals = 1 + lower_bandwidth + upper_bandwidth;
+	n_boundary_rows = _n_boundary_rows;
+	n_boundary_elements = _n_boundary_elements;
+
+	// Band-diagonal matrix in compact form.
+	std::vector<T> diagonal(order, 0.0);
+	std::vector<std::vector<T>> m(n_diagonals, diagonal);
+	matrix = std::move(m);
+
+	// Boundary rows of band-diagonal matrix.
+	std::vector<T> row(n_boundary_elements);
+	std::vector<std::vector<T>> b(2 * n_boundary_rows, row);
+	boundary_rows = std::move(b);
+
+}
+
+
+template<typename T>
+BandDiagonalTemplate<T>::BandDiagonalTemplate(const BandDiagonalTemplate& mat) {
+
+	order = mat.order;
+	lower_bandwidth = mat.lower_bandwidth;
+	upper_bandwidth = mat.upper_bandwidth;
+	bandwidth = mat.bandwidth;
+	n_diagonals = mat.n_diagonals;
+	n_boundary_rows = mat.n_boundary_rows;
+	n_boundary_elements = mat.n_boundary_elements;
+	matrix = mat.matrix;
+	boundary_rows = mat.boundary_rows;
+
+}
+
+
 // TODO: Correct default initialization?
 BandDiagonal::BandDiagonal() {
 
