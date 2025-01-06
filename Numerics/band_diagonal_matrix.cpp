@@ -55,6 +55,7 @@ BandDiagonalTemplate<T>::BandDiagonalTemplate(const BandDiagonalTemplate& mat) {
 template<typename T>
 bool BandDiagonalTemplate<T>::operator==(const BandDiagonalTemplate& m)
 {
+	// TODO: Is this difference criteria correct?
 	const double eps = 1.0e-12;
 
 	if (order_ == m.order_ &&

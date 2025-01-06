@@ -100,15 +100,15 @@ class TriDiagonalTemplate : public BandDiagonalTemplate<T> {
 
 public:
 
-	TriDiagonalTemplate() {}
-
 	TriDiagonalTemplate(
 		const std::size_t _order,
 		const std::size_t _n_boundary_rows = 1,
 		const std::size_t _n_boundary_elements = 3) :
 		BandDiagonalTemplate<T>(_order, 1, 1, _n_boundary_rows, _n_boundary_elements) {}
 
-	TriDiagonalTemplate(const TriDiagonalTemplate& mat) : BandDiagonalTemplate<T>(mat) {};
+	TriDiagonalTemplate(const TriDiagonalTemplate& mat) : 
+		BandDiagonalTemplate<T>(mat) {};
+
 #if false
 	TriDiagonal operator*(const double scalar);
 
@@ -127,6 +127,47 @@ public:
 	TriDiagonal identity();
 
 	TriDiagonal pre_vector(const std::vector<double>& vector);
+
+	void adjust_boundary(std::vector<double>& column);
+#endif
+};
+
+
+// Penta-diagonal matrix stored in compact form.
+// TODO: Assumed, in other places, to have two boundary row!
+// TODO: Remove _n_boundary_rows from parameter list!
+template<typename T>
+class PentaDiagonalTemplate : public BandDiagonalTemplate<T> {
+
+public:
+
+	PentaDiagonalTemplate(
+		const int _order,
+		const int _n_boundary_rows = 2,
+		const int _n_boundary_elements = 3) :
+		BandDiagonalTemplate<T>(_order, 2, 2, _n_boundary_rows, _n_boundary_elements) {}
+
+	PentaDiagonalTemplate(const PentaDiagonalTemplate& mat) :
+		BandDiagonalTemplate<T>(mat) {};
+
+#if false
+	PentaDiagonal operator*(const double scalar);
+
+	std::vector<double> operator*(const std::vector<double>& vector);
+
+	PentaDiagonal operator*=(const double scalar);
+
+	PentaDiagonal operator+(const PentaDiagonal& rhs);
+
+	PentaDiagonal operator+=(const PentaDiagonal& rhs);
+
+	PentaDiagonal operator-(const PentaDiagonal& rhs);
+
+	PentaDiagonal operator-=(const PentaDiagonal& rhs);
+
+	PentaDiagonal identity();
+
+	PentaDiagonal pre_vector(const std::vector<double>& vector);
 
 	void adjust_boundary(std::vector<double>& column);
 #endif
