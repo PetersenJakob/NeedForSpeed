@@ -89,7 +89,7 @@ bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
 
 
 template<typename Tnumber, typename Tmatrix>
-void scalar_add_matrix(
+void scalar_add_matrixTemplate(
 	const Tnumber scalar,
 	Tmatrix& matrix) {
 
@@ -108,8 +108,30 @@ void scalar_add_matrix(
 }
 
 
+template<typename Tmatrix>
+void matrix_add_matrixTemplate(
+	const Tmatrix& matrix1,
+	const Tmatrix& matrix2,
+	Tmatrix& result) {
+
+	for (std::size_t i = 0; i != result.n_diagonals(); ++i) {
+		for (std::size_t j = 0; j != result.order(); ++j) {
+			result.matrix[i][j] = matrix1.matrix[i][j] + matrix2.matrix[i][j];
+		}
+	}
+
+	for (std::size_t i = 0; i != 2 * result.n_boundary_rows(); ++i) {
+		for (std::size_t j = 0; j != result.n_boundary_elements(); ++j) {
+			result.boundary_rows[i][j] = 
+				matrix1.boundary_rows[i][j] + matrix2.boundary_rows[i][j];
+		}
+	}
+
+}
+
+
 template<typename Tnumber, typename Tmatrix>
-void scalar_multiply_matrix(
+void scalar_multiply_matrixTemplate(
 	const Tnumber scalar,
 	Tmatrix& matrix) {
 

@@ -175,15 +175,35 @@ public:
 
 
 template<typename Tnumber, typename Tmatrix>
-void scalar_add_matrix(
+void scalar_add_matrixTemplate(
+	const Tnumber scalar,
+	Tmatrix& matrix);
+
+
+template<typename Tmatrix>
+void matrix_add_matrixTemplate(
+	const Tmatrix& matrix1,
+	const Tmatrix& matrix2,
+	Tmatrix& result);
+
+
+template<typename Tnumber, typename Tmatrix>
+void scalar_multiply_matrixTemplate(
 	const Tnumber scalar,
 	Tmatrix& matrix);
 
 
 template<typename Tnumber, typename Tmatrix>
-void scalar_multiply_matrix(
-	const Tnumber scalar,
-	Tmatrix& matrix);
+void matrix_multiply_columnTemplate(
+	const Tmatrix& matrix,
+	const std::vector<Tnumber>& column,
+	std::vector<Tnumber>& result) {};
+
+
+template<typename Tnumber, typename Tmatrix>
+void row_multiply_matrixTemplate(
+	const std::vector<Tnumber>& vector,
+	Tmatrix& matrix) {};
 
 
 // ###############################################################################
