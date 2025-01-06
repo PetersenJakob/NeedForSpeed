@@ -7,8 +7,8 @@
 #include "utility.h"
 
 
-template<typename T>
-BandDiagonalTemplate<T>::BandDiagonalTemplate(
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(
 	const std::size_t _order,
 	const std::size_t _lower_bandwidth,
 	const std::size_t _upper_bandwidth,
@@ -24,20 +24,20 @@ BandDiagonalTemplate<T>::BandDiagonalTemplate(
 	n_boundary_elements_ = _n_boundary_elements;
 
 	// Band-diagonal matrix in compact form.
-	std::vector<T> diagonal(order_, 0.0);
-	std::vector<std::vector<T>> m(n_diagonals_, diagonal);
+	std::vector<Tnumber> diagonal(order_, 0.0);
+	std::vector<std::vector<Tnumber>> m(n_diagonals_, diagonal);
 	matrix = std::move(m);
 
 	// Boundary rows of band-diagonal matrix.
-	std::vector<T> row(n_boundary_elements_, 0.0);
-	std::vector<std::vector<T>> b(2 * n_boundary_rows_, row);
+	std::vector<Tnumber> row(n_boundary_elements_, 0.0);
+	std::vector<std::vector<Tnumber>> b(2 * n_boundary_rows_, row);
 	boundary_rows = std::move(b);
 
 }
 
 
-template<typename T>
-BandDiagonalTemplate<T>::BandDiagonalTemplate(const BandDiagonalTemplate& mat) {
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(const BandDiagonalTemplate& mat) {
 
 	order_ = mat.order;
 	lower_bandwidth_ = mat.lower_bandwidth;
@@ -52,8 +52,8 @@ BandDiagonalTemplate<T>::BandDiagonalTemplate(const BandDiagonalTemplate& mat) {
 }
 
 
-template<typename T>
-bool BandDiagonalTemplate<T>::operator==(const BandDiagonalTemplate& m)
+template<typename Tnumber>
+bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
 {
 	// TODO: Is this difference criteria correct?
 	const double eps = 1.0e-12;

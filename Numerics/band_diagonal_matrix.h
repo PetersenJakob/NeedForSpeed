@@ -4,7 +4,7 @@
 
 
 // Band-diagonal matrix stored in compact form.
-template<typename T>
+template<typename Tnumber>
 class BandDiagonalTemplate {
 
 protected:
@@ -29,10 +29,10 @@ public:
 	// Band-diagonal matrix in compact form.
 	// TODO: Store as row-major or column-major? See Scott Meyers youtube video.
 	// TODO: Should this be private/protected?
-	std::vector<std::vector<T>> matrix;
+	std::vector<std::vector<Tnumber>> matrix;
 
 	// Boundary rows of band-diagonal matrix.
-	std::vector<std::vector<T>> boundary_rows;
+	std::vector<std::vector<Tnumber>> boundary_rows;
 
 	// TODO: Default constructor removed since useless...
 
@@ -95,8 +95,8 @@ public:
 // Tri-diagonal matrix stored in compact form.
 // TODO: Assumed, in other places, to have one boundary row!
 // TODO: Remove _n_boundary_rows from parameter list!
-template<typename T>
-class TriDiagonalTemplate : public BandDiagonalTemplate<T> {
+template<typename Tnumber>
+class TriDiagonalTemplate : public BandDiagonalTemplate<Tnumber> {
 
 public:
 
@@ -104,10 +104,10 @@ public:
 		const std::size_t _order,
 		const std::size_t _n_boundary_rows = 1,
 		const std::size_t _n_boundary_elements = 3) :
-		BandDiagonalTemplate<T>(_order, 1, 1, _n_boundary_rows, _n_boundary_elements) {}
+		BandDiagonalTemplate<Tnumber>(_order, 1, 1, _n_boundary_rows, _n_boundary_elements) {}
 
 	TriDiagonalTemplate(const TriDiagonalTemplate& mat) : 
-		BandDiagonalTemplate<T>(mat) {};
+		BandDiagonalTemplate<Tnumber>(mat) {};
 
 #if false
 	TriDiagonal operator*(const double scalar);
@@ -136,8 +136,8 @@ public:
 // Penta-diagonal matrix stored in compact form.
 // TODO: Assumed, in other places, to have two boundary row!
 // TODO: Remove _n_boundary_rows from parameter list!
-template<typename T>
-class PentaDiagonalTemplate : public BandDiagonalTemplate<T> {
+template<typename Tnumber>
+class PentaDiagonalTemplate : public BandDiagonalTemplate<Tnumber> {
 
 public:
 
@@ -145,10 +145,10 @@ public:
 		const int _order,
 		const int _n_boundary_rows = 2,
 		const int _n_boundary_elements = 3) :
-		BandDiagonalTemplate<T>(_order, 2, 2, _n_boundary_rows, _n_boundary_elements) {}
+		BandDiagonalTemplate<Tnumber>(_order, 2, 2, _n_boundary_rows, _n_boundary_elements) {}
 
 	PentaDiagonalTemplate(const PentaDiagonalTemplate& mat) :
-		BandDiagonalTemplate<T>(mat) {};
+		BandDiagonalTemplate<Tnumber>(mat) {};
 
 #if false
 	PentaDiagonal operator*(const double scalar);
