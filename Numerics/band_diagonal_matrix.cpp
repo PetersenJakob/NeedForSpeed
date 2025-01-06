@@ -9,11 +9,11 @@
 
 template<typename T>
 BandDiagonalTemplate<T>::BandDiagonalTemplate(
-	const int _order,
-	const int _lower_bandwidth,
-	const int _upper_bandwidth,
-	const int _n_boundary_rows,
-	const int _n_boundary_elements) {
+	const std::size_t _order,
+	const std::size_t _lower_bandwidth,
+	const std::size_t _upper_bandwidth,
+	const std::size_t _n_boundary_rows,
+	const std::size_t _n_boundary_elements) {
 
 	order_ = _order;
 	lower_bandwidth_ = _lower_bandwidth;
@@ -29,7 +29,7 @@ BandDiagonalTemplate<T>::BandDiagonalTemplate(
 	matrix = std::move(m);
 
 	// Boundary rows of band-diagonal matrix.
-	std::vector<T> row(n_boundary_elements_);
+	std::vector<T> row(n_boundary_elements_, 0.0);
 	std::vector<std::vector<T>> b(2 * n_boundary_rows_, row);
 	boundary_rows = std::move(b);
 
@@ -50,6 +50,44 @@ BandDiagonalTemplate<T>::BandDiagonalTemplate(const BandDiagonalTemplate& mat) {
 	boundary_rows = mat.boundary_rows;
 
 }
+
+
+template<typename T>
+bool BandDiagonalTemplate<T>::operator==(const BandDiagonalTemplate& m)
+{
+	const double eps = 1.0e-12;
+
+	if (order_ == m.order_ &&
+		lower_bandwidth_ == m.lower_bandwidth_ &&
+		upper_bandwidth_ == m.upper_bandwidth_ &&
+		n_boundary_rows_ == m.n_boundary_rows_ &&
+		n_boundary_elements_ == m.n_boundary_elements_) {
+
+		for (std::size_t i = 0; i != n_diagonals_; ++i) {
+			for (std::size_t j = 0; j != order_; ++j) {
+				if (std::abs(matrix[i][j] - m.matrix[i][j]) > eps) {
+					return false;
+				}
+			}
+		}
+
+		for (std::size_t i = 0; i != 2 * n_boundary_rows_; ++i) {
+			for (std::size_t j = 0; j != n_boundary_elements_; ++j) {
+				if (std::abs(boundary_rows[i][j] - m.boundary_rows[i][j]) > eps) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
+// ###############################################################################
 
 
 // TODO: Correct default initialization?

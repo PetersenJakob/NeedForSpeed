@@ -10,19 +10,19 @@ class BandDiagonalTemplate {
 protected:
 
 	// Matrix order: Number of elements along main diagonal.
-	const int order_;
+	const std::size_t order_;
 	// Lower bandwidth: Number of sub-diagonals.
-	const int lower_bandwidth_;
+	const std::size_t lower_bandwidth_;
 	// Upper bandwidth: Number of super-diagonals.
-	const int upper_bandwidth_;
+	const std::size_t upper_bandwidth_;
 	// Bandwidth: Maximum of lower_bandwidth_ and upper_bandwidth_.
-	const int bandwidth_;
+	const std::size_t bandwidth_;
 	// Number of diagonals.
-	const int n_diagonals_;
+	const std::size_t n_diagonals_;
 	// Number of boundary rows (at each boundary).
-	const int n_boundary_rows_;
+	const std::size_t n_boundary_rows_;
 	// Number of non-zero elements along each boundary row.
-	const int n_boundary_elements_;
+	const std::size_t n_boundary_elements_;
 
 public:
 
@@ -34,19 +34,19 @@ public:
 	// Boundary rows of band-diagonal matrix.
 	std::vector<std::vector<T>> boundary_rows;
 
-	BandDiagonalTemplate() {};
+	// TODO: Default constructor removed since useless...
 
 	BandDiagonalTemplate(
-		const int _order,
-		const int _lower_bandwidth,
-		const int _upper_bandwidth,
-		const int _n_boundary_rows,
-		const int _n_boundary_elements);
+		const std::size_t _order,
+		const std::size_t _lower_bandwidth,
+		const std::size_t _upper_bandwidth,
+		const std::size_t _n_boundary_rows,
+		const std::size_t _n_boundary_elements);
 
 	BandDiagonalTemplate(const BandDiagonalTemplate& mat);
 
-	// Why is this inherited by derived classes?
-//	bool operator==(const BandDiagonal& m);
+	// TODO: Why is this inherited by derived classes?
+	bool operator==(const BandDiagonalTemplate& m);
 
 	int order() const {
 		return order_;
@@ -90,6 +90,50 @@ public:
 	virtual void adjust_boundary(std::vector<double>& column) {}
 #endif
 };
+
+
+// Tri-diagonal matrix stored in compact form.
+// TODO: Assumed, in other places, to have one boundary row!
+// TODO: Remove _n_boundary_rows from parameter list!
+template<typename T>
+class TriDiagonalTemplate : public BandDiagonalTemplate<T> {
+
+public:
+
+	TriDiagonalTemplate() {}
+
+	TriDiagonalTemplate(
+		const std::size_t _order,
+		const std::size_t _n_boundary_rows = 1,
+		const std::size_t _n_boundary_elements = 3) :
+		BandDiagonalTemplate<T>(_order, 1, 1, _n_boundary_rows, _n_boundary_elements) {}
+
+	TriDiagonalTemplate(const TriDiagonalTemplate& mat) : BandDiagonalTemplate<T>(mat) {};
+#if false
+	TriDiagonal operator*(const double scalar);
+
+	std::vector<double> operator*(const std::vector<double>& vector);
+
+	TriDiagonal operator*=(const double scalar);
+
+	TriDiagonal operator+(const TriDiagonal& rhs);
+
+	TriDiagonal operator+=(const TriDiagonal& rhs);
+
+	TriDiagonal operator-(const TriDiagonal& rhs);
+
+	TriDiagonal operator-=(const TriDiagonal& rhs);
+
+	TriDiagonal identity();
+
+	TriDiagonal pre_vector(const std::vector<double>& vector);
+
+	void adjust_boundary(std::vector<double>& column);
+#endif
+};
+
+
+// ###############################################################################
 
 
 // Band-diagonal matrix stored in compact form.
