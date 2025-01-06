@@ -109,6 +109,8 @@ public:
 	TriDiagonalTemplate(const TriDiagonalTemplate& mat) : 
 		BandDiagonalTemplate<Tnumber>(mat) {};
 
+	TriDiagonalTemplate operator+(const TriDiagonalTemplate& rhs);
+
 #if false
 	TriDiagonal operator*(const double scalar);
 

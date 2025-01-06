@@ -88,6 +88,20 @@ bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
 }
 
 
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator+(const TriDiagonalTemplate& rhs) {
+
+	// TODO: Specify TriDiagonalTemplate<Tnumber>?
+	TriDiagonalTemplate result(*this);
+
+	// TODO: Specify TriDiagonalTemplate<Tnumber>?
+	matrix_add_matrixTemplate<TriDiagonalTemplate>(*this, rhs, result);
+
+	return result;
+
+}
+
+
 template<typename Tnumber, typename Tmatrix>
 void scalar_add_matrixTemplate(
 	const Tnumber scalar,
