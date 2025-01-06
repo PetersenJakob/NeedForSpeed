@@ -174,6 +174,18 @@ public:
 };
 
 
+template<typename Tnumber, typename Tmatrix>
+void scalar_add_matrix(
+	const Tnumber scalar,
+	Tmatrix& matrix);
+
+
+template<typename Tnumber, typename Tmatrix>
+void scalar_multiply_matrix(
+	const Tnumber scalar,
+	Tmatrix& matrix);
+
+
 // ###############################################################################
 
 

@@ -14,7 +14,7 @@ BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(
 	const std::size_t _upper_bandwidth,
 	const std::size_t _n_boundary_rows,
 	const std::size_t _n_boundary_elements) {
-
+	
 	order_ = _order;
 	lower_bandwidth_ = _lower_bandwidth;
 	upper_bandwidth_ = _upper_bandwidth;
@@ -85,6 +85,46 @@ bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
 	else {
 		return false;
 	}
+}
+
+
+template<typename Tnumber, typename Tmatrix>
+void scalar_add_matrix(
+	const Tnumber scalar,
+	Tmatrix& matrix) {
+
+	for (std::size_t i = 0; i != matrix.n_diagonals(); ++i) {
+		for (std::size_t j = 0; j != matrix.order(); ++j) {
+			matrix.matrix[i][j] += scalar;
+		}
+	}
+
+	for (std::size_t i = 0; i != 2 * matrix.n_boundary_rows(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements(); ++j) {
+			matrix.boundary_rows[i][j] += scalar;
+		}
+	}
+
+}
+
+
+template<typename Tnumber, typename Tmatrix>
+void scalar_multiply_matrix(
+	const Tnumber scalar,
+	Tmatrix& matrix) {
+
+	for (std::size_t i = 0; i != matrix.n_diagonals(); ++i) {
+		for (std::size_t j = 0; j != matrix.order(); ++j) {
+			matrix.matrix[i][j] *= scalar;
+		}
+	}
+
+	for (std::size_t i = 0; i != 2 * matrix.n_boundary_rows(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements(); ++j) {
+			matrix.boundary_rows[i][j] *= scalar;
+		}
+	}
+
 }
 
 
