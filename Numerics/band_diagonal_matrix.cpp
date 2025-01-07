@@ -153,6 +153,14 @@ TriDiagonalTemplate<Tnumber>& TriDiagonalTemplate<Tnumber>::operator*=(const Tnu
 }
 
 
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber> operator*(const Tnumber scalar, TriDiagonalTemplate<Tnumber> rhs) {
+
+	return rhs * scalar;
+
+}
+
+
 template<typename Tnumber, typename Tmatrix>
 void scalar_add_matrixTemplate(
 	const Tnumber scalar,
@@ -167,6 +175,26 @@ void scalar_add_matrixTemplate(
 	for (std::size_t i = 0; i != 2 * matrix.n_boundary_rows(); ++i) {
 		for (std::size_t j = 0; j != matrix.n_boundary_elements(); ++j) {
 			matrix.boundary_rows[i][j] += scalar;
+		}
+	}
+
+}
+
+
+template<typename Tnumber, typename Tmatrix>
+void scalar_multiply_matrixTemplate(
+	const Tnumber scalar,
+	Tmatrix& matrix) {
+
+	for (std::size_t i = 0; i != matrix.n_diagonals(); ++i) {
+		for (std::size_t j = 0; j != matrix.order(); ++j) {
+			matrix.matrix[i][j] *= scalar;
+		}
+	}
+
+	for (std::size_t i = 0; i != 2 * matrix.n_boundary_rows(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements(); ++j) {
+			matrix.boundary_rows[i][j] *= scalar;
 		}
 	}
 
@@ -189,26 +217,6 @@ void matrix_add_matrixTemplate(
 		for (std::size_t j = 0; j != result.n_boundary_elements(); ++j) {
 			result.boundary_rows[i][j] = 
 				matrix1.boundary_rows[i][j] + matrix2.boundary_rows[i][j];
-		}
-	}
-
-}
-
-
-template<typename Tnumber, typename Tmatrix>
-void scalar_multiply_matrixTemplate(
-	const Tnumber scalar,
-	Tmatrix& matrix) {
-
-	for (std::size_t i = 0; i != matrix.n_diagonals(); ++i) {
-		for (std::size_t j = 0; j != matrix.order(); ++j) {
-			matrix.matrix[i][j] *= scalar;
-		}
-	}
-
-	for (std::size_t i = 0; i != 2 * matrix.n_boundary_rows(); ++i) {
-		for (std::size_t j = 0; j != matrix.n_boundary_elements(); ++j) {
-			matrix.boundary_rows[i][j] *= scalar;
 		}
 	}
 

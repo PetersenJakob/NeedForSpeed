@@ -139,6 +139,12 @@ public:
 };
 
 
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber> operator*(
+	const Tnumber scalar,
+	TriDiagonalTemplate<Tnumber> rhs);
+
+
 // Penta-diagonal matrix stored in compact form.
 // TODO: Assumed, in other places, to have two boundary row!
 // TODO: Remove _n_boundary_rows from parameter list!
@@ -186,17 +192,17 @@ void scalar_add_matrixTemplate(
 	Tmatrix& matrix);
 
 
+template<typename Tnumber, typename Tmatrix>
+void scalar_multiply_matrixTemplate(
+	const Tnumber scalar,
+	Tmatrix& matrix);
+
+
 template<typename Tmatrix>
 void matrix_add_matrixTemplate(
 	const Tmatrix& matrix1,
 	const Tmatrix& matrix2,
 	Tmatrix& result);
-
-
-template<typename Tnumber, typename Tmatrix>
-void scalar_multiply_matrixTemplate(
-	const Tnumber scalar,
-	Tmatrix& matrix);
 
 
 template<typename Tnumber, typename Tmatrix>
