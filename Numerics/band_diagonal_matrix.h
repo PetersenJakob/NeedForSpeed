@@ -109,24 +109,26 @@ public:
 	TriDiagonalTemplate(const TriDiagonalTemplate& mat) : 
 		BandDiagonalTemplate<Tnumber>(mat) {};
 
+	// TODO: Need to define ordinary assignment operator?
+
 	TriDiagonalTemplate operator+(const TriDiagonalTemplate& rhs);
 
-	TriDiagonalTemplate operator+=(const TriDiagonalTemplate& rhs);
+	TriDiagonalTemplate& operator+=(const TriDiagonalTemplate& rhs);
+
+	TriDiagonalTemplate operator-(const TriDiagonalTemplate& rhs);
+
+	TriDiagonalTemplate& operator-=(const TriDiagonalTemplate& rhs);
+
+	TriDiagonalTemplate operator*(const Tnumber scalar);
+
+	TriDiagonalTemplate& operator*=(const Tnumber scalar);
+
+	// TODO: operator*(const TriDiagonalTemplate& rhs)?
+	// TODO: operator*=(const TriDiagonalTemplate& rhs)?
 
 #if false
-	TriDiagonal operator*(const double scalar);
 
 	std::vector<double> operator*(const std::vector<double>& vector);
-
-	TriDiagonal operator*=(const double scalar);
-
-	TriDiagonal operator+(const TriDiagonal& rhs);
-
-	TriDiagonal operator+=(const TriDiagonal& rhs);
-
-	TriDiagonal operator-(const TriDiagonal& rhs);
-
-	TriDiagonal operator-=(const TriDiagonal& rhs);
 
 	TriDiagonal identity();
 

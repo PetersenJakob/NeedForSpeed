@@ -103,10 +103,50 @@ TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator+(const TriDi
 
 
 template<typename Tnumber>
-TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator+=(const TriDiagonalTemplate& rhs) {
+TriDiagonalTemplate<Tnumber>& TriDiagonalTemplate<Tnumber>::operator+=(const TriDiagonalTemplate& rhs) {
 
 	// TODO: Specify TriDiagonalTemplate<Tnumber>?
 	matrix_add_matrixTemplate<TriDiagonalTemplate>(*this, rhs, *this);
+
+	return *this;
+
+}
+
+
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator-(const TriDiagonalTemplate& rhs) {
+
+	return *this + (-1.0) * rhs;
+
+}
+
+
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber>& TriDiagonalTemplate<Tnumber>::operator-=(const TriDiagonalTemplate& rhs) {
+
+	*this += (-1.0) * rhs;
+
+	return *this;
+
+}
+
+
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator*(const Tnumber scalar) {
+
+	TriDiagonalTemplate result(*this);
+
+	scalar_multiply_matrixTemplate<Tnumber, TriDiagonalTemplate>(scalar, result);
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber>& TriDiagonalTemplate<Tnumber>::operator*=(const Tnumber scalar) {
+
+	scalar_multiply_matrixTemplate<Tnumber, TriDiagonalTemplate>(scalar, *this);
 
 	return *this;
 
