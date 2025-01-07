@@ -111,6 +111,8 @@ public:
 
 	TriDiagonalTemplate operator+(const TriDiagonalTemplate& rhs);
 
+	TriDiagonalTemplate operator+=(const TriDiagonalTemplate& rhs);
+
 #if false
 	TriDiagonal operator*(const double scalar);
 

@@ -102,6 +102,17 @@ TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator+(const TriDi
 }
 
 
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator+=(const TriDiagonalTemplate& rhs) {
+
+	// TODO: Specify TriDiagonalTemplate<Tnumber>?
+	matrix_add_matrixTemplate<TriDiagonalTemplate>(*this, rhs, *this);
+
+	return *this;
+
+}
+
+
 template<typename Tnumber, typename Tmatrix>
 void scalar_add_matrixTemplate(
 	const Tnumber scalar,
