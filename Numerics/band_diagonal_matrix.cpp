@@ -100,6 +100,7 @@ bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
 				}
 			}
 		}
+
 		for (std::size_t i = 0; i != n_boundary_rows_upper_; ++i) {
 			for (std::size_t j = 0; j != n_boundary_elements_upper_; ++j) {
 				diff = boundary_upper[i][j] - m.boundary_upper[i][j];
@@ -118,13 +119,11 @@ bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
 
 
 template<typename Tnumber>
-TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator+(const TriDiagonalTemplate& rhs) {
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator+(const BandDiagonalTemplate& rhs) {
 
-	// TODO: Specify TriDiagonalTemplate<Tnumber>?
-	TriDiagonalTemplate result(*this);
+	BandDiagonalTemplate result(*this);
 
-	// TODO: Specify TriDiagonalTemplate<Tnumber>?
-	matrix_add_matrixTemplate<TriDiagonalTemplate>(*this, rhs, result);
+	matrix_add_matrixTemplate(rhs, result);
 
 	return result;
 
@@ -132,28 +131,9 @@ TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator+(const TriDi
 
 
 template<typename Tnumber>
-TriDiagonalTemplate<Tnumber>& TriDiagonalTemplate<Tnumber>::operator+=(const TriDiagonalTemplate& rhs) {
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator+=(const BandDiagonalTemplate& rhs) {
 
-	// TODO: Specify TriDiagonalTemplate<Tnumber>?
-	matrix_add_matrixTemplate<TriDiagonalTemplate>(*this, rhs, *this);
-
-	return *this;
-
-}
-
-
-template<typename Tnumber>
-TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator-(const TriDiagonalTemplate& rhs) {
-
-	return *this + (-1.0) * rhs;
-
-}
-
-
-template<typename Tnumber>
-TriDiagonalTemplate<Tnumber>& TriDiagonalTemplate<Tnumber>::operator-=(const TriDiagonalTemplate& rhs) {
-
-	*this += (-1.0) * rhs;
+	matrix_add_matrixTemplate(rhs, *this);
 
 	return *this;
 
@@ -161,11 +141,11 @@ TriDiagonalTemplate<Tnumber>& TriDiagonalTemplate<Tnumber>::operator-=(const Tri
 
 
 template<typename Tnumber>
-TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator*(const Tnumber scalar) {
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator+(const Tnumber rhs) {
 
-	TriDiagonalTemplate result(*this);
+	BandDiagonalTemplate result(*this);
 
-	scalar_multiply_matrixTemplate<Tnumber, TriDiagonalTemplate>(scalar, result);
+	matrix_add_scalarTemplate(result, rhs);
 
 	return result;
 
@@ -173,9 +153,9 @@ TriDiagonalTemplate<Tnumber> TriDiagonalTemplate<Tnumber>::operator*(const Tnumb
 
 
 template<typename Tnumber>
-TriDiagonalTemplate<Tnumber>& TriDiagonalTemplate<Tnumber>::operator*=(const Tnumber scalar) {
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator+=(const Tnumber rhs) {
 
-	scalar_multiply_matrixTemplate<Tnumber, TriDiagonalTemplate>(scalar, *this);
+	matrix_add_scalarTemplate(*this, rhs);
 
 	return *this;
 
@@ -183,17 +163,104 @@ TriDiagonalTemplate<Tnumber>& TriDiagonalTemplate<Tnumber>::operator*=(const Tnu
 
 
 template<typename Tnumber>
-TriDiagonalTemplate<Tnumber> operator*(const Tnumber scalar, TriDiagonalTemplate<Tnumber> rhs) {
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator-(const BandDiagonalTemplate& rhs) {
+
+	return *this + rhs * (-1.0);
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator-=(const BandDiagonalTemplate& rhs) {
+
+	*this += rhs * (-1.0);
+
+	return *this;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator-(const Tnumber rhs) {
+
+	return *this + rhs * (-1.0);
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator-=(const Tnumber rhs) {
+
+	*this += rhs * (-1.0);
+
+	return *this;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator*(const Tnumber scalar) {
+
+	BandDiagonalTemplate result(*this);
+
+	matrix_multiply_scalarTemplate<Tnumber>(result, scalar);
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator*=(const Tnumber scalar) {
+
+	matrix_multiply_scalarTemplate<Tnumber>(*this, scalar);
+
+	return *this;
+
+}
+
+
+template<typename Tnumber>
+void matrix_add_matrixTemplate(
+	const BandDiagonalTemplate<Tnumber>& matrix,
+	BandDiagonalTemplate<Tnumber>& result) {
+
+	// TODO: Check if the two matrices have same dimensions?
+
+	// TODO: Maybe adjust when row-major/column-major structure has been chosen?
+	for (std::size_t i = 0; i != result.n_diagonals(); ++i) {
+		for (std::size_t j = 0; j != result.order(); ++j) {
+			result.matrix[i][j] += matrix.matrix[i][j];
+		}
+	}
+
+	for (std::size_t i = 0; i != result.n_boundary_rows_lower(); ++i) {
+		for (std::size_t j = 0; j != result.n_boundary_elements_lower(); ++j) {
+			result.boundary_lower[i][j] += matrix.boundary_lower[i][j];
+		}
+	}
+
+	for (std::size_t i = 0; i != result.n_boundary_rows_upper(); ++i) {
+		for (std::size_t j = 0; j != result.n_boundary_elements_upper(); ++j) {
+			result.boundary_upper[i][j] += matrix.boundary_upper[i][j];
+		}
+	}
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> operator*(const Tnumber scalar, BandDiagonalTemplate<Tnumber> rhs) {
 
 	return rhs * scalar;
 
 }
 
 
-template<typename Tnumber, typename Tmatrix>
-void scalar_add_matrixTemplate(
-	const Tnumber scalar,
-	Tmatrix& matrix) {
+template<typename Tnumber>
+void matrix_add_scalarTemplate(
+	BandDiagonalTemplate<Tnumber>& matrix,
+	const Tnumber scalar) {
 
 	for (std::size_t i = 0; i != matrix.n_diagonals(); ++i) {
 		for (std::size_t j = 0; j != matrix.order(); ++j) {
@@ -201,51 +268,42 @@ void scalar_add_matrixTemplate(
 		}
 	}
 
-	for (std::size_t i = 0; i != 2 * matrix.n_boundary_rows(); ++i) {
-		for (std::size_t j = 0; j != matrix.n_boundary_elements(); ++j) {
-			matrix.boundary_rows[i][j] += scalar;
+	for (std::size_t i = 0; i !=  matrix.n_boundary_rows_lower(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_lower(); ++j) {
+			matrix.boundary_lower[i][j] =+ scalar;
+		}
+	}
+
+	for (std::size_t i = 0; i != matrix.n_boundary_rows_upper(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_upper(); ++j) {
+			matrix.boundary_upper[i][j] =+ scalar;
 		}
 	}
 
 }
 
 
-template<typename Tnumber, typename Tmatrix>
-void scalar_multiply_matrixTemplate(
-	const Tnumber scalar,
-	Tmatrix& matrix) {
+template<typename Tnumber>
+void matrix_multiply_scalarTemplate(
+	BandDiagonalTemplate<Tnumber>& matrix,
+	const Tnumber scalar) {
 
+	// TODO: Maybe adjust when row-major/column-major structure has been chosen?
 	for (std::size_t i = 0; i != matrix.n_diagonals(); ++i) {
 		for (std::size_t j = 0; j != matrix.order(); ++j) {
 			matrix.matrix[i][j] *= scalar;
 		}
 	}
 
-	for (std::size_t i = 0; i != 2 * matrix.n_boundary_rows(); ++i) {
-		for (std::size_t j = 0; j != matrix.n_boundary_elements(); ++j) {
-			matrix.boundary_rows[i][j] *= scalar;
+	for (std::size_t i = 0; i != matrix.n_boundary_rows_lower(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_lower(); ++j) {
+			matrix.boundary_lower[i][j] *= scalar;
 		}
 	}
 
-}
-
-
-template<typename Tmatrix>
-void matrix_add_matrixTemplate(
-	const Tmatrix& matrix1,
-	const Tmatrix& matrix2,
-	Tmatrix& result) {
-
-	for (std::size_t i = 0; i != result.n_diagonals(); ++i) {
-		for (std::size_t j = 0; j != result.order(); ++j) {
-			result.matrix[i][j] = matrix1.matrix[i][j] + matrix2.matrix[i][j];
-		}
-	}
-
-	for (std::size_t i = 0; i != 2 * result.n_boundary_rows(); ++i) {
-		for (std::size_t j = 0; j != result.n_boundary_elements(); ++j) {
-			result.boundary_rows[i][j] = 
-				matrix1.boundary_rows[i][j] + matrix2.boundary_rows[i][j];
+	for (std::size_t i = 0; i != matrix.n_boundary_rows_upper(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_upper(); ++j) {
+			matrix.boundary_upper[i][j] *= scalar;
 		}
 	}
 

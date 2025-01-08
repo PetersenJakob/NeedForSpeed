@@ -9,6 +9,8 @@ class BandDiagonalTemplate {
 
 protected:
 
+	// TODO: Make "dim" struct with all data members?
+
 	// Matrix order: Number of elements along main diagonal.
 	const std::size_t order_;
 	// Lower bandwidth: Number of sub-diagonals.
@@ -56,6 +58,32 @@ public:
 
 	// TODO: Why is this inherited by derived classes?
 	bool operator==(const BandDiagonalTemplate& m);
+
+	BandDiagonalTemplate operator+(const BandDiagonalTemplate& rhs);
+
+	BandDiagonalTemplate& operator+=(const BandDiagonalTemplate& rhs);
+
+	// TODO: const reference? Tnumber object might be "big"?
+	BandDiagonalTemplate operator+(const Tnumber rhs);
+
+	// TODO: const reference? Tnumber object might be "big"?
+	BandDiagonalTemplate& operator+=(const Tnumber rhs);
+
+	BandDiagonalTemplate operator-(const BandDiagonalTemplate& rhs);
+
+	BandDiagonalTemplate& operator-=(const BandDiagonalTemplate& rhs);
+
+	// TODO: const reference? Tnumber object might be "big"?
+	BandDiagonalTemplate operator-(const Tnumber rhs);
+
+	// TODO: const reference? Tnumber object might be "big"?
+	BandDiagonalTemplate& operator-=(const Tnumber rhs);
+
+	// TODO: const reference? Tnumber object might be "big"?
+	BandDiagonalTemplate operator*(const Tnumber rhs);
+
+	// TODO: const reference? Tnumber object might be "big"?
+	BandDiagonalTemplate& operator*=(const Tnumber rhs);
 
 	int order() const {
 		return order_;
@@ -114,6 +142,30 @@ public:
 };
 
 
+template<typename Tnumber>
+void matrix_add_matrixTemplate(
+	const BandDiagonalTemplate<Tnumber>& matrix,
+	BandDiagonalTemplate<Tnumber>& result);
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> operator*(
+	const Tnumber scalar,
+	BandDiagonalTemplate<Tnumber> rhs);
+
+
+template<typename Tnumber>
+void matrix_add_scalarTemplate(
+	BandDiagonalTemplate<Tnumber>& matrix,
+	const Tnumber scalar);
+
+
+template<typename Tnumber>
+void matrix_multiply_scalarTemplate(
+	BandDiagonalTemplate<Tnumber>& matrix,
+	const Tnumber scalar);
+
+
 // Tri-diagonal matrix stored in compact form.
 // TODO: Assumed, in other places, to have one boundary row!
 // TODO: Remove _n_boundary_rows from parameter list!
@@ -124,32 +176,18 @@ public:
 
 	TriDiagonalTemplate(
 		const std::size_t _order,
-		const std::size_t _n_boundary_rows = 1,
-		const std::size_t _n_boundary_elements = 3) :
-		BandDiagonalTemplate<Tnumber>(_order, 1, 1, _n_boundary_rows, _n_boundary_elements) {}
+		const std::size_t _n_boundary_elements_lower = 2,
+		const std::size_t _n_boundary_elements_upper = 2) :
+		BandDiagonalTemplate<Tnumber>(_order, 1, 1, 1, 1, 
+			_n_boundary_elements_lower, _n_boundary_elements_upper) {}
 
+	// TODO: Necessary?
 	TriDiagonalTemplate(const TriDiagonalTemplate& mat) : 
 		BandDiagonalTemplate<Tnumber>(mat) {};
 
 	// TODO: Need to define ordinary assignment operator?
 
-	TriDiagonalTemplate operator+(const TriDiagonalTemplate& rhs);
-
-	TriDiagonalTemplate& operator+=(const TriDiagonalTemplate& rhs);
-
-	TriDiagonalTemplate operator-(const TriDiagonalTemplate& rhs);
-
-	TriDiagonalTemplate& operator-=(const TriDiagonalTemplate& rhs);
-
-	TriDiagonalTemplate operator*(const Tnumber scalar);
-
-	TriDiagonalTemplate& operator*=(const Tnumber scalar);
-
-	// TODO: operator*(const TriDiagonalTemplate& rhs)?
-	// TODO: operator*=(const TriDiagonalTemplate& rhs)?
-
 #if false
-
 	std::vector<double> operator*(const std::vector<double>& vector);
 
 	TriDiagonal identity();
@@ -159,12 +197,6 @@ public:
 	void adjust_boundary(std::vector<double>& column);
 #endif
 };
-
-
-template<typename Tnumber>
-TriDiagonalTemplate<Tnumber> operator*(
-	const Tnumber scalar,
-	TriDiagonalTemplate<Tnumber> rhs);
 
 
 // Penta-diagonal matrix stored in compact form.
@@ -177,27 +209,17 @@ public:
 
 	PentaDiagonalTemplate(
 		const int _order,
-		const int _n_boundary_rows = 2,
-		const int _n_boundary_elements = 3) :
-		BandDiagonalTemplate<Tnumber>(_order, 2, 2, _n_boundary_rows, _n_boundary_elements) {}
+		const int _n_boundary_elements_lower = 3,
+		const int _n_boundary_elements_upper = 3) :
+		BandDiagonalTemplate<Tnumber>(_order, 2, 2, 2, 2, 
+			_n_boundary_elements_lower, _n_boundary_elements_upper) {}
 
+	// TODO: Necessary?
 	PentaDiagonalTemplate(const PentaDiagonalTemplate& mat) :
 		BandDiagonalTemplate<Tnumber>(mat) {};
 
 #if false
-	PentaDiagonal operator*(const double scalar);
-
 	std::vector<double> operator*(const std::vector<double>& vector);
-
-	PentaDiagonal operator*=(const double scalar);
-
-	PentaDiagonal operator+(const PentaDiagonal& rhs);
-
-	PentaDiagonal operator+=(const PentaDiagonal& rhs);
-
-	PentaDiagonal operator-(const PentaDiagonal& rhs);
-
-	PentaDiagonal operator-=(const PentaDiagonal& rhs);
 
 	PentaDiagonal identity();
 
@@ -206,25 +228,6 @@ public:
 	void adjust_boundary(std::vector<double>& column);
 #endif
 };
-
-
-template<typename Tnumber, typename Tmatrix>
-void scalar_add_matrixTemplate(
-	const Tnumber scalar,
-	Tmatrix& matrix);
-
-
-template<typename Tnumber, typename Tmatrix>
-void scalar_multiply_matrixTemplate(
-	const Tnumber scalar,
-	Tmatrix& matrix);
-
-
-template<typename Tmatrix>
-void matrix_add_matrixTemplate(
-	const Tmatrix& matrix1,
-	const Tmatrix& matrix2,
-	Tmatrix& result);
 
 
 // IMPLEMENT THIS!
