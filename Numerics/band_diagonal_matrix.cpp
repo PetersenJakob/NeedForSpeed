@@ -10,28 +10,38 @@
 template<typename Tnumber>
 BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(
 	const std::size_t _order,
-	const std::size_t _lower_bandwidth,
-	const std::size_t _upper_bandwidth,
-	const std::size_t _n_boundary_rows,
-	const std::size_t _n_boundary_elements) {
+	const std::size_t _bandwidth_lower,
+	const std::size_t _bandwidth_upper,
+	const std::size_t _n_boundary_rows_lower,
+	const std::size_t _n_boundary_rows_upper,
+	const std::size_t _n_boundary_elements_lower,
+	const std::size_t _n_boundary_elements_upper) {
 	
 	order_ = _order;
-	lower_bandwidth_ = _lower_bandwidth;
-	upper_bandwidth_ = _upper_bandwidth;
-	bandwidth_ = std::max(lower_bandwidth_, upper_bandwidth_);
-	n_diagonals_ = 1 + lower_bandwidth_ + upper_bandwidth_;
-	n_boundary_rows_ = _n_boundary_rows;
-	n_boundary_elements_ = _n_boundary_elements;
+	bandwidth_lower_ = _bandwidth_lower;
+	bandwidth_upper_ = _bandwidth_upper;
+	bandwidth_ = std::max(bandwidth_lower_, bandwidth_upper_);
+	n_diagonals_ = 1 + bandwidth_lower_ + bandwidth_upper_;
+	n_boundary_rows_lower_ = _n_boundary_rows_lower;
+	n_boundary_rows_upper_ = _n_boundary_rows_upper;
+	n_boundary_rows_ = n_boundary_rows_lower_ + n_boundary_rows_upper_;
+	n_boundary_elements_lower_ = _n_boundary_elements_lower;
+	n_boundary_elements_upper_ = _n_boundary_elements_upper;
 
 	// Band-diagonal matrix in compact form.
 	std::vector<Tnumber> diagonal(order_, 0.0);
 	std::vector<std::vector<Tnumber>> m(n_diagonals_, diagonal);
 	matrix = std::move(m);
 
-	// Boundary rows of band-diagonal matrix.
-	std::vector<Tnumber> row(n_boundary_elements_, 0.0);
-	std::vector<std::vector<Tnumber>> b(2 * n_boundary_rows_, row);
-	boundary_rows = std::move(b);
+	// Lower boundary rows of band-diagonal matrix.
+	std::vector<Tnumber> row_lower(n_boundary_elements_lower_, 0.0);
+	std::vector<std::vector<Tnumber>> b_lower(2 * n_boundary_rows_lower_, row_lower);
+	boundary_lower = std::move(b_lower);
+
+	// Upper boundary rows of band-diagonal matrix.
+	std::vector<Tnumber> row_upper(n_boundary_elements_upper_, 0.0);
+	std::vector<std::vector<Tnumber>> b_upper(2 * n_boundary_rows_upper_, row_upper);
+	boundary_upper = std::move(b_upper);
 
 }
 
@@ -39,15 +49,19 @@ BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(
 template<typename Tnumber>
 BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(const BandDiagonalTemplate& mat) {
 
-	order_ = mat.order;
-	lower_bandwidth_ = mat.lower_bandwidth;
-	upper_bandwidth_ = mat.upper_bandwidth;
-	bandwidth_ = mat.bandwidth;
-	n_diagonals_ = mat.n_diagonals;
-	n_boundary_rows_ = mat.n_boundary_rows;
-	n_boundary_elements_ = mat.n_boundary_elements;
+	order_ = mat.order_;
+	bandwidth_lower_ = mat.bandwidth_lower_;
+	bandwidth_upper_ = mat.bandwidth_upper_;
+	bandwidth_ = mat.bandwidth_;
+	n_diagonals_ = mat.n_diagonals_;
+	n_boundary_rows_lower_ = mat.n_boundary_rows_lower_;
+	n_boundary_rows_upper_ = mat.n_boundary_rows_upper_;
+	n_boundary_rows_ = mat.n_boundary_rows_;
+	n_boundary_elements_lower_ = mat.n_boundary_elements_lower_;
+	n_boundary_elements_upper_ = mat.n_boundary_elements_upper_;
 	matrix = mat.matrix;
-	boundary_rows = mat.boundary_rows;
+	boundary_lower = mat.boundary_lower;
+	boundary_upper = mat.boundary_upper;
 
 }
 
@@ -59,22 +73,37 @@ bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
 	const double eps = 1.0e-12;
 
 	if (order_ == m.order_ &&
-		lower_bandwidth_ == m.lower_bandwidth_ &&
-		upper_bandwidth_ == m.upper_bandwidth_ &&
-		n_boundary_rows_ == m.n_boundary_rows_ &&
-		n_boundary_elements_ == m.n_boundary_elements_) {
+		bandwidth_lower_ == m.bandwidth_lower_ &&
+		bandwidth_upper_ == m.bandwidth_upper_ &&
+		n_boundary_rows_lower_ == m.n_boundary_rows_lower_ &&
+		n_boundary_rows_upper_ == m.n_boundary_rows_upper_ &&
+		n_boundary_elements_lower_ == m.n_boundary_elements_lower_ &&
+		n_boundary_elements_upper_ == m.n_boundary_elements_upper_) {
 
+		double diff = 0.0;
+
+		// TODO: Maybe adjust when row-major/column-major structure has been chosen?
 		for (std::size_t i = 0; i != n_diagonals_; ++i) {
 			for (std::size_t j = 0; j != order_; ++j) {
-				if (std::abs(matrix[i][j] - m.matrix[i][j]) > eps) {
+				diff = matrix[i][j] - m.matrix[i][j];
+				if (std::abs(diff) > eps) {
 					return false;
 				}
 			}
 		}
 
-		for (std::size_t i = 0; i != 2 * n_boundary_rows_; ++i) {
-			for (std::size_t j = 0; j != n_boundary_elements_; ++j) {
-				if (std::abs(boundary_rows[i][j] - m.boundary_rows[i][j]) > eps) {
+		for (std::size_t i = 0; i != n_boundary_rows_lower_; ++i) {
+			for (std::size_t j = 0; j != n_boundary_elements_lower_; ++j) {
+				diff = boundary_lower[i][j] - m.boundary_lower[i][j];
+				if (std::abs(diff) > eps) {
+					return false;
+				}
+			}
+		}
+		for (std::size_t i = 0; i != n_boundary_rows_upper_; ++i) {
+			for (std::size_t j = 0; j != n_boundary_elements_upper_; ++j) {
+				diff = boundary_upper[i][j] - m.boundary_upper[i][j];
+				if (std::abs(diff) > eps) {
 					return false;
 				}
 			}
@@ -217,6 +246,57 @@ void matrix_add_matrixTemplate(
 		for (std::size_t j = 0; j != result.n_boundary_elements(); ++j) {
 			result.boundary_rows[i][j] = 
 				matrix1.boundary_rows[i][j] + matrix2.boundary_rows[i][j];
+		}
+	}
+
+}
+
+
+template<typename Tnumber, typename Tmatrix>
+void matrix_multiply_columnTemplate(
+	const Tmatrix& matrix,
+	const std::vector<Tnumber>& column,
+	std::vector<Tnumber>& result) {
+
+	int mr_lower_idx = 0;
+	int mr_upper_idx = 0;
+	int br_lower_idx = 0;
+	int br_upper_idx = 0;
+
+	int be_upper_idx = 0;
+	int column_idx = 0;
+
+	// Boundary rows.
+	for (int i = 0; i != matrix.n_boundary_rows(); ++i) {
+		for (int j = i; j != matrix.n_boundary_elements(); ++j) {
+
+			mr_lower_idx = i;
+			mr_upper_idx = (matrix.order() - 1) - mr_lower_idx;
+
+			br_lower_idx = i;
+			br_upper_idx = (2 * matrix.n_boundary_rows() - 1) - br_lower_idx;
+
+			// Lower boundary row.
+			result[mr_lower_idx] += matrix.boundary_rows[br_lower_idx][j] * column[j];
+
+			be_upper_idx = (matrix.n_boundary_elements() - 1) - j;
+			column_idx = (matrix.order() - 1) - j;
+
+			// Upper boundary row.
+			result[mr_upper_idx] += matrix.boundary_rows[br_upper_idx][be_upper_idx] * column[column_idx];
+
+		}
+	}
+
+	const std::size_t i_initial = matrix.n_boundary_rows();
+	const std::size_t i_final = matrix.order() - matrix.n_boundary_rows();
+	const std::size_t j_initial = 0;
+	const std::size_t j_final = matrix.n_diagonals();
+
+	// Interior rows.
+	for (std::size_t i = i_initial; i != i_final; ++i) {
+		for (std::size_t j = j_initial; j != j_final; ++j) {
+			result[i] += matrix.matrix[j][i] * column[(i - matrix.n_boundary_rows()) + j];
 		}
 	}
 

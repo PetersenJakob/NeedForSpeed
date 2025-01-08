@@ -12,17 +12,23 @@ protected:
 	// Matrix order: Number of elements along main diagonal.
 	const std::size_t order_;
 	// Lower bandwidth: Number of sub-diagonals.
-	const std::size_t lower_bandwidth_;
+	const std::size_t bandwidth_lower_;
 	// Upper bandwidth: Number of super-diagonals.
-	const std::size_t upper_bandwidth_;
-	// Bandwidth: Maximum of lower_bandwidth_ and upper_bandwidth_.
+	const std::size_t bandwidth_upper_;
+	// Bandwidth: Maximum of bandwidth_lower_ and bandwidth_upper_.
 	const std::size_t bandwidth_;
 	// Number of diagonals.
 	const std::size_t n_diagonals_;
-	// Number of boundary rows (at each boundary).
+	// Number of rows at lower boundary.
+	const std::size_t n_boundary_rows_lower_;
+	// Number of rows at upper boundary.
+	const std::size_t n_boundary_rows_upper_;
+	// Number of boundary rows.
 	const std::size_t n_boundary_rows_;
-	// Number of non-zero elements along each boundary row.
-	const std::size_t n_boundary_elements_;
+	// Number of non-zero elements along each lower boundary row.
+	const std::size_t n_boundary_elements_lower_;
+	// Number of non-zero elements along each upper boundary row.
+	const std::size_t n_boundary_elements_upper_;
 
 public:
 
@@ -30,18 +36,21 @@ public:
 	// TODO: Store as row-major or column-major? See Scott Meyers youtube video.
 	// TODO: Should this be private/protected?
 	std::vector<std::vector<Tnumber>> matrix;
-
-	// Boundary rows of band-diagonal matrix.
-	std::vector<std::vector<Tnumber>> boundary_rows;
+	// Lower boundary rows of band-diagonal matrix.
+	std::vector<std::vector<Tnumber>> boundary_lower;
+	// Upper boundary rows of band-diagonal matrix.
+	std::vector<std::vector<Tnumber>> boundary_upper;
 
 	// TODO: Default constructor removed since useless...
 
 	BandDiagonalTemplate(
 		const std::size_t _order,
-		const std::size_t _lower_bandwidth,
-		const std::size_t _upper_bandwidth,
-		const std::size_t _n_boundary_rows,
-		const std::size_t _n_boundary_elements);
+		const std::size_t _bandwidth_lower,
+		const std::size_t _bandwidth_upper,
+		const std::size_t _n_boundary_rows_lower,
+		const std::size_t _n_boundary_rows_upper,
+		const std::size_t _n_boundary_elements_lower,
+		const std::size_t _n_boundary_elements_upper);
 
 	BandDiagonalTemplate(const BandDiagonalTemplate& mat);
 
@@ -52,12 +61,12 @@ public:
 		return order_;
 	}
 
-	int lower_bandwidth() const {
-		return lower_bandwidth_;
+	int bandwidth_lower() const {
+		return bandwidth_lower_;
 	}
 
-	int upper_bandwidth() const {
-		return upper_bandwidth_;
+	int bandwidth_upper() const {
+		return bandwidth_upper_;
 	}
 
 	int bandwidth() const {
@@ -68,13 +77,26 @@ public:
 		return n_diagonals_;
 	}
 
+	int n_boundary_rows_lower() const {
+		return n_boundary_rows_lower_;
+	}
+
+	int n_boundary_rows_upper() const {
+		return n_boundary_rows_upper_;
+	}
+
 	int n_boundary_rows() const {
 		return n_boundary_rows_;
 	}
 
-	int n_boundary_elements() const {
-		return n_boundary_elements_;
+	int n_boundary_elements_lower() const {
+		return n_boundary_elements_lower_;
 	}
+
+	int n_boundary_elements_upper() const {
+		return n_boundary_elements_upper_;
+	}
+
 #if false
 	// ...
 	void gauss_elimination(
@@ -205,13 +227,15 @@ void matrix_add_matrixTemplate(
 	Tmatrix& result);
 
 
+// IMPLEMENT THIS!
 template<typename Tnumber, typename Tmatrix>
 void matrix_multiply_columnTemplate(
 	const Tmatrix& matrix,
 	const std::vector<Tnumber>& column,
-	std::vector<Tnumber>& result) {};
+	std::vector<Tnumber>& result);
 
 
+// IMPLEMENT THIS!
 template<typename Tnumber, typename Tmatrix>
 void row_multiply_matrixTemplate(
 	const std::vector<Tnumber>& vector,
