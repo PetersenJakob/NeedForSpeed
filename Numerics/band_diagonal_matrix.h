@@ -85,6 +85,8 @@ public:
 	// TODO: const reference? Tnumber object might be "big"?
 	BandDiagonalTemplate& operator*=(const Tnumber rhs);
 
+//	std::vector<Tnumber> operator*(const std::vector<Tnumber>& vector);
+
 	int order() const {
 		return order_;
 	}
@@ -127,17 +129,26 @@ public:
 
 #if false
 	// ...
+	template<typename Tnumber>
 	void gauss_elimination(
-		const int boundary_row_idx,
-		const int boundary_element_idx,
-		const int matrix_row_idx,
-		std::vector<double>& column);
+		const std::size_t boundary_row_idx,
+		const std::size_tboundary_element_idx,
+		const std::size_t matrix_row_idx,
+		std::vector<Tnumber>& column);
 
 	// ...
-	void overwrite_bounary_row(const int boundary_row_idx);
+	void overwrite_bounary_row(const std::size_t boundary_row_idx);
 
 	// ...
-	virtual void adjust_boundary(std::vector<double>& column) {}
+	template<typename Tnumber>
+	virtual void adjust_boundary(std::vector<Tnumber>& column) {}
+
+	template<typename Tnumber>
+	BandDiagonalTemplate<Tnumber> identity();
+
+	template<typename Tnumber>
+	BandDiagonalTemplate<Tnumber> pre_vector(const std::vector<Tnumber>& vector);
+
 #endif
 };
 
@@ -146,12 +157,6 @@ template<typename Tnumber>
 void matrix_add_matrixTemplate(
 	const BandDiagonalTemplate<Tnumber>& matrix,
 	BandDiagonalTemplate<Tnumber>& result);
-
-
-template<typename Tnumber>
-BandDiagonalTemplate<Tnumber> operator*(
-	const Tnumber scalar,
-	BandDiagonalTemplate<Tnumber> rhs);
 
 
 template<typename Tnumber>
@@ -164,6 +169,27 @@ template<typename Tnumber>
 void matrix_multiply_scalarTemplate(
 	BandDiagonalTemplate<Tnumber>& matrix,
 	const Tnumber scalar);
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> operator*(
+	const Tnumber scalar,
+	const BandDiagonalTemplate<Tnumber> rhs);
+
+
+// IMPLEMENT THIS!
+template<typename Tnumber, typename Tmatrix>
+void matrix_multiply_columnTemplate(
+	const Tmatrix& matrix,
+	const std::vector<Tnumber>& column,
+	std::vector<Tnumber>& result);
+
+
+// IMPLEMENT THIS!
+template<typename Tnumber, typename Tmatrix>
+void row_multiply_matrixTemplate(
+	const std::vector<Tnumber>& vector,
+	Tmatrix& matrix) {};
 
 
 // Tri-diagonal matrix stored in compact form.
@@ -231,18 +257,8 @@ public:
 
 
 // IMPLEMENT THIS!
-template<typename Tnumber, typename Tmatrix>
-void matrix_multiply_columnTemplate(
-	const Tmatrix& matrix,
-	const std::vector<Tnumber>& column,
-	std::vector<Tnumber>& result);
-
-
-// IMPLEMENT THIS!
-template<typename Tnumber, typename Tmatrix>
-void row_multiply_matrixTemplate(
-	const std::vector<Tnumber>& vector,
-	Tmatrix& matrix) {};
+template<typename Tnumber>
+void print_matrixTemplate(BandDiagonalTemplate<Tnumber> matrix) {};
 
 
 // ###############################################################################

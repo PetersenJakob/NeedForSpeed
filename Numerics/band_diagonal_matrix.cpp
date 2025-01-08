@@ -250,14 +250,6 @@ void matrix_add_matrixTemplate(
 
 
 template<typename Tnumber>
-BandDiagonalTemplate<Tnumber> operator*(const Tnumber scalar, BandDiagonalTemplate<Tnumber> rhs) {
-
-	return rhs * scalar;
-
-}
-
-
-template<typename Tnumber>
 void matrix_add_scalarTemplate(
 	BandDiagonalTemplate<Tnumber>& matrix,
 	const Tnumber scalar) {
@@ -310,6 +302,15 @@ void matrix_multiply_scalarTemplate(
 }
 
 
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> operator*(const Tnumber scalar, const BandDiagonalTemplate<Tnumber> rhs) {
+
+	return rhs * scalar;
+
+}
+
+
+// IMPLEMENT THIS!
 template<typename Tnumber, typename Tmatrix>
 void matrix_multiply_columnTemplate(
 	const Tmatrix& matrix,
