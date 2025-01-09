@@ -149,8 +149,6 @@ public:
 	template<typename Tnumber>
 	virtual void adjust_boundary(std::vector<Tnumber>& column) {};
 
-	BandDiagonalTemplate identity() {};
-
 	template<typename Tnumber>
 	BandDiagonalTemplate pre_vector(const std::vector<Tnumber>& vector) {};
 
@@ -192,7 +190,7 @@ void matrix_multiply_columnTemplate(
 
 
 template<typename Tnumber>
-void row_multiply_matrixTemplate(
+void prevector_multiply_matrixTemplate(
 	const std::vector<Tnumber>& vector,
 	BandDiagonalTemplate<Tnumber>& matrix);
 

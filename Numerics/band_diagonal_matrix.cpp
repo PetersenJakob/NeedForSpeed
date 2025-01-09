@@ -416,40 +416,38 @@ void matrix_multiply_columnTemplate(
 }
 
 
-// IMPLEMENT THIS!
 template<typename Tnumber>
-void row_multiply_matrixTemplate(
+void prevector_multiply_matrixTemplate(
 	const std::vector<Tnumber>& vector,
 	BandDiagonalTemplate<Tnumber>& matrix) {
 
-	// Internal elements.
+	// "Interior" rows of matrix.
+	const std::size_t i_initial_1 = matrix.n_boundary_rows_lower();
+	const std::size_t i_final_1 = matrix.order() - matrix.n_boundary_rows_upper();
+	const std::size_t j_initial_1 = 0;
+	const std::size_t j_final_1 = matrix.n_diagonals();
 
-	const int i_initial_1 = matrix.n_boundary_rows();
-	const int i_final_1 = matrix.order() - matrix.n_boundary_rows();
-	const int j_initial_1 = 0;
-	const int j_final_1 = matrix.n_diagonals();
-
-	for (int i = i_initial_1; i != i_final_1; ++i) {
-		for (int j = j_initial_1; j != j_final_1; ++j) {
+	for (std::size_t i = i_initial_1; i != i_final_1; ++i) {
+		for (std::size_t j = j_initial_1; j != j_final_1; ++j) {
 			matrix.matrix[j][i] *= vector[i];
 		}
 	}
 
-	// Boundary elements.
+	// Boundary rows.
+	std::size_t column_idx = 0;
 
-	const int i_initial_2 = 0;
-	const int i_final_2 = 2 * matrix.n_boundary_rows();
-	const int j_initial_2 = 0;
-	const int j_final_2 = matrix.n_boundary_elements();
+	// Lower boundary rows of matrix.
+	for (std::size_t i = 0; i != matrix.n_boundary_rows_lower(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_lower(); ++j) {
+			matrix.boundary_lower[i][j] *= vector[j];
+		}
+	}
 
-	for (int i = i_initial_2; i != i_final_2; ++i) {
-		for (int j = j_initial_2; j != j_final_2; ++j) {
-			if (i < matrix.n_boundary_rows()) {
-				matrix.boundary_rows[i][j] *= vector[i];
-			}
-			else {
-				matrix.boundary_rows[i][j] *= vector[(vector.size() - 1) - (i_final_2 - 1 - i)];
-			}
+	// Upper boundary rows of matrix.
+	for (std::size_t i = 0; i != matrix.n_boundary_rows_upper(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_upper(); ++j) {
+			column_idx = (matrix.order() - 1) - j;
+			matrix.boundary_upper[i][j] *= vector[column_idx];
 		}
 	}
 
