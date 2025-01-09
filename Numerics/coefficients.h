@@ -4,6 +4,89 @@
 
 
 // Finite difference coefficients for first order derivative operator.
+namespace coef_x1Template {
+
+	// Finite difference representation on uniform grid.
+	namespace uniform {
+
+		// Central difference; 2nd order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> c2(const Tnumber dx) {};
+
+		// Forward difference; 1st order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> f1(const Tnumber dx) {};
+
+		// Backward difference; 1st order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> b1(const Tnumber dx) {};
+
+	}
+
+	// Finite difference representation on non-uniform grid.
+	namespace nonuniform {
+
+		// Central difference; 2nd order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> c2(const std::vector<Tnumber>& dx_vector) {};
+
+		// Forward difference; 1st order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> f1(const std::vector<Tnumber>& dx_vector) {};
+
+		// Backward difference; 1st order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> b1(const std::vector<Tnumber>& dx_vector) {};
+
+	}
+
+}
+
+
+// Finite difference coefficients for second order derivative operator.
+namespace coef_x2Template {
+
+	// Finite difference representation on uniform grid.
+	namespace uniform {
+
+		// Central difference; 2nd order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> c2(const Tnumber dx) {};
+
+		// Forward difference; 1st order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> f1(const Tnumber dx) {};
+
+		// Backward difference; 1st order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> b1(const Tnumber dx) {};
+
+	}
+
+	// Finite difference representation on non-uniform grid.
+	namespace nonuniform {
+
+		// Central difference; ~2nd order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> c2(const std::vector<Tnumber>& dx_vector) {};
+
+		// Forward difference; 1st order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> f1(const std::vector<Tnumber>& dx_vector) {};
+
+		// Backward difference; 1st order accuracy.
+		template<typename Tnumber>
+		std::vector<Tnumber> b1(const std::vector<Tnumber>& dx_vector) {};
+
+	}
+
+}
+
+
+// ###############################################################################
+
+
+// Finite difference coefficients for first order derivative operator.
 namespace coef_x1 {
 
 	// Finite difference representation on uniform grid.
