@@ -7,6 +7,7 @@
 // TODO: General assumption. For non-boundary rows, all diagonal elementss are "present"!!!
 // TODO: This assumption has been used in matrix_multiply_column function!
 // TODO: order- >= n_boundary_rows_lower + n_boundary_rows_upper, included assert in constructor.
+// TODO: Upper boundary row vectors are intepreted as being from right to left
 template<typename Tnumber>
 class BandDiagonalTemplate {
 
@@ -129,6 +130,8 @@ public:
 	int n_boundary_elements_upper() const {
 		return n_boundary_elements_upper_;
 	}
+
+	BandDiagonalTemplate identity();
 
 #if false
 	// ...

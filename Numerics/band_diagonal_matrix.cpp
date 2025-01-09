@@ -237,6 +237,52 @@ std::vector<Tnumber> BandDiagonalTemplate<Tnumber>::operator*(const std::vector<
 
 
 template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::identity() {
+
+	BandDiagonalTemplate<Tnumber> result(*this);
+
+	for (std::size_t i = 0; i != result.n_diagonals(); ++i) {
+		for (std::size_t j = 0; j != result.order(); ++j) {
+			if (i < result.bandwith_lower()) {
+				result[i][j] = Tnumber(0.0);
+			}
+			else if (i == result.bandwidth_lower()) {
+				result[i][j] = Tnumber(1.0);
+			}
+			else {
+				result[i][j] = Tnumber(0.0);
+			}
+		}
+	}
+
+	for (std::size_t i = 0; i != result.n_boundary_rows_lower(); ++i) {
+		for (std::size_t j = 0; j != result.n_boundary_elements_lower(); ++j) {
+			if (i == j) {
+				result.boundary_lower[i][j] = Tnumber(1.0);
+			}
+			else {
+				result.boundary_lower[i][j] = Tnumber(0.0);
+			}
+		}
+	}
+
+	for (std::size_t i = 0; i != result.n_boundary_rows_upper(); ++i) {
+		for (std::size_t j = 0; j != result.n_boundary_elements_upper(); ++j) {
+			if (i == j) {
+				result.boundary_upper[i][j] = Tnumber(1.0);
+			}
+			else {
+				result.boundary_upper[i][j] = Tnumber(0.0);
+			}
+		}
+	}
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
 void matrix_add_matrixTemplate(
 	const BandDiagonalTemplate<Tnumber>& matrix,
 	BandDiagonalTemplate<Tnumber>& result) {
@@ -346,7 +392,7 @@ void matrix_multiply_columnTemplate(
 	for (int i = 0; i != matrix.n_boundary_rows_upper(); ++i) {
 		for (int j = 0; j != matrix.n_boundary_elements_upper(); ++j) {
 			row_idx = (matrix.order() - 1) - i;
-			column_idx = (matrix.order() - 1) - matrix.n_boundary_elements_upper() + j;
+			column_idx = (matrix.order() - 1) - j;
 			result[row_idx] += matrix.boundary_upper[i][j] * column[column_idx];
 		}
 	}
