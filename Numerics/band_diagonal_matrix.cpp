@@ -283,6 +283,18 @@ BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::identity() {
 
 
 template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::pre_vector(const std::vector<Tnumber>& vector) {
+
+	BandDiagonalTemplate<Tnumber> result(*this);
+
+	prevector_multiply_matrixTemplate<Tnumber>(result, vector);
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
 void matrix_add_matrixTemplate(
 	const BandDiagonalTemplate<Tnumber>& matrix,
 	BandDiagonalTemplate<Tnumber>& result) {
