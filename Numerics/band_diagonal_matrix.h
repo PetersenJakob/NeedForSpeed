@@ -60,7 +60,7 @@ public:
 	BandDiagonalTemplate(const BandDiagonalTemplate& mat);
 
 	// TODO: Why is this inherited by derived classes?
-	bool operator==(const BandDiagonalTemplate& m);
+	bool operator==(const BandDiagonalTemplate& rhs);
 
 	BandDiagonalTemplate operator+(const BandDiagonalTemplate& rhs);
 
@@ -88,7 +88,7 @@ public:
 	// TODO: const reference? Tnumber object might be "big"?
 	BandDiagonalTemplate& operator*=(const Tnumber rhs);
 
-//	std::vector<Tnumber> operator*(const std::vector<Tnumber>& vector);
+	std::vector<Tnumber> operator*(const std::vector<Tnumber>& rhs);
 
 	int order() const {
 		return order_;

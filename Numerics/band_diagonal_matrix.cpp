@@ -33,17 +33,17 @@ BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(
 	}
 
 	// Band-diagonal matrix in compact form.
-	std::vector<Tnumber> diagonal(order_, 0.0);
+	std::vector<Tnumber> diagonal(order_, Tnumber(0.0));
 	std::vector<std::vector<Tnumber>> m(n_diagonals_, diagonal);
 	matrix = std::move(m);
 
 	// Lower boundary rows of band-diagonal matrix.
-	std::vector<Tnumber> row_lower(n_boundary_elements_lower_, 0.0);
+	std::vector<Tnumber> row_lower(n_boundary_elements_lower_, Tnumber(0.0));
 	std::vector<std::vector<Tnumber>> b_lower(2 * n_boundary_rows_lower_, row_lower);
 	boundary_lower = std::move(b_lower);
 
 	// Upper boundary rows of band-diagonal matrix.
-	std::vector<Tnumber> row_upper(n_boundary_elements_upper_, 0.0);
+	std::vector<Tnumber> row_upper(n_boundary_elements_upper_, Tnumber(0.0));
 	std::vector<std::vector<Tnumber>> b_upper(2 * n_boundary_rows_upper_, row_upper);
 	boundary_upper = std::move(b_upper);
 
@@ -71,25 +71,25 @@ BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(const BandDiagonalTemplate& 
 
 
 template<typename Tnumber>
-bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
+bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& rhs)
 {
 	// TODO: Is this difference criteria correct?
 	const double eps = 1.0e-12;
 
-	if (order_ == m.order_ &&
-		bandwidth_lower_ == m.bandwidth_lower_ &&
-		bandwidth_upper_ == m.bandwidth_upper_ &&
-		n_boundary_rows_lower_ == m.n_boundary_rows_lower_ &&
-		n_boundary_rows_upper_ == m.n_boundary_rows_upper_ &&
-		n_boundary_elements_lower_ == m.n_boundary_elements_lower_ &&
-		n_boundary_elements_upper_ == m.n_boundary_elements_upper_) {
+	if (order_ == rhs.order_ &&
+		bandwidth_lower_ == rhs.bandwidth_lower_ &&
+		bandwidth_upper_ == rhs.bandwidth_upper_ &&
+		n_boundary_rows_lower_ == rhs.n_boundary_rows_lower_ &&
+		n_boundary_rows_upper_ == rhs.n_boundary_rows_upper_ &&
+		n_boundary_elements_lower_ == rhs.n_boundary_elements_lower_ &&
+		n_boundary_elements_upper_ == rhs.n_boundary_elements_upper_) {
 
 		double diff = 0.0;
 
 		// TODO: Maybe adjust when row-major/column-major structure has been chosen?
 		for (std::size_t i = 0; i != n_diagonals_; ++i) {
 			for (std::size_t j = 0; j != order_; ++j) {
-				diff = matrix[i][j] - m.matrix[i][j];
+				diff = matrix[i][j] - rhs.matrix[i][j];
 				if (std::abs(diff) > eps) {
 					return false;
 				}
@@ -98,7 +98,7 @@ bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
 
 		for (std::size_t i = 0; i != n_boundary_rows_lower_; ++i) {
 			for (std::size_t j = 0; j != n_boundary_elements_lower_; ++j) {
-				diff = boundary_lower[i][j] - m.boundary_lower[i][j];
+				diff = boundary_lower[i][j] - rhs.boundary_lower[i][j];
 				if (std::abs(diff) > eps) {
 					return false;
 				}
@@ -107,7 +107,7 @@ bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& m)
 
 		for (std::size_t i = 0; i != n_boundary_rows_upper_; ++i) {
 			for (std::size_t j = 0; j != n_boundary_elements_upper_; ++j) {
-				diff = boundary_upper[i][j] - m.boundary_upper[i][j];
+				diff = boundary_upper[i][j] - rhs.boundary_upper[i][j];
 				if (std::abs(diff) > eps) {
 					return false;
 				}
@@ -203,11 +203,11 @@ BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator-=(const T
 
 
 template<typename Tnumber>
-BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator*(const Tnumber scalar) {
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator*(const Tnumber rhs) {
 
 	BandDiagonalTemplate result(*this);
 
-	matrix_multiply_scalarTemplate<Tnumber>(result, scalar);
+	matrix_multiply_scalarTemplate<Tnumber>(result, rhs);
 
 	return result;
 
@@ -215,11 +215,23 @@ BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator*(const Tnu
 
 
 template<typename Tnumber>
-BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator*=(const Tnumber scalar) {
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator*=(const Tnumber rhs) {
 
-	matrix_multiply_scalarTemplate<Tnumber>(*this, scalar);
+	matrix_multiply_scalarTemplate<Tnumber>(*this, rhs);
 
 	return *this;
+
+}
+
+
+template<typename Tnumber>
+std::vector<Tnumber> BandDiagonalTemplate<Tnumber>::operator*(const std::vector<Tnumber>& rhs) {
+
+	std::vector<Tnumber> result(rhs.size(), Tnumber(0.0));
+
+	matrix_multiply_columnTemplate<Tnumber>(*this, rhs, result);
+
+	return result;
 
 }
 
