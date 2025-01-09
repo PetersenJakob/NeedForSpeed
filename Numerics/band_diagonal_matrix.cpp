@@ -28,6 +28,10 @@ BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(
 	n_boundary_elements_lower_ = _n_boundary_elements_lower;
 	n_boundary_elements_upper_ = _n_boundary_elements_upper;
 
+	if (order_ < n_boundary_rows_lower_ + n_boundary_rows_upper_) {
+		throw std::invalid_argument("order < n_boundary_rows_lower + n_boundary_rows_upper!");
+	}
+
 	// Band-diagonal matrix in compact form.
 	std::vector<Tnumber> diagonal(order_, 0.0);
 	std::vector<std::vector<Tnumber>> m(n_diagonals_, diagonal);
@@ -310,52 +314,84 @@ BandDiagonalTemplate<Tnumber> operator*(const Tnumber scalar, const BandDiagonal
 }
 
 
-// IMPLEMENT THIS!
-template<typename Tnumber, typename Tmatrix>
+template<typename Tnumber>
 void matrix_multiply_columnTemplate(
-	const Tmatrix& matrix,
+	const BandDiagonalTemplate<Tnumber>& matrix,
 	const std::vector<Tnumber>& column,
 	std::vector<Tnumber>& result) {
 
-	int mr_lower_idx = 0;
-	int mr_upper_idx = 0;
-	int br_lower_idx = 0;
-	int br_upper_idx = 0;
+	std::size_t row_idx = 0;
+	std::size_t column_idx = 0;
 
-	int be_upper_idx = 0;
-	int column_idx = 0;
-
-	// Boundary rows.
-	for (int i = 0; i != matrix.n_boundary_rows(); ++i) {
-		for (int j = i; j != matrix.n_boundary_elements(); ++j) {
-
-			mr_lower_idx = i;
-			mr_upper_idx = (matrix.order() - 1) - mr_lower_idx;
-
-			br_lower_idx = i;
-			br_upper_idx = (2 * matrix.n_boundary_rows() - 1) - br_lower_idx;
-
-			// Lower boundary row.
-			result[mr_lower_idx] += matrix.boundary_rows[br_lower_idx][j] * column[j];
-
-			be_upper_idx = (matrix.n_boundary_elements() - 1) - j;
-			column_idx = (matrix.order() - 1) - j;
-
-			// Upper boundary row.
-			result[mr_upper_idx] += matrix.boundary_rows[br_upper_idx][be_upper_idx] * column[column_idx];
-
+	// Contribution from lower boundary rows of matrix.
+	for (int i = 0; i != matrix.n_boundary_rows_lower(); ++i) {
+		for (int j = 0; j != matrix.n_boundary_elements_lower(); ++j) {
+			result[i] += matrix.boundary_lower[i][j] * column[j];
 		}
 	}
 
-	const std::size_t i_initial = matrix.n_boundary_rows();
-	const std::size_t i_final = matrix.order() - matrix.n_boundary_rows();
+	// Contribution from upper boundary rows of matrix.
+	for (int i = 0; i != matrix.n_boundary_rows_upper(); ++i) {
+		for (int j = 0; j != matrix.n_boundary_elements_upper(); ++j) {
+			row_idx = (matrix.order() - 1) - i;
+			column_idx = (matrix.order() - 1) - matrix.n_boundary_elements_upper() + j;
+			result[row_idx] += matrix.boundary_upper[i][j] * column[column_idx];
+		}
+	}
+
+	// TODO: Only use interior rows from matrix. 
+	// TODO: Elements of boundary rows should be represented by boundary_rows.
+
+	// Contribution from "interior" rows of matrix.
+	const std::size_t i_initial = matrix.n_boundary_rows_lower();
+	const std::size_t i_final = matrix.order() - matrix.n_boundary_rows_upper();
 	const std::size_t j_initial = 0;
 	const std::size_t j_final = matrix.n_diagonals();
 
-	// Interior rows.
 	for (std::size_t i = i_initial; i != i_final; ++i) {
 		for (std::size_t j = j_initial; j != j_final; ++j) {
-			result[i] += matrix.matrix[j][i] * column[(i - matrix.n_boundary_rows()) + j];
+			result[i] += matrix.matrix[j][i] 
+				* column[(i - matrix.n_boundary_rows_lower()) + j];
+		}
+	}
+
+}
+
+
+// IMPLEMENT THIS!
+template<typename Tnumber>
+void row_multiply_matrixTemplate(
+	const std::vector<Tnumber>& vector,
+	BandDiagonalTemplate<Tnumber>& matrix) {
+
+	// Internal elements.
+
+	const int i_initial_1 = matrix.n_boundary_rows();
+	const int i_final_1 = matrix.order() - matrix.n_boundary_rows();
+	const int j_initial_1 = 0;
+	const int j_final_1 = matrix.n_diagonals();
+
+	for (int i = i_initial_1; i != i_final_1; ++i) {
+		for (int j = j_initial_1; j != j_final_1; ++j) {
+			matrix.matrix[j][i] *= vector[i];
+		}
+	}
+
+	// Boundary elements.
+
+	const int i_initial_2 = 0;
+	const int i_final_2 = 2 * matrix.n_boundary_rows();
+	const int j_initial_2 = 0;
+	const int j_final_2 = matrix.n_boundary_elements();
+
+	for (int i = i_initial_2; i != i_final_2; ++i) {
+		for (int j = j_initial_2; j != j_final_2; ++j) {
+			if (i < matrix.n_boundary_rows()) {
+				matrix.boundary_rows[i][j] *= vector[i];
+			}
+			else {
+				matrix.boundary_rows[i][j] *= vector[(vector.size() - 1) - (i_final_2 - 1 - i)];
+			}
 		}
 	}
 

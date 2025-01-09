@@ -4,6 +4,9 @@
 
 
 // Band-diagonal matrix stored in compact form.
+// TODO: General assumption. For non-boundary rows, all diagonal elementss are "present"!!!
+// TODO: This assumption has been used in matrix_multiply_column function!
+// TODO: order- >= n_boundary_rows_lower + n_boundary_rows_upper, included assert in constructor.
 template<typename Tnumber>
 class BandDiagonalTemplate {
 
@@ -134,20 +137,21 @@ public:
 		const std::size_t boundary_row_idx,
 		const std::size_tboundary_element_idx,
 		const std::size_t matrix_row_idx,
-		std::vector<Tnumber>& column);
+		std::vector<Tnumber>& column) {};
 
 	// ...
-	void overwrite_bounary_row(const std::size_t boundary_row_idx);
+	void overwrite_bounary_row(const std::size_t boundary_row_idx) {};
 
 	// ...
 	template<typename Tnumber>
-	virtual void adjust_boundary(std::vector<Tnumber>& column) {}
+	virtual void adjust_boundary(std::vector<Tnumber>& column) {};
+
+	BandDiagonalTemplate identity() {};
 
 	template<typename Tnumber>
-	BandDiagonalTemplate<Tnumber> identity();
+	BandDiagonalTemplate pre_vector(const std::vector<Tnumber>& vector) {};
 
-	template<typename Tnumber>
-	BandDiagonalTemplate<Tnumber> pre_vector(const std::vector<Tnumber>& vector);
+	void print_matrixTemplate() {};
 
 #endif
 };
@@ -177,19 +181,17 @@ BandDiagonalTemplate<Tnumber> operator*(
 	const BandDiagonalTemplate<Tnumber> rhs);
 
 
-// IMPLEMENT THIS!
-template<typename Tnumber, typename Tmatrix>
+template<typename Tnumber>
 void matrix_multiply_columnTemplate(
-	const Tmatrix& matrix,
+	const BandDiagonalTemplate<Tnumber>& matrix,
 	const std::vector<Tnumber>& column,
 	std::vector<Tnumber>& result);
 
 
-// IMPLEMENT THIS!
-template<typename Tnumber, typename Tmatrix>
+template<typename Tnumber>
 void row_multiply_matrixTemplate(
 	const std::vector<Tnumber>& vector,
-	Tmatrix& matrix) {};
+	BandDiagonalTemplate<Tnumber>& matrix);
 
 
 // Tri-diagonal matrix stored in compact form.
@@ -211,17 +213,6 @@ public:
 	TriDiagonalTemplate(const TriDiagonalTemplate& mat) : 
 		BandDiagonalTemplate<Tnumber>(mat) {};
 
-	// TODO: Need to define ordinary assignment operator?
-
-#if false
-	std::vector<double> operator*(const std::vector<double>& vector);
-
-	TriDiagonal identity();
-
-	TriDiagonal pre_vector(const std::vector<double>& vector);
-
-	void adjust_boundary(std::vector<double>& column);
-#endif
 };
 
 
@@ -244,21 +235,7 @@ public:
 	PentaDiagonalTemplate(const PentaDiagonalTemplate& mat) :
 		BandDiagonalTemplate<Tnumber>(mat) {};
 
-#if false
-	std::vector<double> operator*(const std::vector<double>& vector);
-
-	PentaDiagonal identity();
-
-	PentaDiagonal pre_vector(const std::vector<double>& vector);
-
-	void adjust_boundary(std::vector<double>& column);
-#endif
 };
-
-
-// IMPLEMENT THIS!
-template<typename Tnumber>
-void print_matrixTemplate(BandDiagonalTemplate<Tnumber> matrix) {};
 
 
 // ###############################################################################
