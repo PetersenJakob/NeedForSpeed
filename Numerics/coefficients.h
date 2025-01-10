@@ -13,13 +13,41 @@ namespace coef_x1Template {
 		template<typename Tnumber>
 		const std::vector<Tnumber> c2(const Tnumber dx);
 
+		// Central difference; 4th order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> c4(const Tnumber dx);
+
 		// Forward difference; 1st order accuracy.
 		template<typename Tnumber>
 		const std::vector<Tnumber> f1(const Tnumber dx);
 
+		// Forward difference; 2nd order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> f2(const Tnumber dx);
+
+		// Forward difference; 3rd order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> f3(const Tnumber dx);
+
+		// Forward difference; 4th order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> f4(const Tnumber dx);
+
 		// Backward difference; 1st order accuracy.
 		template<typename Tnumber>
 		const std::vector<Tnumber> b1(const Tnumber dx);
+
+		// Backward difference; 2nd order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> b2(const Tnumber dx);
+
+		// Backward difference; 3rd order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> b3(const Tnumber dx);
+
+		// Backward difference; 4th order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> b4(const Tnumber dx);
 
 	}
 
@@ -30,13 +58,25 @@ namespace coef_x1Template {
 		template<typename Tnumber>
 		const std::vector<Tnumber> c2(const std::vector<Tnumber>& dx_vector);
 
+		// Central difference; 4th order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> c4(const std::vector<Tnumber>& dx_vector);
+
 		// Forward difference; 1st order accuracy.
 		template<typename Tnumber>
 		const std::vector<Tnumber> f1(const std::vector<Tnumber>& dx_vector);
 
+		// Forward difference; 2nd order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> f2(const std::vector<Tnumber>& dx_vector);
+
 		// Backward difference; 1st order accuracy.
 		template<typename Tnumber>
 		const std::vector<Tnumber> b1(const std::vector<Tnumber>& dx_vector);
+
+		// Backward difference; 2nd order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> b2(const std::vector<Tnumber>& dx_vector);
 
 	}
 
