@@ -6,6 +6,70 @@
 #include "matrix_equation_solver.h"
 
 
+template<typename Tnumber>
+void tridiagonal_matrix_solverTemplate(
+	const std::vector<Tnumber>& sub,
+	const std::vector<Tnumber>& main,
+	const std::vector<Tnumber>& super,
+	std::vector<Tnumber>& column,
+	std::vector<Tnumber>& vec_tmp) {
+
+	// Number of elements along main diagonal.
+	const std::size_t n_elements = main.size();
+
+	// Temporary index.
+	int idx_tmp = 0;
+
+	// #####################################################
+	// Forward sweep:
+	// Remove elements of sub-diagonal by Gauss elimination.
+	// #####################################################
+
+	// Denominator for normalization of 1st element of main diagonal.          
+	Tnumber denominator = main[0];
+
+	// 1st element of super-diagonal after normalization.
+	vec_tmp[0] = super[0] / denominator;
+
+	// 1st element of column vector after normalization.
+	column[0] /= denominator;
+
+	for (int i = 1; i != n_elements; ++i) {
+
+		idx_tmp = i - 1;
+
+		// Denominator for normalization of (i + 1)'th element of main diagonal.        
+		denominator = main[i] - sub[i] * vec_tmp[idx_tmp];
+
+		// (i + 1)'th element of super-diagonal after Gauss elimination.
+		vec_tmp[i] = super[i] / denominator;
+
+		// (i + 1)'th element of column vector after Gauss elimination.
+		column[i] = (column[i] - sub[i] * column[idx_tmp]) / denominator;
+
+	}
+
+	// #######################################################
+	// Backward sweep (back substitution):
+	// Remove elements of super-diagonal by Gauss elimination.
+	// #######################################################
+
+	// TODO: Can one use std::size_t? Loop should continue until i < 0...
+	for (int i = n_elements - 2; i != -1; --i) {
+
+		idx_tmp = i + 1;
+
+		// (i + 1)'th element of column vector after Gauss elimination.
+		column[i] -= vec_tmp[i] * column[idx_tmp];
+
+	}
+
+}
+
+
+// ###############################################################################
+
+
 // Band-diagonal matrix equation solver.
 void solver::band(
 	BandDiagonal& matrix,

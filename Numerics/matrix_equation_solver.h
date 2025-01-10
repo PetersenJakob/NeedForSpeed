@@ -5,6 +5,19 @@
 #include "band_diagonal_matrix.h"
 
 
+template<typename Tnumber>
+void tridiagonal_matrix_solverTemplate(
+	const std::vector<Tnumber>& sub,
+	const std::vector<Tnumber>& main,
+	const std::vector<Tnumber>& super,
+	std::vector<Tnumber>& column,
+	std::vector<Tnumber>& vec_tmp);
+
+
+
+// ###############################################################################
+
+
 namespace solver {
 
 	// Band-diagonal matrix equation solver.
