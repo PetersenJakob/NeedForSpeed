@@ -1,6 +1,155 @@
+#include <algorithm>
 #include <vector>
 
 #include "coefficients.h"
+
+
+// Finite difference coefficients for first order derivative operator.
+namespace coef_x1Template {
+
+	// Finite difference representation on uniform grid.
+	// See Fornberg (1988).
+	namespace uniform {
+
+		// Central difference; 2nd order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> c2_coefficients{
+			-1.0 / 2.0,
+			0.0,
+			1.0 / 2.0
+		};
+
+		template<typename Tnumber>
+		const std::vector<Tnumber> c2(const Tnumber dx) {
+
+			return adjust_coefficients(c2_coefficients, dx);
+
+		}
+
+		// Forward difference; 1st order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> f1_coefficients{
+			-1.0,
+			1.0
+		};
+
+		template<typename Tnumber>
+		const std::vector<Tnumber> f1(const Tnumber dx) {
+
+			return adjust_coefficients(f1_coefficients, dx);
+
+		}
+
+		// Backward difference; 1st order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> b1(const Tnumber dx) {
+
+			return reverse_order(f1(dx), -1.0);
+
+		}
+
+	}
+
+	// Finite difference representation on non-uniform grid.
+	// See Sundqvist and Veronis (1970).
+	namespace nonuniform {
+
+		// dx_vector; step size vector with four elements:
+		// [0] dx_m2 = x_m1 - x_m2  TODO: Correct sign?
+		// [1] dx_m1 = x - x_m1     TODO: Correct sign?
+		// [2] dx_p1 = x_p1 - x  
+		// [3] dx_p2 = x_p2 - x_p1
+
+		// Central difference; 2nd order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> c2(const std::vector<Tnumber>& dx_vector) {
+
+			const Tnumber dx_m1 = dx_vector[1];
+			const Tnumber dx_p1 = dx_vector[2];
+
+			std::vector<Tnumber> row(3, 0.0);
+
+			const Tnumber denominator = dx_p1 * (1.0 + dx_p1 / dx_m1);
+
+			// Coefficient of 1st sub-diagonal.
+			row[0] = -pow(dx_p1 / dx_m1, 2) / denominator;
+
+			// Coefficient of main diagonal.
+			row[1] = -(1.0 - pow(dx_p1 / dx_m1, 2)) / denominator;
+
+			// Coefficient of 1st super-diagonal.
+			row[2] = 1.0 / denominator;
+
+			return row;
+
+		}
+
+		// Forward difference; 1st order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> f1(const std::vector<Tnumber>& dx_vector) {
+
+			const Tnumber dx_p1 = dx_vector[2];
+
+			std::vector<Tnumber> row(2, 0.0);
+
+			const Tnumber denominator = dx_p1;
+
+			// Coefficient of main diagonal.
+			row[0] = -1.0 / denominator;
+
+			// Coefficient of 1st super-diagonal.
+			row[1] = 1.0 / denominator;
+
+			return row;
+
+		}
+
+		// Backward difference; 1st order accuracy.
+		template<typename Tnumber>
+		const std::vector<Tnumber> b1(const std::vector<Tnumber>& dx_vector) {
+
+			return reverse_order(f1(dx_vector), -1.0);
+
+		}
+
+	}
+
+}
+
+
+// Reverse order of coefficients and multiply by scalar.
+template<typename Tnumber>
+std::vector<Tnumber> reverse_orderTemplate(
+	std::vector<Tnumber> coefficients,
+	const Tnumber scalar) {
+
+	std::reverse(coefficients.begin(), coefficients.end());
+
+	for (auto& element : coefficients) {
+		element *= scalar;
+	}
+
+	return coefficients;
+
+}
+
+
+// Divide coefficients by denominator. TODO: Change function name.
+template<typename Tnumber>
+std::vector<Tnumber> adjust_coefficientsTemplate(
+	std::vector<Tnumber> coefficients,
+	const Tnumber denominator) {
+
+	for (auto& element : coefficients) {
+		element /= denominator;
+	}
+
+	return coefficients;
+
+}
+
+
+// ###############################################################################
 
 
 // Finite difference coefficients for first order derivative operator.

@@ -11,15 +11,15 @@ namespace coef_x1Template {
 
 		// Central difference; 2nd order accuracy.
 		template<typename Tnumber>
-		std::vector<Tnumber> c2(const Tnumber dx) {};
+		const std::vector<Tnumber> c2(const Tnumber dx);
 
 		// Forward difference; 1st order accuracy.
 		template<typename Tnumber>
-		std::vector<Tnumber> f1(const Tnumber dx) {};
+		const std::vector<Tnumber> f1(const Tnumber dx);
 
 		// Backward difference; 1st order accuracy.
 		template<typename Tnumber>
-		std::vector<Tnumber> b1(const Tnumber dx) {};
+		const std::vector<Tnumber> b1(const Tnumber dx);
 
 	}
 
@@ -28,15 +28,15 @@ namespace coef_x1Template {
 
 		// Central difference; 2nd order accuracy.
 		template<typename Tnumber>
-		std::vector<Tnumber> c2(const std::vector<Tnumber>& dx_vector) {};
+		const std::vector<Tnumber> c2(const std::vector<Tnumber>& dx_vector);
 
 		// Forward difference; 1st order accuracy.
 		template<typename Tnumber>
-		std::vector<Tnumber> f1(const std::vector<Tnumber>& dx_vector) {};
+		const std::vector<Tnumber> f1(const std::vector<Tnumber>& dx_vector);
 
 		// Backward difference; 1st order accuracy.
 		template<typename Tnumber>
-		std::vector<Tnumber> b1(const std::vector<Tnumber>& dx_vector) {};
+		const std::vector<Tnumber> b1(const std::vector<Tnumber>& dx_vector);
 
 	}
 
@@ -81,6 +81,20 @@ namespace coef_x2Template {
 	}
 
 }
+
+
+// Reverse order of coefficients and multiply by scalar.
+template<typename Tnumber>
+std::vector<Tnumber> reverse_orderTemplate(
+	std::vector<Tnumber> coef,
+	const Tnumber scalar = 1.0);
+
+
+// Divide coefficients by denominator.
+template<typename Tnumber>
+std::vector<Tnumber> adjust_coefficientsTemplate(
+	std::vector<Tnumber> coefficients,
+	const Tnumber denominator);
 
 
 // ###############################################################################
