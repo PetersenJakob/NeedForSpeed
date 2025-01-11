@@ -14,6 +14,19 @@ void tridiagonal_matrix_solverTemplate(
 	std::vector<Tnumber>& vec_tmp);
 
 
+template<typename Tnumber>
+void pentadiagonal_matrix_solverTemplate(
+	const std::vector<Tnumber>& sub_2,
+	const std::vector<Tnumber>& sub_1,
+	const std::vector<Tnumber>& main,
+	const std::vector<Tnumber>& super_1,
+	const std::vector<Tnumber>& super_2,
+	std::vector<Tnumber>& column,
+	std::vector<Tnumber>& sub_tmp,
+	std::vector<Tnumber>& main_tmp,
+	std::vector<Tnumber>& super_tmp,
+	std::vector<Tnumber>& vec_tmp);
+
 
 // ###############################################################################
 
