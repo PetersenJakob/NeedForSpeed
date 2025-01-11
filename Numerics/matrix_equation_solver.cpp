@@ -6,6 +6,56 @@
 #include "matrix_equation_solver.h"
 
 
+// Tri-diagonal matrix equation solver.
+template<typename Tnumber>
+void solverTemplate::tri(
+	TriDiagonalTemplate<Tnumber>& matrix,
+	std::vector<Tnumber>& column) {
+
+	matrix.adjust_boundary(column);
+
+	// TODO: Pre-allocate, but where?
+	std::vector<double> vec_tmp(matrix.order(), 0.0);
+
+	tridiagonal_matrix_solver(
+		matrix.matrix[0],
+		matrix.matrix[1],
+		matrix.matrix[2],
+		column,
+		vec_tmp);
+
+}
+
+
+// Penta-diagonal matrix equation solver.
+template<typename Tnumber>
+void solverTemplate::penta(
+	PentaDiagonalTemplate<Tnumber>& matrix,
+	std::vector<Tnumber>& column) {
+
+	matrix.adjust_boundary(column);
+
+	// TODO: Pre-allocate, but where?
+	std::vector<double> sub_tmp(matrix.order(), 0.0);
+	std::vector<double> main_tmp(matrix.order(), 0.0);
+	std::vector<double> super_tmp(matrix.order(), 0.0);
+	std::vector<double> vec_tmp(matrix.order(), 0.0);
+
+	pentadiagonal_matrix_solver(
+		matrix.matrix[0],
+		matrix.matrix[1],
+		matrix.matrix[2],
+		matrix.matrix[3],
+		matrix.matrix[4],
+		column,
+		sub_tmp,
+		main_tmp,
+		super_tmp,
+		vec_tmp);
+
+}
+
+
 template<typename Tnumber>
 void tridiagonal_matrix_solverTemplate(
 	const std::vector<Tnumber>& sub,

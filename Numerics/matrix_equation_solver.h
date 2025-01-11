@@ -5,6 +5,29 @@
 #include "band_diagonal_matrix.h"
 
 
+namespace solverTemplate {
+
+	// Band-diagonal matrix equation solver.
+//	template<typename Tnumber>
+//	void band(
+//		BandDiagonalTemplate<Tnumber>& matrix,
+//		std::vector<Tnumber>& column);
+
+	// Tri-diagonal matrix equation solver.
+	template<typename Tnumber>
+	void tri(
+		TriDiagonalTemplate<Tnumber>& matrix,
+		std::vector<Tnumber>& column);
+
+	// Penta-diagonal matrix equation solver.
+	template<typename Tnumber>
+	void penta(
+		PentaDiagonalTemplate<Tnumber>& matrix,
+		std::vector<Tnumber>& column);
+
+}
+
+
 template<typename Tnumber>
 void tridiagonal_matrix_solverTemplate(
 	const std::vector<Tnumber>& sub,
