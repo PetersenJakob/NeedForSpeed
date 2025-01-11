@@ -5,6 +5,24 @@
 #include "band_diagonal_matrix.h"
 
 
+// TODO: PDE solver class under solver namespace?
+template<typename Tnumber>
+class PDESolver {
+
+private:
+
+	BandDiagonalTemplate<Tnumber> diff_operator;
+
+	std::vector<Tnumber>& column;
+
+public:
+
+	PDESolver(const BandDiagonalTemplate<Tnumber>& matrix) :
+		diff_operator(matrix) {};
+
+};
+
+
 namespace solverTemplate {
 
 	// Band-diagonal matrix equation solver.
