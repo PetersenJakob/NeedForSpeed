@@ -18,6 +18,12 @@ namespace d1dx1Template {
 		template<typename Tnumber>
 		TriDiagonalTemplate<Tnumber> c2b1(const std::vector<Tnumber>& grid);
 
+		// Interior: Central difference, 4th order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
+		// Boundary 2nd row: Central difference, 2nd order accurary.
+		template<typename Tnumber>
+		PentaDiagonalTemplate<Tnumber> c4b2(const std::vector<Tnumber>& grid);
+
 #if false
 		// Interior: Central difference, 2nd order accuracy.
 		// Boundary 1st row: Forward difference, 2nd order accurary.
@@ -42,15 +48,40 @@ namespace d1dx1Template {
 template<typename Tnumber>
 TriDiagonalTemplate<Tnumber> d1dx1Template::uniform::c2b1(const std::vector<Tnumber>& grid) {
 
+	using MatrixType = TriDiagonalTemplate<Tnumber>;
+
 	// TODO: If you choose two boundary rows with f1+f1 and b1+b1, what will the L2 function norm be?
 
 	const std::size_t order = grid.size();
 	// TODO: Should dx be of type Tnumber?
 	const Tnumber dx = grid[1] - grid[0];
 
-	TriDiagonalTemplate<Tnumber> matrix = setupTemplate<TriDiagonalTemplate<Tnumber>>(order, coef_x1Template::uniform::c2<Tnumber>(dx), 1, 2);
-	boundary<TriDiagonal>(0, coef_x1::uniform::f1(dx), matrix);
-	boundary<TriDiagonal>(1, coef_x1::uniform::b1(dx), matrix);
+	MatrixType matrix = 
+		setupTemplate<MatrixType, Tnumber>(order, coef_x1Template::uniform::c2<Tnumber>(dx), 1, 2);
+	boundaryTemplate<MatrixType, Tnumber>(0, "lower", coef_x1Template::uniform::f1<Tnumber>(dx), matrix);
+	boundaryTemplate<MatrixType, Tnumber>(0, "upper", coef_x1Template::uniform::b1<Tnumber>(dx), matrix);
+
+	return matrix;
+
+}
+
+
+// First order derivative operator. 
+// Central difference; 4th order accuracy. Boundary; 2nd order accuracy.
+template<typename Tnumber>
+PentaDiagonalTemplate<Tnumber> d1dx1Template::uniform::c4b2(const std::vector<Tnumber>& grid) {
+
+	using MatrixType = PentaDiagonalTemplate<Tnumber>;
+
+	const std::size_t order = grid.size();
+	const Tnumber dx = grid[1] - grid[0];
+
+	MatrixType matrix =
+		setupTemplate<MatrixType, Tnumber>(order, coef_x1Template::uniform::c4<Tnumber>(dx), 2, 3);
+	boundaryTemplate<MatrixType, Tnumber>(0, "lower", coef_x1Template::uniform::f2<Tnumber>(dx), matrix);
+	boundaryTemplate<MatrixType, Tnumber>(1, "lower", coef_x1Template::uniform::f2<Tnumber>(dx), matrix);
+	boundaryTemplate<MatrixType, Tnumber>(1, "upper", coef_x1Template::uniform::b2<Tnumber>(dx), matrix);
+	boundaryTemplate<MatrixType, Tnumber>(0, "upper", coef_x1Template::uniform::b2<Tnumber>(dx), matrix);
 
 	return matrix;
 

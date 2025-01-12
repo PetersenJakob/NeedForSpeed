@@ -29,6 +29,27 @@ Tmatrix setupTemplate(
 }
 
 
+// Adjusting finite difference representation at boundary.
+template <typename Tmatrix, typename Tnumber>
+void boundaryTemplate(const std::string& which_boundary, const std::size_t row_index, const std::vector<Tnumber>& coef, Tmatrix& matrix) {
+
+	if (which_boundary == "lower") {
+		for (std::size_t i = 0; i != coef.size(); ++i) {
+			matrix.boundary_lower[row_index][i] = coef[i];
+		}
+	}
+	else if (which_boundary == "upper") {
+		for (std::size_t i = 0; i != coef.size(); ++i) {
+			matrix.boundary_upper[row_index][i] = coef[i];
+		}
+	}
+	else {
+		throw std::invalid_argument("Unknown boundary type: lower or upper!");
+	}
+
+}
+
+
 // ###############################################################################
 
 

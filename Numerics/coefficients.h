@@ -2,6 +2,8 @@
 
 #include <vector>
 
+// TODO: Move definitions from coefficients.cpp! Otherwise, linking error!
+
 
 // Finite difference coefficients for first order derivative operator.
 namespace coef_x1Template {
