@@ -426,7 +426,7 @@ void matrix_multiply_columnTemplate(
 	}
 
 }
-#endif
+
 
 template<typename Tnumber>
 void prevector_multiply_matrixTemplate(
@@ -464,7 +464,7 @@ void prevector_multiply_matrixTemplate(
 	}
 
 }
-
+#endif
 
 // ###############################################################################
 

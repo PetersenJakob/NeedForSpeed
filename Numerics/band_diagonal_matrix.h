@@ -358,7 +358,39 @@ void matrix_multiply_columnTemplate(
 template<typename Tnumber>
 void prevector_multiply_matrixTemplate(
 	const std::vector<Tnumber>& vector,
-	BandDiagonalTemplate<Tnumber>& matrix);
+	BandDiagonalTemplate<Tnumber>& matrix) {
+
+	// "Interior" rows of matrix.
+	const std::size_t i_initial_1 = matrix.n_boundary_rows_lower();
+	const std::size_t i_final_1 = matrix.order() - matrix.n_boundary_rows_upper();
+	const std::size_t j_initial_1 = 0;
+	const std::size_t j_final_1 = matrix.n_diagonals();
+
+	for (std::size_t i = i_initial_1; i != i_final_1; ++i) {
+		for (std::size_t j = j_initial_1; j != j_final_1; ++j) {
+			matrix.matrix[j][i] *= vector[i];
+		}
+	}
+
+	// Boundary rows.
+	std::size_t column_idx = 0;
+
+	// Lower boundary rows of matrix.
+	for (std::size_t i = 0; i != matrix.n_boundary_rows_lower(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_lower(); ++j) {
+			matrix.boundary_lower[i][j] *= vector[j];
+		}
+	}
+
+	// Upper boundary rows of matrix.
+	for (std::size_t i = 0; i != matrix.n_boundary_rows_upper(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_upper(); ++j) {
+			column_idx = (matrix.order() - 1) - j;
+			matrix.boundary_upper[i][j] *= vector[column_idx];
+		}
+	}
+
+}
 
 
 // Tri-diagonal matrix stored in compact form.
