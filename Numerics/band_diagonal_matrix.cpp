@@ -374,7 +374,7 @@ void matrix_multiply_scalarTemplate(
 	}
 
 }
-#endif
+
 
 template<typename Tnumber>
 BandDiagonalTemplate<Tnumber> operator*(const Tnumber scalar, const BandDiagonalTemplate<Tnumber> rhs) {
@@ -383,7 +383,7 @@ BandDiagonalTemplate<Tnumber> operator*(const Tnumber scalar, const BandDiagonal
 
 }
 
-#if false
+
 template<typename Tnumber>
 void matrix_multiply_columnTemplate(
 	const BandDiagonalTemplate<Tnumber>& matrix,

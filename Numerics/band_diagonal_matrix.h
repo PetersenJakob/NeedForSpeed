@@ -307,8 +307,12 @@ void matrix_multiply_scalarTemplate(
 
 template<typename Tnumber>
 BandDiagonalTemplate<Tnumber> operator*(
-	const Tnumber scalar,
-	const BandDiagonalTemplate<Tnumber> rhs);
+	const Tnumber scalar, 
+	const BandDiagonalTemplate<Tnumber> rhs) {
+
+	return rhs * scalar;
+
+}
 
 
 template<typename Tnumber>
