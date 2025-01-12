@@ -321,7 +321,7 @@ void matrix_add_matrixTemplate(
 	}
 
 }
-#endif
+
 
 template<typename Tnumber>
 void matrix_add_scalarTemplate(
@@ -347,7 +347,7 @@ void matrix_add_scalarTemplate(
 	}
 
 }
-
+#endif
 
 template<typename Tnumber>
 void matrix_multiply_scalarTemplate(
