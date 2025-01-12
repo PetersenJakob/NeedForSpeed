@@ -3,6 +3,8 @@
 #include <vector>
 
 
+// TODO: POSSIBLE LINING ERRORS SINCE ALL CLASS METHODS SHOULD BE DEFINED IN THIS HEADER!
+
 // Band-diagonal matrix stored in compact form.
 // TODO: General assumption. For non-boundary rows, all diagonal elementss are "present"!!!
 // TODO: This assumption has been used in matrix_multiply_column function!

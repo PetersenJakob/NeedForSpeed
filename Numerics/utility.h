@@ -8,6 +8,31 @@
 
 
 // Setting up finite difference representation of derivative operator on uniform grid.
+// TODO: Only works with TriDiagonalTemplate and PentaDiagonalTemplate constructors!
+template <typename Tmatrix, typename Tnumber>
+Tmatrix setupTemplate(
+	const std::size_t order,
+	const std::vector<Tnumber>& coef,
+	const std::size_t n_boundary_elements_lower,
+	const std::size_t n_boundary_elements_upper) {
+
+	Tmatrix matrix(order, n_boundary_elements_lower, n_boundary_elements_upper);
+
+	for (std::size_t i = 0; i != coef.size(); ++i) {
+		for (std::size_t j = matrix.n_boundary_rows_lower(); j != matrix.order() - matrix.n_boundary_rows_upper(); ++j) {
+			matrix.matrix[i][j] = coef[i];
+		}
+	}
+
+	return matrix;
+
+}
+
+
+// ###############################################################################
+
+
+// Setting up finite difference representation of derivative operator on uniform grid.
 template <class T>
 T setup(
 	const int order,

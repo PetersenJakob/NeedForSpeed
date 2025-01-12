@@ -3,7 +3,61 @@
 #include <vector>
 
 #include "band_diagonal_matrix.h"
+#include "coefficients.h"
 #include "utility.h"
+
+
+// Finite difference representation of first order derivative operator.
+namespace d1dx1Template {
+
+	// Finite difference representation on uniform grid.
+	namespace uniform {
+
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 1st order accurary.
+		template<typename Tnumber>
+		TriDiagonalTemplate<Tnumber> c2b1(const std::vector<Tnumber>& grid);
+
+#if false
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
+		TriDiagonal c2b2(const std::vector<double>& grid);
+
+		// Interior: Central difference, 4th order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
+		// Boundary 2nd row: Central difference, 2nd order accurary.
+		PentaDiagonal c4b2(const std::vector<double>& grid);
+
+		// Interior: Central difference, 4th order accuracy.
+		// Boundary 1st row: Forward difference, 4th order accurary.
+		// Boundary 2nd row: Forward difference, 4th order accurary.
+		PentaDiagonal c4b4(const std::vector<double>& grid);
+#endif
+	}
+}
+
+
+// First order derivative operator. 
+// Central difference; 2nd order accuracy. Boundary; 1st order accuracy.
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber> d1dx1Template::uniform::c2b1(const std::vector<Tnumber>& grid) {
+
+	// TODO: If you choose two boundary rows with f1+f1 and b1+b1, what will the L2 function norm be?
+
+	const std::size_t order = grid.size();
+	// TODO: Should dx be of type Tnumber?
+	const Tnumber dx = grid[1] - grid[0];
+
+	TriDiagonalTemplate<Tnumber> matrix = setupTemplate<TriDiagonalTemplate<Tnumber>>(order, coef_x1Template::uniform::c2<Tnumber>(dx), 1, 2);
+	boundary<TriDiagonal>(0, coef_x1::uniform::f1(dx), matrix);
+	boundary<TriDiagonal>(1, coef_x1::uniform::b1(dx), matrix);
+
+	return matrix;
+
+}
+
+
+// ###############################################################################
 
 
 // Finite difference representation of first order derivative operator.
