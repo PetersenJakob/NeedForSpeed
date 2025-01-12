@@ -226,7 +226,30 @@ BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(const BandDiagonalTemplate& 
 template<typename Tnumber>
 void matrix_add_matrixTemplate(
 	const BandDiagonalTemplate<Tnumber>& matrix,
-	BandDiagonalTemplate<Tnumber>& result);
+	BandDiagonalTemplate<Tnumber>& result) {
+
+	// TODO: Check if the two matrices have same dimensions?
+
+	// TODO: Maybe adjust when row-major/column-major structure has been chosen?
+	for (std::size_t i = 0; i != result.n_diagonals(); ++i) {
+		for (std::size_t j = 0; j != result.order(); ++j) {
+			result.matrix[i][j] += matrix.matrix[i][j];
+		}
+	}
+
+	for (std::size_t i = 0; i != result.n_boundary_rows_lower(); ++i) {
+		for (std::size_t j = 0; j != result.n_boundary_elements_lower(); ++j) {
+			result.boundary_lower[i][j] += matrix.boundary_lower[i][j];
+		}
+	}
+
+	for (std::size_t i = 0; i != result.n_boundary_rows_upper(); ++i) {
+		for (std::size_t j = 0; j != result.n_boundary_elements_upper(); ++j) {
+			result.boundary_upper[i][j] += matrix.boundary_upper[i][j];
+		}
+	}
+
+}
 
 
 template<typename Tnumber>

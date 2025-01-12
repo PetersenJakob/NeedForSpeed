@@ -293,7 +293,7 @@ BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::pre_vector(const st
 
 }
 
-
+#if false
 template<typename Tnumber>
 void matrix_add_matrixTemplate(
 	const BandDiagonalTemplate<Tnumber>& matrix,
@@ -321,7 +321,7 @@ void matrix_add_matrixTemplate(
 	}
 
 }
-
+#endif
 
 template<typename Tnumber>
 void matrix_add_scalarTemplate(
