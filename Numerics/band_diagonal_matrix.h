@@ -315,7 +315,44 @@ template<typename Tnumber>
 void matrix_multiply_columnTemplate(
 	const BandDiagonalTemplate<Tnumber>& matrix,
 	const std::vector<Tnumber>& column,
-	std::vector<Tnumber>& result);
+	std::vector<Tnumber>& result) {
+
+	std::size_t row_idx = 0;
+	std::size_t column_idx = 0;
+
+	// Contribution from lower boundary rows of matrix.
+	for (int i = 0; i != matrix.n_boundary_rows_lower(); ++i) {
+		for (int j = 0; j != matrix.n_boundary_elements_lower(); ++j) {
+			result[i] += matrix.boundary_lower[i][j] * column[j];
+		}
+	}
+
+	// Contribution from upper boundary rows of matrix.
+	for (int i = 0; i != matrix.n_boundary_rows_upper(); ++i) {
+		for (int j = 0; j != matrix.n_boundary_elements_upper(); ++j) {
+			row_idx = (matrix.order() - 1) - i;
+			column_idx = (matrix.order() - 1) - j;
+			result[row_idx] += matrix.boundary_upper[i][j] * column[column_idx];
+		}
+	}
+
+	// TODO: Only use interior rows from matrix. 
+	// TODO: Elements of boundary rows should be represented by boundary_rows.
+
+	// Contribution from "interior" rows of matrix.
+	const std::size_t i_initial = matrix.n_boundary_rows_lower();
+	const std::size_t i_final = matrix.order() - matrix.n_boundary_rows_upper();
+	const std::size_t j_initial = 0;
+	const std::size_t j_final = matrix.n_diagonals();
+
+	for (std::size_t i = i_initial; i != i_final; ++i) {
+		for (std::size_t j = j_initial; j != j_final; ++j) {
+			result[i] += matrix.matrix[j][i]
+				* column[(i - matrix.n_boundary_rows_lower()) + j];
+		}
+	}
+
+}
 
 
 template<typename Tnumber>
