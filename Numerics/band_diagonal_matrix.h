@@ -281,7 +281,28 @@ void matrix_add_scalarTemplate(
 template<typename Tnumber>
 void matrix_multiply_scalarTemplate(
 	BandDiagonalTemplate<Tnumber>& matrix,
-	const Tnumber scalar);
+	const Tnumber scalar) {
+
+	// TODO: Maybe adjust when row-major/column-major structure has been chosen?
+	for (std::size_t i = 0; i != matrix.n_diagonals(); ++i) {
+		for (std::size_t j = 0; j != matrix.order(); ++j) {
+			matrix.matrix[i][j] *= scalar;
+		}
+	}
+
+	for (std::size_t i = 0; i != matrix.n_boundary_rows_lower(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_lower(); ++j) {
+			matrix.boundary_lower[i][j] *= scalar;
+		}
+	}
+
+	for (std::size_t i = 0; i != matrix.n_boundary_rows_upper(); ++i) {
+		for (std::size_t j = 0; j != matrix.n_boundary_elements_upper(); ++j) {
+			matrix.boundary_upper[i][j] *= scalar;
+		}
+	}
+
+}
 
 
 template<typename Tnumber>
