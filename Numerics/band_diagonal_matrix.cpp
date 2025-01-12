@@ -6,7 +6,7 @@
 #include "coefficients.h"
 #include "utility.h"
 
-
+#if false
 template<typename Tnumber>
 BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(
 	const std::size_t _order,
@@ -68,7 +68,7 @@ BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(const BandDiagonalTemplate& 
 	boundary_upper = mat.boundary_upper;
 
 }
-
+#endif
 
 template<typename Tnumber>
 bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& rhs)

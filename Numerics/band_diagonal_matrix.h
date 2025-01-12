@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <vector>
 
 
@@ -157,6 +158,69 @@ public:
 
 #endif
 };
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(
+	const std::size_t _order,
+	const std::size_t _bandwidth_lower,
+	const std::size_t _bandwidth_upper,
+	const std::size_t _n_boundary_rows_lower,
+	const std::size_t _n_boundary_rows_upper,
+	const std::size_t _n_boundary_elements_lower,
+	const std::size_t _n_boundary_elements_upper) {
+
+	order_ = _order;
+	bandwidth_lower_ = _bandwidth_lower;
+	bandwidth_upper_ = _bandwidth_upper;
+	bandwidth_ = std::max(bandwidth_lower_, bandwidth_upper_);
+	n_diagonals_ = 1 + bandwidth_lower_ + bandwidth_upper_;
+	n_boundary_rows_lower_ = _n_boundary_rows_lower;
+	n_boundary_rows_upper_ = _n_boundary_rows_upper;
+	n_boundary_rows_ = n_boundary_rows_lower_ + n_boundary_rows_upper_;
+	n_boundary_elements_lower_ = _n_boundary_elements_lower;
+	n_boundary_elements_upper_ = _n_boundary_elements_upper;
+
+	if (order_ < n_boundary_rows_lower_ + n_boundary_rows_upper_) {
+		throw std::invalid_argument("order < n_boundary_rows_lower + n_boundary_rows_upper!");
+	}
+
+	// Band-diagonal matrix in compact form.
+	std::vector<Tnumber> diagonal(order_, Tnumber(0.0));
+	std::vector<std::vector<Tnumber>> m(n_diagonals_, diagonal);
+	matrix = std::move(m);
+
+	// Lower boundary rows of band-diagonal matrix.
+	std::vector<Tnumber> row_lower(n_boundary_elements_lower_, Tnumber(0.0));
+	std::vector<std::vector<Tnumber>> b_lower(2 * n_boundary_rows_lower_, row_lower);
+	boundary_lower = std::move(b_lower);
+
+	// Upper boundary rows of band-diagonal matrix.
+	std::vector<Tnumber> row_upper(n_boundary_elements_upper_, Tnumber(0.0));
+	std::vector<std::vector<Tnumber>> b_upper(2 * n_boundary_rows_upper_, row_upper);
+	boundary_upper = std::move(b_upper);
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(const BandDiagonalTemplate& mat) {
+
+	order_ = mat.order_;
+	bandwidth_lower_ = mat.bandwidth_lower_;
+	bandwidth_upper_ = mat.bandwidth_upper_;
+	bandwidth_ = mat.bandwidth_;
+	n_diagonals_ = mat.n_diagonals_;
+	n_boundary_rows_lower_ = mat.n_boundary_rows_lower_;
+	n_boundary_rows_upper_ = mat.n_boundary_rows_upper_;
+	n_boundary_rows_ = mat.n_boundary_rows_;
+	n_boundary_elements_lower_ = mat.n_boundary_elements_lower_;
+	n_boundary_elements_upper_ = mat.n_boundary_elements_upper_;
+	matrix = mat.matrix;
+	boundary_lower = mat.boundary_lower;
+	boundary_upper = mat.boundary_upper;
+
+}
 
 
 template<typename Tnumber>
