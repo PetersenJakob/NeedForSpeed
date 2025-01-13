@@ -5,7 +5,7 @@
 #include "band_diagonal_matrix.h"
 #include "matrix_equation_solver.h"
 
-
+#if false
 // Tri-diagonal matrix equation solver.
 template<typename Tnumber>
 void solverTemplate::tri(
@@ -326,7 +326,7 @@ void pentadiagonal_matrix_solverTemplate(
 	tridiagonal_matrix_solverTemplate<Tnumber>(sub_tmp, main_tmp, super_tmp, column, vec_tmp);
 
 }
-
+#endif
 
 // ###############################################################################
 

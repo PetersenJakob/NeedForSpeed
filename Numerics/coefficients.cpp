@@ -276,7 +276,7 @@ namespace coef_x1Template {
 
 }
 #endif
-
+#if false
 // Finite difference coefficients for second order derivative operator.
 namespace coef_x2Template {
 	// Finite difference representation on uniform grid.
@@ -519,38 +519,6 @@ namespace coef_x2Template {
 		}
 
 	}
-
-}
-
-#if false
-// Reverse order of coefficients and multiply by scalar.
-template<typename Tnumber>
-std::vector<Tnumber> reverse_orderTemplate(
-	std::vector<Tnumber> coefficients,
-	const Tnumber scalar) {
-
-	std::reverse(coefficients.begin(), coefficients.end());
-
-	for (auto& element : coefficients) {
-		element *= scalar;
-	}
-
-	return coefficients;
-
-}
-
-
-// Divide coefficients by denominator. TODO: Change function name.
-template<typename Tnumber>
-std::vector<Tnumber> adjust_coefficientsTemplate(
-	std::vector<Tnumber> coefficients,
-	const Tnumber denominator) {
-
-	for (auto& element : coefficients) {
-		element /= denominator;
-	}
-
-	return coefficients;
 
 }
 #endif
