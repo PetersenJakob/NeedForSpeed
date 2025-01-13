@@ -224,6 +224,58 @@ BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(const BandDiagonalTemplate& 
 
 
 template<typename Tnumber>
+bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& rhs)
+{
+	// TODO: Is this difference criteria correct?
+	const double eps = 1.0e-12;
+
+	if (order_ == rhs.order_ &&
+		bandwidth_lower_ == rhs.bandwidth_lower_ &&
+		bandwidth_upper_ == rhs.bandwidth_upper_ &&
+		n_boundary_rows_lower_ == rhs.n_boundary_rows_lower_ &&
+		n_boundary_rows_upper_ == rhs.n_boundary_rows_upper_ &&
+		n_boundary_elements_lower_ == rhs.n_boundary_elements_lower_ &&
+		n_boundary_elements_upper_ == rhs.n_boundary_elements_upper_) {
+
+		double diff = 0.0;
+
+		// TODO: Maybe adjust when row-major/column-major structure has been chosen?
+		for (std::size_t i = 0; i != n_diagonals_; ++i) {
+			for (std::size_t j = 0; j != order_; ++j) {
+				diff = matrix[i][j] - rhs.matrix[i][j];
+				if (std::abs(diff) > eps) {
+					return false;
+				}
+			}
+		}
+
+		for (std::size_t i = 0; i != n_boundary_rows_lower_; ++i) {
+			for (std::size_t j = 0; j != n_boundary_elements_lower_; ++j) {
+				diff = boundary_lower[i][j] - rhs.boundary_lower[i][j];
+				if (std::abs(diff) > eps) {
+					return false;
+				}
+			}
+		}
+
+		for (std::size_t i = 0; i != n_boundary_rows_upper_; ++i) {
+			for (std::size_t j = 0; j != n_boundary_elements_upper_; ++j) {
+				diff = boundary_upper[i][j] - rhs.boundary_upper[i][j];
+				if (std::abs(diff) > eps) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
+template<typename Tnumber>
 void matrix_add_matrixTemplate(
 	const BandDiagonalTemplate<Tnumber>& matrix,
 	BandDiagonalTemplate<Tnumber>& result) {
@@ -253,6 +305,28 @@ void matrix_add_matrixTemplate(
 
 
 template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator+(const BandDiagonalTemplate& rhs) {
+
+	BandDiagonalTemplate result(*this);
+
+	matrix_add_matrixTemplate(rhs, result);
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator+=(const BandDiagonalTemplate& rhs) {
+
+	matrix_add_matrixTemplate(rhs, *this);
+
+	return *this;
+
+}
+
+
+template<typename Tnumber>
 void matrix_add_scalarTemplate(
 	BandDiagonalTemplate<Tnumber>& matrix,
 	const Tnumber scalar) {
@@ -274,6 +348,64 @@ void matrix_add_scalarTemplate(
 			matrix.boundary_upper[i][j] = +scalar;
 		}
 	}
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator+(const Tnumber rhs) {
+
+	BandDiagonalTemplate result(*this);
+
+	matrix_add_scalarTemplate(result, rhs);
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator+=(const Tnumber rhs) {
+
+	matrix_add_scalarTemplate(*this, rhs);
+
+	return *this;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator-(const BandDiagonalTemplate& rhs) {
+
+	return *this + rhs * (-1.0);
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator-=(const BandDiagonalTemplate& rhs) {
+
+	*this += rhs * (-1.0);
+
+	return *this;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator-(const Tnumber rhs) {
+
+	return *this + rhs * (-1.0);
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator-=(const Tnumber rhs) {
+
+	*this += rhs * (-1.0);
+
+	return *this;
 
 }
 
@@ -306,11 +438,23 @@ void matrix_multiply_scalarTemplate(
 
 
 template<typename Tnumber>
-BandDiagonalTemplate<Tnumber> operator*(
-	const Tnumber scalar, 
-	const BandDiagonalTemplate<Tnumber> rhs) {
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::operator*(const Tnumber rhs) {
 
-	return rhs * scalar;
+	BandDiagonalTemplate result(*this);
+
+	matrix_multiply_scalarTemplate<Tnumber>(result, rhs);
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber>& BandDiagonalTemplate<Tnumber>::operator*=(const Tnumber rhs) {
+
+	matrix_multiply_scalarTemplate<Tnumber>(*this, rhs);
+
+	return *this;
 
 }
 
@@ -360,6 +504,64 @@ void matrix_multiply_columnTemplate(
 
 
 template<typename Tnumber>
+std::vector<Tnumber> BandDiagonalTemplate<Tnumber>::operator*(const std::vector<Tnumber>& rhs) {
+
+	std::vector<Tnumber> result(rhs.size(), Tnumber(0.0));
+
+	matrix_multiply_columnTemplate<Tnumber>(*this, rhs, result);
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::identity() {
+
+	BandDiagonalTemplate<Tnumber> result(*this);
+
+	for (std::size_t i = 0; i != result.n_diagonals(); ++i) {
+		for (std::size_t j = 0; j != result.order(); ++j) {
+			if (i < result.bandwith_lower()) {
+				result[i][j] = Tnumber(0.0);
+			}
+			else if (i == result.bandwidth_lower()) {
+				result[i][j] = Tnumber(1.0);
+			}
+			else {
+				result[i][j] = Tnumber(0.0);
+			}
+		}
+	}
+
+	for (std::size_t i = 0; i != result.n_boundary_rows_lower(); ++i) {
+		for (std::size_t j = 0; j != result.n_boundary_elements_lower(); ++j) {
+			if (i == j) {
+				result.boundary_lower[i][j] = Tnumber(1.0);
+			}
+			else {
+				result.boundary_lower[i][j] = Tnumber(0.0);
+			}
+		}
+	}
+
+	for (std::size_t i = 0; i != result.n_boundary_rows_upper(); ++i) {
+		for (std::size_t j = 0; j != result.n_boundary_elements_upper(); ++j) {
+			if (i == j) {
+				result.boundary_upper[i][j] = Tnumber(1.0);
+			}
+			else {
+				result.boundary_upper[i][j] = Tnumber(0.0);
+			}
+		}
+	}
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
 void prevector_multiply_matrixTemplate(
 	const std::vector<Tnumber>& vector,
 	BandDiagonalTemplate<Tnumber>& matrix) {
@@ -393,6 +595,28 @@ void prevector_multiply_matrixTemplate(
 			matrix.boundary_upper[i][j] *= vector[column_idx];
 		}
 	}
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::pre_vector(const std::vector<Tnumber>& vector) {
+
+	BandDiagonalTemplate<Tnumber> result(*this);
+
+	prevector_multiply_matrixTemplate<Tnumber>(result, vector);
+
+	return result;
+
+}
+
+
+template<typename Tnumber>
+BandDiagonalTemplate<Tnumber> operator*(
+	const Tnumber scalar, 
+	const BandDiagonalTemplate<Tnumber> rhs) {
+
+	return rhs * scalar;
 
 }
 

@@ -68,7 +68,7 @@ BandDiagonalTemplate<Tnumber>::BandDiagonalTemplate(const BandDiagonalTemplate& 
 	boundary_upper = mat.boundary_upper;
 
 }
-#endif
+
 
 template<typename Tnumber>
 bool BandDiagonalTemplate<Tnumber>::operator==(const BandDiagonalTemplate& rhs)
@@ -293,7 +293,7 @@ BandDiagonalTemplate<Tnumber> BandDiagonalTemplate<Tnumber>::pre_vector(const st
 
 }
 
-#if false
+
 template<typename Tnumber>
 void matrix_add_matrixTemplate(
 	const BandDiagonalTemplate<Tnumber>& matrix,
