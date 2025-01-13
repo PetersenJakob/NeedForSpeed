@@ -3,7 +3,7 @@
 
 #include "coefficients.h"
 
-
+#if false
 // Finite difference coefficients for first order derivative operator.
 namespace coef_x1Template {
 
@@ -275,7 +275,7 @@ namespace coef_x1Template {
 	}
 
 }
-
+#endif
 
 // Finite difference coefficients for second order derivative operator.
 namespace coef_x2Template {
@@ -522,7 +522,7 @@ namespace coef_x2Template {
 
 }
 
-
+#if false
 // Reverse order of coefficients and multiply by scalar.
 template<typename Tnumber>
 std::vector<Tnumber> reverse_orderTemplate(
@@ -553,7 +553,7 @@ std::vector<Tnumber> adjust_coefficientsTemplate(
 	return coefficients;
 
 }
-
+#endif
 
 // ###############################################################################
 
