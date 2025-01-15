@@ -18,27 +18,23 @@ namespace d1dx1Template {
 		template<typename Tnumber>
 		TriDiagonalTemplate<Tnumber> c2b1(const std::vector<Tnumber>& grid);
 
+		// Interior: Central difference, 2nd order accuracy.
+		// Boundary 1st row: Forward difference, 2nd order accurary.
+		template<typename Tnumber>
+		TriDiagonalTemplate<Tnumber> c2b2(const std::vector<Tnumber>& grid);
+
 		// Interior: Central difference, 4th order accuracy.
 		// Boundary 1st row: Forward difference, 2nd order accurary.
 		// Boundary 2nd row: Central difference, 2nd order accurary.
 		template<typename Tnumber>
 		PentaDiagonalTemplate<Tnumber> c4b2(const std::vector<Tnumber>& grid);
 
-#if false
-		// Interior: Central difference, 2nd order accuracy.
-		// Boundary 1st row: Forward difference, 2nd order accurary.
-		TriDiagonal c2b2(const std::vector<double>& grid);
-
-		// Interior: Central difference, 4th order accuracy.
-		// Boundary 1st row: Forward difference, 2nd order accurary.
-		// Boundary 2nd row: Central difference, 2nd order accurary.
-		PentaDiagonal c4b2(const std::vector<double>& grid);
-
 		// Interior: Central difference, 4th order accuracy.
 		// Boundary 1st row: Forward difference, 4th order accurary.
 		// Boundary 2nd row: Forward difference, 4th order accurary.
-		PentaDiagonal c4b4(const std::vector<double>& grid);
-#endif
+		template<typename Tnumber>
+		PentaDiagonalTemplate<Tnumber> c4b4(const std::vector<Tnumber>& grid);
+
 	}
 }
 
@@ -67,6 +63,26 @@ TriDiagonalTemplate<Tnumber> d1dx1Template::uniform::c2b1(const std::vector<Tnum
 
 
 // First order derivative operator. 
+// Central difference; 2nd order accuracy. Boundary; 2nd order accuracy.
+template<typename Tnumber>
+TriDiagonalTemplate<Tnumber> d1dx1Template::uniform::c2b2(const std::vector<Tnumber>& grid) {
+
+	using MatrixType = TriDiagonalTemplate<Tnumber>;
+
+	const std::size_t order = grid.size();
+	const Tnumber dx = grid[1] - grid[0];
+
+	MatrixType matrix = 
+		setup<MatrixType, Tnumber>(order, coef_x1Template::uniform::c2<Tnumber>(dx), 1, 3);
+	boundaryTemplate<MatrixType, Tnumber>(0, "lower", coef_x1Template::uniform::f2<Tnumber>(dx), matrix);
+	boundaryTemplate<MatrixType, Tnumber>(0, "upper", coef_x1Template::uniform::b2<Tnumber>(dx), matrix);
+
+	return matrix;
+
+}
+
+
+// First order derivative operator. 
 // Central difference; 4th order accuracy. Boundary; 2nd order accuracy.
 template<typename Tnumber>
 PentaDiagonalTemplate<Tnumber> d1dx1Template::uniform::c4b2(const std::vector<Tnumber>& grid) {
@@ -82,6 +98,27 @@ PentaDiagonalTemplate<Tnumber> d1dx1Template::uniform::c4b2(const std::vector<Tn
 	boundaryTemplate<MatrixType, Tnumber>(1, "lower", coef_x1Template::uniform::f2<Tnumber>(dx), matrix);
 	boundaryTemplate<MatrixType, Tnumber>(1, "upper", coef_x1Template::uniform::b2<Tnumber>(dx), matrix);
 	boundaryTemplate<MatrixType, Tnumber>(0, "upper", coef_x1Template::uniform::b2<Tnumber>(dx), matrix);
+
+	return matrix;
+
+}
+
+
+// First order derivative operator. 
+// Central difference; 4th order accuracy. Boundary; 4th order accuracy.
+template<typename Tnumber>
+PentaDiagonalTemplate<Tnumber> d1dx1Template::uniform::c4b4(const std::vector<Tnumber>& grid) {
+
+	using MatrixType = PentaDiagonalTemplate<Tnumber>;
+
+	const std::size_t order = grid.size();
+	const Tnumber dx = grid[1] - grid[0];
+
+	MatrixType matrix = setup<MatrixType, Tnumber>(order, coef_x1Template::uniform::c4<Tnumber>(dx), 2, 5);
+	boundaryTemplate<MatrixType, Tnumber>(0, "lower", coef_x1Template::uniform::f4<Tnumber>(dx), matrix);
+	boundaryTemplate<MatrixType, Tnumber>(1, "lower", coef_x1Template::uniform::f4<Tnumber>(dx), matrix);
+	boundaryTemplate<MatrixType, Tnumber>(1, "upper", coef_x1Template::uniform::b4<Tnumber>(dx), matrix);
+	boundaryTemplate<MatrixType, Tnumber>(0, "upper", coef_x1Template::uniform::b4<Tnumber>(dx), matrix);
 
 	return matrix;
 
